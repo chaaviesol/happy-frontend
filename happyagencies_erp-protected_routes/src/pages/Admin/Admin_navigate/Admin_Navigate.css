@@ -1,0 +1,134 @@
+.admin_na_align {
+    width: 100%;
+    height: 100vh;
+    background-color: #f6f6f9;
+}
+
+
+
+
+
+.admn_na_ptg {
+    font-family: Glamsy;
+    font-size: 20px;
+    height: 10px;
+
+}
+
+.admn_na_cards {
+    border-radius: 20px;
+    height: 80px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    background-color: #006357;
+}
+
+.admn_na_ptagNoti {
+    border-radius: 50%;
+    margin: -10px 00px;
+    width: 25px;
+    height: 25px;
+    background-color: red;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.admn_na_card {
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.adm_na_crd_head {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    letter-spacing: 5px;
+}
+
+.adm_na_crd_al {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.adm_na_crd_cnnt {
+    font-size: 50px;
+
+}
+
+.adm_na_crd_ptags {
+    letter-spacing: 5px;
+    font-size: 17px;
+    font-weight: 100;
+    font-weight: 500;
+    font-family: math;
+    color: white;
+}
+
+.admn_na_startcards {
+    display: flex;
+    width: 100%;
+    gap: 30px;
+    justify-content: center;
+}
+
+.admn_na_startcard {
+    height: 200px;
+    width: 350px;
+    border-radius: 20px;
+    box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+}
+
+.admn_na_P_tag {
+    text-align: start;
+    font-size: 23px;
+    color: rgba(0, 0, 0, 0.715);
+    font-family: serif;
+    letter-spacing: 1px;
+}
+
+.admn_na_start_flx {
+
+    width: 100%;
+}
+
+
+.admn_na_pie_Ptag_align {
+    height: 30px;
+}
+
+.setting_alignment_nav {
+    display: flex;
+    height: 100vh;
+    gap: 30px;
+    flex-direction: column;
+}
+
+@media screen and (max-width: 1300px) {
+    .admn_na_startcard {
+        height: 200px;
+        width: 280px;
+    }
+
+    .admn_na_cards {
+        border-radius: 20px;
+        height: 65px;
+    }
+
+    .setting_alignment_nav {
+        display: flex;
+        height: 100vh;
+        gap: 2px;
+        flex-direction: column;
+    }
+}

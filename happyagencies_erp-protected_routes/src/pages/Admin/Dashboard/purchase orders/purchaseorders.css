@@ -1,0 +1,48 @@
+.poso-po-label {
+  background-color: #e9f5e1;
+  border-radius: 7px;
+  margin-left: 5%;
+  border: none;
+  width: 50%;
+  padding-left: 2%;
+}
+.poso-supplier {
+  background-color: #e9f5e1;
+  width: 50%;
+  border-radius: 7px;
+  border: none;
+  height: 4vh;
+}
+.poso-supplier-label {
+  margin-right: 5%;
+}
+.align_Center{
+  align-items: center;
+}
+.poso-container input{
+  font-size: 13px;
+  height:2rem;
+}
+.poso-container * {
+  font-family: "Poppins";
+}
+
+.pOrder-suppliers-dropdown {
+  position: absolute;
+  height: 200px;
+  width: 88%;
+  padding: 0.3rem;
+  top: 2.5rem;
+  border-radius: 5px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  /* margin-top: 2.2rem; */
+  z-index: 99;
+  overflow-y: scroll;
+}
+.pOrder-suppliers-dropdownMenu:hover {
+  cursor: pointer;
+  background: #e5e7eb;
+}

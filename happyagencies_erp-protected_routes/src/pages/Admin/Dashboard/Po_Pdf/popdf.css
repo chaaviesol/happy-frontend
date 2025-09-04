@@ -1,0 +1,62 @@
+:root {
+    --main-color: #20201F;
+    --secondary-color: rgba(0, 29, 25, 0.55);
+  }
+.po-mainContainer *{
+    font-family: 'Gilroy Regular';
+    font-size: 16px;
+}
+.po-mainContainer{
+    padding-top: 1rem;
+    padding-bottom: 3rem;
+    
+}
+/* .po-Container{
+    width: 65%;
+    border: 3px solid rgb(64, 62, 62);
+} */
+.po-Container .row{
+   
+    align-items: center;
+   
+
+}
+
+
+.po-Container-Rows{
+    text-align: left;
+}
+.po-logo{
+    height: 80px;
+    
+    width: 80px;
+}
+.po-happyTxt{
+    font-size: 1.1rem;
+    color: var(--main-color);
+    font-weight: 500;
+}
+.po-placeTxt{
+    color: var(--main-color);
+    font-weight: 400;
+}
+.po-purchaseOrder{
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--main-color);
+}
+.po-toRow-contact{
+margin-left: 20%;
+}
+.po-toRow-details{
+    
+    border:1px solid red
+}
+
+.po-Container-spans{
+ margin-left: 13%;
+}
+.po-table-sec-texts{
+    font-weight: 400;
+    color: var(--secondary-color);
+}

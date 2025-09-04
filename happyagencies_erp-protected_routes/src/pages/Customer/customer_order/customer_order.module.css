@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.box {
+  width: 87%;
+  height: 600px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  padding: 0.7rem;
+}
+.box > :nth-child(1) {
+  width: 100%;
+  height: 12%;
+  background: #e7e5e4;
+}
+.switch {
+  display: flex;
+  margin-bottom: 0.6rem;
+}
+.switch div {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  border: 1px solid #ced2d6;
+}
+.switch div:hover {
+  background: white;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  /* transform: scale(1.3); */
+}
+.activeTab {
+  background: white;
+}

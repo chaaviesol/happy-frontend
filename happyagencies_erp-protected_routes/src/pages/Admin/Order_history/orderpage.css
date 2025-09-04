@@ -1,0 +1,41 @@
+
+/* orderpage.css */
+.vertical-line-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    border: 1px solid #d6d3d1;
+    border-radius: 50%;
+    color: #fff;
+  }
+  
+.line {
+    height: 3px;
+    width: 80px; 
+    background-color: #d6d3d1;
+  }
+/* .line_completed {
+    width: 20px;
+    height: 2px; 
+    background-color: #00cc00;
+  } */
+  
+  
+  /* Styles for completed steps */
+  .dot.completed {
+    background-color: #00cc00;
+  }
+  
+  
+  .line.completed {
+    background-color: #00cc00;
+  }
+  .line.halfcompleted {
+  
+    background: linear-gradient(to right, #00cc00 40%, #d6d3d1 30%);
+  }

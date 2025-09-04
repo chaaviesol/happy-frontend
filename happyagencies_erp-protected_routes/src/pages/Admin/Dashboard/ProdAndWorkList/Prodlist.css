@@ -1,0 +1,30 @@
+.center-align-header {
+  background: #49905e;
+
+  /* margin-left: -40px; */
+  /* padding-right: 90px; */
+  /* justify-content: flex-start; */
+  color: white
+}
+
+#prod_details_img1:hover {
+  /* position: absolute;
+  z-index: 999;
+  width: 400px;
+  margin: 100px -300px; */
+}
+
+
+.proddetails_img_container{
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.proddetails_img_container>img{
+  background-repeat: no-repeat;
+  height:110px ;
+  width: 200px;
+
+
+}

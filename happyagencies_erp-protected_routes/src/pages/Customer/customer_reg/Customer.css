@@ -1,0 +1,17 @@
+#home_admn_reg_align1 {
+    width: 98%;
+    border: 1px solid black;
+    border-radius: 10px;
+    justify-content: center;
+    background-color: white;
+  }
+  .home_admn_reg_card1{
+    display: flex;
+    width: 100%;
+  }
+  #cus_admn_reg_sec1{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+  }
+ 

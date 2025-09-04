@@ -1,0 +1,132 @@
+.settle_container {
+  padding: 2rem;
+  min-height: 100dvh;
+  display: flex;
+  background-color: #f5f5f5;
+  justify-content: center;
+}
+.settle_flexcenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.settle_main {
+  min-height: 95dvh;
+  /* border: 1px solid red; */
+  width: 80%;
+}
+.settle_heading {
+  /* border: 1px solid red; */
+  height: 10%;
+}
+.settle_heading span {
+  font-size: 30px;
+}
+.settle_generate {
+  /* border: 1px solid red; */
+  height: 10%;
+  display: flex;
+  align-items: center;
+  gap: 10rem;
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+}
+.settle_datecontainer {
+  display: flex;
+  gap: 5rem;
+}
+
+.settle_tablecontainer {
+  /* border: 1px solid green; */
+  height: 60%;
+}
+.settle_lastsettledon{
+  text-align: left;
+  padding-bottom:.5rem;
+}
+.settle_lastsettledon span{
+ font-size: 20px;
+ color:rgb(79, 165, 79)
+}
+.settle_table {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  background-color: white;
+  border-radius: 8px;
+  height: 90%;
+  width: 100%;
+}
+.settle_tablehead {
+  display: flex;
+  height: 15%;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+}
+.settle_tablebody {
+  height: 85%;
+  overflow-x: scroll;
+}
+.settle_tablerow {
+  display: flex;
+}
+
+
+.settle_col1 {
+  border-right: 1px solid rgba(128, 128, 128, 0.3);
+  width: 10%;
+}
+.settle_col2 {
+  border-right: 1px solid rgba(128, 128, 128, 0.3);
+  width: 60%;
+}
+.settle_col3 {
+  width: 30%;
+}
+.settle_bodycol2 {
+  width: 60%;
+  border-right: 1px solid rgba(128, 128, 128, 0.3);
+  text-align: left;
+  padding-top: 1rem;
+  padding-left: 3rem;
+}
+.settle_bodycol1 {
+  width: 10%;
+  border-right: 1px solid rgba(128, 128, 128, 0.3);
+  text-align: center;
+  padding-top: 1rem;
+}
+.settle_bodycol3 {
+  text-align: left;
+  padding-top: 1rem;
+  padding-left: 3rem;
+  width: 30%;
+}
+
+.settle_buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20%;
+  /* border: 1px solid green; */
+  gap: 4.5rem;
+}
+
+.settle_inputBox {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #d6d3d1;
+  height: 40px;
+  padding-left: 20px;
+  &:focus {
+    border: 1px solid #d6d3d1;
+  }
+}
+.settle_dinputBox {
+  background-color: #fafaf9;
+  border-radius: 8px;
+  border: 1px solid #d6d3d1;
+  height: 40px;
+  padding-left: 20px;
+  &:focus {
+    border: 1px solid #d6d3d1;
+  }
+}

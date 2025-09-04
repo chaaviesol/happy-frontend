@@ -1,0 +1,44 @@
+.GoodsReceipt-container * {
+  font-family: "Poppins";
+ 
+}
+.GoodsReceipt-container input{
+  height:2rem
+}
+.GoodsReceipt-Table td {
+  vertical-align: middle;
+}
+.Gr-td {
+  /* z-index: -9; */
+  position: relative;
+  display: inline-block;
+}
+.Gr-td-icon {
+  font-size: 1rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -1.3rem;
+  cursor: pointer;
+}
+.Gr-td-iconStart {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0.5rem;
+}
+.Gr-td-iconStart_po {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-60%);
+  left: -1.2rem;
+}
+
+.poList-tableBody td th{
+text-align:left
+}
+
+.custom-toast .Toastify__toast-body {
+  background-color: red;
+}
+

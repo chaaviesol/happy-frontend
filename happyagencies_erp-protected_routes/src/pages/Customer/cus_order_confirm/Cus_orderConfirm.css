@@ -1,0 +1,209 @@
+#Cart_Cntrl_las_btn4 {
+    background-color: rgb(255, 161, 114);
+    border: none;
+    color: aliceblue;
+    border-radius: 10px;
+    width: 170px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+#cus_odr_dwld_alighn {
+    display: flex;
+    justify-content: end;
+}
+
+#Cart_Cntrl_las_popup {
+    width: 30%;
+    height: 200px;
+    border: 1px solid black;
+    position: absolute;
+    z-index: 999;
+    margin: -500px;
+
+}
+
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    /* Background with 50% opacity for the blur effect */
+    /* Set z-index to -1 to move it behind other content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popups_msg {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    border-image: linear-gradient(#0021b3, #00ffd9) 30;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#cus_ordr_cancel_btn1 {
+    background-color: red;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    width: 80px;
+}
+
+#cus_ordr_cancel_btn2 {
+    background-color: rgb(0, 255, 51);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    width: 80px;
+}
+
+#Cart_Cntrl_las_popupAl {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+
+#Cart_Cntrl_las_btns3 {
+    background-color: #04A777;
+    border: none;
+    color: aliceblue;
+    border-radius: 10px;
+    width: 170px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+#Cart_Cntrl_las_btns5 {
+    background-color: #04A777;
+    border: none;
+    color: aliceblue;
+    border-radius: 10px;
+    width: 170px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+#Cart_Cntrl_las_btns1 {
+    background-color: #950bcf;
+    border: none;
+    color: aliceblue;
+    border-radius: 10px;
+    width: 170px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+#Cart_Cntrl_las_btns111 {
+    background-color: rgb(255, 160, 51);
+    border: none;
+    color: aliceblue;
+    border-radius: 10px;
+    width: 170px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+#order_cfrm {
+    height: 73px;
+    width: 300px;
+    background-color: #e1eeff;
+}
+
+#cus_odr_dwld {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+}
+
+#cus_odr_dwld_inner {
+    width: 70%;
+    border: 1px solid black;
+}
+
+#cus_odr_dwld_Ptag1 {
+    font-size: 25px;
+    font-family: glamsy;
+    height: 20px;
+
+}
+
+#cus_odr_dwld_imgtag {
+    height: 50px;
+}
+
+.cus_odr_dwld_imgtagptag {
+    height: 1px;
+}
+
+#cus_odr_dwld_align2 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#cus_odr_dwld_align3 {
+    width: 97%;
+    display: flex;
+    justify-content: center;
+
+}
+
+#cus_odr_dwld_Ptag2 {
+    margin-left: auto;
+}
+
+#cus_odr_dwld_table {
+    width: 100%;
+}
+
+#Cart_Cntrl_las_dwldBtns {
+    display: flex;
+    justify-content: center;
+}
+
+#Cart_Cntrl_last_button_align {
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-width: 500px) {
+    #Cart_Cntrl_last_button_align {
+        display: inline;
+    }
+
+    #Cart_Cntrl_last_sec {
+        display: flex;
+        justify-content: center;
+    }
+
+    #order_cfrm {
+        width: 100%;
+    }
+}

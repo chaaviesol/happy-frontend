@@ -1,0 +1,4 @@
+.category_scroll{
+    overflow-y: scroll;
+    height: 100px;
+}

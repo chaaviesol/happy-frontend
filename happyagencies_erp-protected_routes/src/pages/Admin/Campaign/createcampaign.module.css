@@ -1,0 +1,335 @@
+.container {
+  background: #faf5ff;
+  display: flex;
+  height: 100vh;
+  padding: 20px;
+  flex-direction: column;
+}
+.tableSection {
+  height: 74%;
+  /* padding-left: 2rem; */
+  /* padding-right: 2rem; */
+  padding-top: 5px;
+  display: flex;
+  justify-content: center;
+  /* border: 1px solid gray; */
+}
+
+.btnSection {
+  padding-top: 10px;
+  height: 8%;
+  /* border: 1px solid gray; */
+}
+
+.upperSection {
+  flex-direction: column;
+  margin-bottom: 2.5vh;
+  /* height: 23%; */
+  /* border: 1px solid gray; */
+  display: flex;
+}
+.heading {
+  /* width: 1000%; */
+  margin-left: 1.5vw;
+  text-align: left;
+}
+.heading > span {
+  text-align: left;
+  font-weight: 400;
+  font-size: 38px;
+}
+.details {
+  /* padding-top: 15px; */
+  /* border: 1px solid blue; */
+  height:70px;
+  display: flex;
+  /* align-items: center; */
+
+  justify-content: space-around;
+  .first {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    /* border: 1px solid red; */
+  }
+  .sec {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    /* border: 1px solid red; */
+  }
+  .third {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+  }
+}
+.inputBox {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #d6d3d1;
+  height: 40px;
+  padding-left: 20px;
+  &:focus {
+    border: 1px solid #d6d3d1;
+  }
+}
+
+.btnSection {
+  align-items: center;
+  /* border: 1px solid gray; */
+  position: relative;
+  width: 100%;
+  .btnContainer {
+    align-items: center;
+    position: absolute;
+    justify-content: space-evenly;
+    right: 10px;
+    width: 40%;
+    /* border: 1px solid red; */
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+  .discard {
+    border-radius: 6px;
+    width: 140px;
+    height: 38px;
+    border: 1px solid #ff0000;
+    color: red;
+    transition: background-color 0.3s ease;
+    background-color: white;
+    &:hover {
+      background-color: #eee;
+    }
+  }
+  .draft {
+    border-radius: 6px;
+    width: 140px;
+    height: 38px;
+    border: none;
+    color: white;
+    transition: background-color 0.3s ease;
+    background-color: #3772ff;
+    &:hover {
+      background-color: #1f4ca1;
+    }
+  }
+  .apply {
+    background-color: #0ead69;
+    border-radius: 6px;
+    width: 140px;
+    transition: background-color 0.3s ease;
+    height: 38px;
+    border: none;
+    color: white;
+    &:hover {
+      background-color: #34e087;
+    }
+  }
+}
+.table {
+  border: 1px solid #d6d3d1;
+  height: 100%;
+  border-radius: 12px;
+  width: 95.5%;
+  background-color: white;
+}
+.tabHeading {
+  display: flex;
+  height: 20%;
+  border-bottom: 1px solid #d6d3d1;
+}
+.slno {
+  flex: 0.5;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+}
+.check {
+  flex: 0.6;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+}
+.category {
+  padding: 20px;
+  flex: 2;
+  gap: 0.7rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+}
+.category > div {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  text-align: left;
+}
+
+.category > span {
+  width: 100%;
+  font-size: 15px;
+  text-align: left;
+}
+
+.subcategories {
+  padding: 10px;
+  flex: 2;
+  gap: 0.7rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+}
+.subcategories > span {
+  width: 100%;
+  font-size: 15px;
+  text-align: left;
+}
+.subcategories > div {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  text-align: left;
+}
+.product {
+  gap: 0.7rem;
+  padding: 10px;
+  flex: 3;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+}
+.product > span {
+  width: 100%;
+  font-size: 15px;
+  text-align: left;
+}
+.product > div {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  text-align: left;
+}
+.color {
+  padding: 10px;
+  flex: 1;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+}
+.stock {
+  padding: 10px;
+  flex: 1;
+
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.tabData {
+  height: 80%;
+  overflow-x: scroll;
+}
+.Row {
+  display: flex;
+  height: 40px;
+}
+
+.tabSl {
+  flex: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+}
+.tabCheck {
+  flex: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+}
+.tabCat {
+  padding: 20px;
+  flex: 2;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #d6d3d1;
+}
+.tabSubcat {
+  padding: 10px;
+  flex: 2;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #d6d3d1;
+}
+.TabProd {
+  padding: 10px;
+  flex: 3;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid #d6d3d1;
+}
+.tabColor {
+  padding: 10px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #d6d3d1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tabStock {
+  padding: 10px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.colorBox {
+  height: 15px;
+  width: 30px;
+  border-radius: 4px;
+}
+.discountMain {
+  display: flex;
+  border: 1px solid #d6d3d1;
+  background-color: white;
+  border-radius: 5px;
+  padding: 3px;
+  align-items: center;
+}
+.discountContainer {
+  display: flex;
+  background-color: white;
+  align-items: center;
+}
+
+.discountInputBox {
+  height: 34px;
+  width: 120px;
+  padding-left: 15px;
+  border: none;
+}
+
+.selectB {
+  outline: none;
+  background-color: #01594F;
+  color: white;
+  border-radius: 5px;
+  height: 34px;
+ border: none;
+ padding:  0px 9px;
+}

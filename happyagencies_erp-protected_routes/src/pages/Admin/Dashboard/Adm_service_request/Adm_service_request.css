@@ -1,0 +1,237 @@
+#adm_srv_start {
+    width: 100%;
+    height: 100vh;
+}
+
+#adm_srv_head {
+    height: 25px;
+    width: 100%;
+    background-color: #00342e;
+    border-radius: 20px;
+}
+
+#adm_srv_ptag {
+    color: white;
+}
+
+#adm_srv_Box {
+    height: 600px;
+    border: 1px solid black;
+    width: 90%;
+    border-radius: 20px;
+}
+
+#adm_srv_contents {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#adm_srv_contents1 {
+    width: 5%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+
+}
+
+#adm_srv_contents2 {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    height: 10%;
+    justify-content: center;
+
+
+}
+
+#adm_srv_contents3 {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+}
+
+#adm_srv_contents4 {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+
+
+}
+
+#adm_srv_contents5 {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+
+
+}
+
+#adm_srv_contents6 {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+
+
+}
+
+#adm_srv_contents7 {
+    width: 15%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+
+
+}
+
+#adm_srv_contents8 {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+
+
+}
+
+#adm_srv_contents9 {
+    width: 10%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+
+
+}
+
+#adm_srv_contents_ptg {
+    height: 1px;
+    font-size: 0.7rem;
+}
+
+#adm_srv_buttons {
+    display: flex;
+    justify-content: center;
+}
+
+#adm_srv_buttons1 {
+    background-color: rgb(255, 145, 0);
+    border: none;
+    width: 130px;
+    border-radius: 15px;
+    color: white;
+}
+
+#adm_srv_buttons2 {
+    background-color: rgb(224, 9, 9);
+    border: none;
+    width: 50%;
+    color: white;
+    height: 50%;
+    font-size: 0.7rem;
+    border-radius: 5px;
+}
+
+#adm_srv_buttons4 {
+    background-color: rgb(145, 224, 9);
+    border: none;
+    color: white;
+    width: 60px;
+    height: 20px;
+    font-size: 0.7rem;
+    border-radius: 5px;
+}
+
+#adm_srv_buttons5 {
+    background-color: rgb(150, 36, 10);
+    border: none;
+    color: white;
+    width: 60px;
+    height: 20px;
+    font-size: 0.7rem;
+    border-radius: 5px;
+}
+
+#adm_srv_buttons3 {
+    background-color: rgb(55, 191, 9);
+    border: none;
+    color: white;
+    height: 50%;
+    font-size: 0.7rem;
+    border-radius: 5px;
+
+}
+
+#adm_srv_Buttons {
+    height: 50px;
+    width: 100%;
+    display: flex;
+
+}
+
+#adm_srv_Buttons1 {
+    width: 50%;
+    border-top-left-radius: 20px;
+    background-color: #8ea5eb;
+    color: white;
+    border: none;
+}
+
+#adm_srv_Buttons2 {
+    width: 50%;
+    border-top-right-radius: 20px;
+    border: none;
+    background-color: #8ea5eb;
+    color: white;
+}
+
+#adm_srv_content_row {
+    height: 490px;
+    overflow-y: scroll;
+}
+
+#adm_srv_img {
+    height: 100%;
+    width: 100%;
+}
+
+#adm_srv_cus_fil {
+    width: 200px;
+    height: 100px;
+    border-radius: 5px;
+    background-color: #daf4f5;
+    position: absolute;
+    z-index: 999;
+    border: 1px solid black;
+    margin: 0px 130px;
+}
+
+#adm_srv_inp_styling {
+    border-radius: 5px;
+    width: 90%;
+}
+
+#adm_srv_search_ptg {
+    font-size: 1rem;
+}
+
+#adm_srv_cont_btns {
+    display: flex;
+    background-color: #ffffff;
+    justify-content: space-between;
+    height: 100%;
+    align-items: center;
+
+}

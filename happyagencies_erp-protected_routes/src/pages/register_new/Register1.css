@@ -1,0 +1,56 @@
+#home_admn_reg_mainset {
+    width: 100%;
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    background-color: #00342e;
+}
+
+@media screen and (max-width: 480px) {
+    #home_admn_reg_mainset {
+        width: 100%;
+        flex-direction: column;
+        background-color: #00342e;
+    }
+
+    #home_admn_reg_setting1 {
+        height: 20rem;
+    }
+
+    #home_admn_reg_setting1 {
+        width: 100%;
+    }
+
+    #home_admn_reg_setting2 {
+        width: 100%;
+        display: list-item;
+    }
+
+    .home_admn_reg_card1 {
+        flex-direction: column;
+    }
+
+    #cus_admn_reg_sec1 {
+        width: 100%;
+    }
+
+    .row {
+        flex-wrap: unset;
+    }
+
+    #home_admn_reg_align1 {
+        width: 100%;
+    }
+
+    .admn_reg_inputBox,
+    .admn_reg_inputBox1 {
+        width: 100%;
+    }
+    #sup_rer_btns{
+        display: flex;
+        justify-content: center;
+    }
+    #home_admn_reg_align{
+        width: 100%;
+    }
+}

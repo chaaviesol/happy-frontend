@@ -1,0 +1,267 @@
+.sideBar * {
+  font-family: "Gilroy Regular";
+}
+
+.sidebar-profile-row {
+  padding: 1rem 4rem 1rem 4rem;
+}
+
+.sideBar-happy-logo {
+  height: 100px;
+  width: 130px;
+}
+
+.sidebar-navlinks-container * {
+  color: #e5be6d;
+}
+
+.sidebar-navlinks-container span {
+  cursor: pointer;
+}
+
+.sidebar-navlinks-container .row {
+  padding-bottom: 1rem;
+}
+
+.sidebar-navlink-Icon-rows {
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-profile-row_col {
+  display: grid;
+  place-content: center;
+  padding: 0;
+  margin: 0;
+
+  text-align: left;
+}
+
+
+.sidebar-profile-row_col span {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.sidebar-nav-headings {
+  color: white;
+}
+
+/* top bar------------------------------------------------------------------------------------ */
+
+/* .topbar {
+  background: white;
+  
+  display: flex;
+  justify-content: space-between;
+  
+}
+.left {
+  padding-left: 3rem;
+
+  border-right: 0;
+}
+.left-logos {
+  padding-top: .1em;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  gap: 2rem;
+  font-size: 2.5rem;
+}
+
+.topbar-right{
+  padding-left: 2rem;
+  padding-right: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+.topbar-right-Date{
+  font-weight: 540;
+  font-size: 1.5rem;
+  font-family: "Gilroy";
+}
+.topbar-right-icons{
+  font-size: 2rem;
+} */
+.topbar {
+  background: white;
+  /* margin-left: 21vw; */
+  /* border: 1px solid rgb(183, 176, 176); */
+  /* position: absolute; */
+  display: flex;
+  justify-content: space-between;
+  /* width: 79vw; */
+  align-items: center;
+  border-radius: 30px;
+}
+
+.left {
+  padding-left: 3rem;
+
+  border-right: 0;
+}
+
+.topBar-bikes {
+  margin-top: 1rem;
+  color: #00342e;
+  /* border: 1px solid red; */
+}
+
+.topBar-icon-flex {
+  gap: .5rem;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.topBar-red-hr {
+  margin-bottom: 0.1rem;
+  margin-top: 0.1rem;
+  border-radius: 3px;
+  height: 3px;
+  background-color: #00243e;
+  border: none;
+}
+
+.topBar-bikes:hover {
+  color: rgb(134, 156, 100);
+}
+
+.left-logos {
+  padding-top: 0.1em;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+
+  gap: 5rem;
+  font-size: 2rem;
+}
+
+.topBar-rocketIcon-span {
+  background: linear-gradient(to right, #00342e, #00342e) no-repeat;
+  background-size: 80% 4px;
+  background-position: center bottom;
+  color: black;
+  display: inline-block;
+  vertical-align: top;
+  padding-bottom: 10px;
+}
+
+.topbar-right {
+  
+  /* border: 1px solid green; */
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.admin_na_image_setting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin_na_image {
+  height: 35px;
+}
+
+.topbar-right-icons {
+  font-size: 2rem;
+}
+
+/* calender */
+
+.topbar-calender-col {
+  box-shadow: 2px -1px 11px -4px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 2px -1px 11px -4px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 2px -1px 11px -4px rgba(0, 0, 0, 0.75);
+}
+
+/* mobile  */
+
+@media screen and (max-width: 480px) {
+  /* nav */
+
+  .company {
+    padding: 0;
+  }
+
+  .logo {
+    height: 25%;
+    width: 25%;
+    padding-top: 0.5em;
+  }
+
+  .name {
+    font-size: 2rem;
+    padding-top: 1rem;
+  }
+
+  .main-links {
+    height: 80vh;
+  }
+
+  /* topbar */
+  .topbar {
+    display: none;
+  }
+}
+
+#top_bar_cart_Icn {
+  color: rgb(255, 255, 255);
+  font-size: 15px;
+  margin: -9px 00px 00px 20px;
+  background-color: red;
+  height: 22px;
+  width: 23px;
+  border-radius: 50%;
+  position: absolute;
+
+}
+#top_bar_wallet_Icn{
+  color: rgb(255, 255, 255);
+  font-size: 15px;
+  margin: -9px 00px 00px 20px;
+  background-color:red;
+  height: 22px;
+  /* width: 45px; */
+  border-radius: 15%;
+  padding-left: 4px;
+  padding-right: 4px;
+  position: absolute;
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .main-links {
+    height: 100%;
+  }
+
+  .main-links ul {
+    font-size: 1rem;
+  }
+}
+
+#Supplier_Top_img {
+  height: 40px;
+}
+
+#Supplier_Top_logo {
+  font-size: 20px;
+  font-family: Glamsy;
+  margin: 5px 00px;
+}
+/* App.css */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(184,138,68); /* gold color */
+  border-radius: 4px;
+}

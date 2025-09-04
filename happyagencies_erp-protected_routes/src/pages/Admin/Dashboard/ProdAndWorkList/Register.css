@@ -1,0 +1,117 @@
+.register_form{
+    height: "2rem";
+    /* background-color:#e6e7e9 ; */
+    border-radius: 25px;
+    border: none;
+}
+#registercolor{
+      background-color:#e6e7e9 ;
+}
+#registercolor1{
+  background-color:#E0E9FF ;
+}
+
+.container_form{
+    width: 65vw;
+    padding: 5%;
+}
+/* .readonly {
+    pointer-events: none;
+    cursor: default;
+  } */
+  .imgestyle{
+    width:100px;
+    /* height: 100px; */
+  }
+  .prodcontainer{
+    font-size: 12px;
+  }
+  .no-border {
+    border: none;
+    outline: none;
+  }
+  .log-supp-dropdown-scrollbar1{
+    background-color: white;
+    position: absolute;
+    width: 45%;
+    border-radius: 5px;
+    display: flex;
+    overflow-y: scroll;
+    height: 100px;
+    flex-direction: column;
+    border: 1px solid gray;
+    z-index:99; 
+    text-align:left
+  }
+  .inputstyle{
+    cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: none !important;
+  }
+  .color_family{
+    width:100px
+  }
+  .center-align-header{
+    background-color:#00342E;
+    color: white;
+    font-size:15px ;
+  }
+  /* //supplier details// */
+
+  .tab-bar{
+    background-color: rgb(248, 244, 244);
+    width: 100%;
+    font-size: 20px;
+  }
+.active{
+  background-color: white;
+}
+.col-form-label{
+font-size: 12px;
+}
+
+#registercolor2{
+  background-color:#E0E9FF;
+}
+#supcolor{
+  color:rgb(232, 223, 223);
+  font-style: italic;
+}
+
+#stylecheck{
+  color:rgb(17, 17, 17)
+}
+#styledit{
+  display:none
+}
+#buttonblacklist{
+  background-color: red;
+  color:white;
+  border-radius: 25px;
+}
+#buttonblacklist1{
+  background-color:white;
+  color:red;
+  border-radius:25px;
+  font-size:16px;
+  border:1px solid red;
+    font-weight:bold;
+}
+.red-cell {
+  color: red;
+  font-weight: bold;
+}
+.green-cell{
+  color:green;
+}
+.black-cell{
+  color:black
+}
+  @media only screen and (max-width: 767px){
+    #buttonwidth{
+      width:"10%"
+   }
+
+  }

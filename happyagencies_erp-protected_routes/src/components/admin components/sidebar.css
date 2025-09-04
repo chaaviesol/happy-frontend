@@ -1,0 +1,17 @@
+.sidebar_link_span {
+  color: #b88a44;
+  transition: color 0.3s, transform 0.3s; 
+}
+.sidebar_link_span:hover {
+  color: white;
+  transform: scale(1.1);
+}
+
+.sidebar_dropdown {
+  padding-left: 30px;
+  margin-left: 70px;
+  cursor: pointer;
+  padding: "3px";
+  font-size: 15px;
+  display: flex;
+}

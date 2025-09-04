@@ -1,0 +1,149 @@
+.login {
+  min-height: 100vh;
+}
+#login-form {
+  text-align: center;
+  position: relative;
+  margin-top: 7rem;
+  /* border: 1px solid rgb(61, 203, 33); */
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+#log-container {
+  text-align: center;
+}
+
+
+.bg-image {
+  display: flex;
+  justify-content: center;
+  background-color: #00342e;
+}
+.top-rightpic {
+  position: absolute;
+  right: 0;
+  top: 0;
+  /* border: 1px solid red; */
+  width: 30vw;
+  height: 45vh;
+}
+.bottom-leftpic {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  /* border: 1px solid red; */
+  width: 30vw;
+  height: 45vh;
+}
+.Happygroup-txt {
+  font-size: 1vw;
+}
+
+.login-heading {
+  position: absolute;
+  /* border: 2px solid red; */
+  margin-top: -6vh;
+  /* margin-left: 11vw; */
+}
+/* .login-heading span{
+    font-weight: 560;
+    
+}  */
+.d-none{
+    /* border: 2px solid red; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-hppy {
+  padding: 0;
+  width: 35vw;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  /* border: 1px solid rgb(245, 239, 239); */
+  /* margin-top: 15%; */
+}
+.login-logo {
+  height: 23%;
+}
+
+.login-hppy span {
+  font-size: 4rem;
+  color: white;
+  font-weight: 500;
+}
+.form-control {
+  border-radius: 15px;
+}
+.forgot-pwd{
+    /* border: 2px solid red; */
+    color: #00342E;
+    position: absolute;
+    right: 0;
+    font-family: "Gilroy";
+    cursor: pointer;
+    top: 55%;
+    
+}
+.d-grid {
+  padding-top: 3rem;
+  justify-content: space-between;
+  /* border: 1px solid red; */
+  display: flex;
+}
+#sign-btn {
+  background-color: #b9974b !important;
+  color: white;
+  text-transform: none !important;
+}
+#sign-btn:hover {
+  background-color: #bc840a !important;
+}
+
+.btn-login {
+  width: 35%;
+  color: #ba974c;
+  background: #00342e;
+  border-radius: 12px;
+  text-transform: none !important;
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+}
+.btn-login:hover {
+  background: #01473e;
+}
+/* @media screen and (max-width: 640px) {
+  #log {
+    border: 2px solid red;
+  }
+} */
+
+@media screen and (max-width:1024px){
+    .d-none{
+        display: none !important;
+       
+
+    }
+    .g-0{
+        /* border: 5px solid red; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+    }
+}
+@media screen and (max-width:720px){
+  .d-grid {
+
+    gap: 10px;
+
+}
+}

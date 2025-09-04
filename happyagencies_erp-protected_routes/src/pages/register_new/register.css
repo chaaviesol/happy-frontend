@@ -1,0 +1,240 @@
+.register {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #00342e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.register label {
+  text-align: left;
+}
+.register * {
+  font-size: 13px;
+  font-family: "Poppins";
+}
+.flex_center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.register-form {
+ /* border:1px solid red; */
+ /* height: 87vh; */
+  width: 65vw;
+  border-radius: 10px;
+}
+.register-form__btn-container {
+  /* border:1px soolid red; */
+
+  height: 4rem;
+}
+.register-form__customer-btn {
+  border:none;
+  color: black;
+  width: 50%;
+  background-color: white;
+}
+.register-form__customer-btn-white {
+  border:none;
+  width: 50%;
+  background-color: #00342e;
+  color: white;
+}
+
+.register-form__supplier-btn {
+  border:none;
+  width: 50%;
+  background-color: white;
+  color: black;
+}
+.register-form__supplier-btn-white {
+  border:none;
+  width: 50%;
+  background-color: #00342e;
+
+  color: white;
+}
+.registration-form__form-control {
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+  width: 80%;
+  background-color: #fdfcfc;
+}
+
+.register-logo {
+  /* border: 2px solid rgb(212, 218, 198); */
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-50%);
+
+  top: 50%;
+  left: 0;
+  /* margin-left: 3.2vw; */
+
+  display: flex;
+  justify-content: flex-start; /* aligns image to the left */
+  align-items: center; /* aligns image vertically to the center */
+}
+.register-logo img {
+  /* border: 1px solid red; */
+  /* transform: translateY(-50%); */
+  height: 90px;
+  width: 120px;
+  max-width: 100%; /* ensures image does not exceed its parent container */
+}
+.register-logo > span {
+  /* border: 2px solid white; */
+  font-family: "Glamzy";
+  font-size: 2rem;
+  /* transform: translateY(-90%); */
+}
+/* .registration-form__checkboxes{
+    border: 1px solid red;
+  } */
+.reg-submit {
+  justify-content: center;
+
+  /* text-align: center; */
+  /* border: 1px solid red; */
+}
+.reg_Submit {
+  background-color: #00342e;
+  color: #ffffff;
+  text-transform: lowercase;
+
+  border-radius: 3px;
+  width: 25%;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+.registration-form__checkboxes {
+  /* border: 1px solid rgb(55, 13, 163); */
+  display: flex;
+  /* align-items: center; */
+  justify-content: space-evenly;
+}
+.registration-form__checkboxes > span {
+  width: 100%;
+  /* border: 2px solid red; */
+  text-align: center;
+}
+.registration-form__FormGroup {
+  padding-left: 0;
+}
+
+.formControlLabel {
+  /* border: 1px solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.red-asterisk {
+  color: red;
+}
+
+/* smartphones */
+
+@media only screen and (max-width: 600px) {
+  .register-logo {
+    display: none;
+  }
+  .register-form {
+    /* border: 2px solid red; */
+    width: 100vw;
+  }
+  .registration-form__form-control {
+    width: 100%;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  /* .registration-form__form-check-label {
+    margin-right: 10px;
+  } */
+
+  .col-form-label {
+    padding-top: 10px;
+    margin-bottom: 0;
+  }
+
+  .col-sm-8 {
+    margin-top: 10px;
+  }
+
+  .form-group.row {
+    flex-wrap: wrap;
+  }
+
+  .form-group.row > div {
+    flex: 1 1 100%;
+  }
+
+  .form-group.row label {
+    margin-bottom: 5px;
+  }
+  .registration-form__checkboxes {
+    /* border: 1px solid rgb(55, 13, 163); */
+    display: flex;
+    align-items: center;
+  }
+  .registration-form__checkboxes > span {
+    width: 100%;
+    /* border: 2px solid red; */
+    text-align: center;
+  }
+  .registration-form__FormGroup {
+    /* border: 2px solid rgb(25, 219, 48); */
+    display: flex;
+    /* flex-direction: row; */
+    align-items: flex-start;
+    padding-left: 0;
+  }
+}
+
+/* Smartphone landscape */
+@media only screen and (min-width: 601px) and (max-width: 900px) and (orientation: landscape) {
+  .register-logo {
+    display: none;
+  }
+  .register-form {
+    width: 100vw;
+  }
+  .registration-form__form-control {
+    width: 100%;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  /* .form-check-label {
+    margin-right: 10px;
+  } */
+
+  .col-form-label {
+    padding-top: 10px;
+    margin-bottom: 0;
+  }
+
+  .col-sm-8 {
+    margin-top: 10px;
+  }
+
+  .form-group.row {
+    flex-wrap: wrap;
+  }
+
+  /* .form-group.row > div {
+      flex: 1 1 100%;
+    } */
+
+  .form-group.row label {
+    margin-bottom: 5px;
+  }
+}

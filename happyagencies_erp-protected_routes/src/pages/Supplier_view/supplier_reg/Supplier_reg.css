@@ -1,0 +1,10 @@
+#sup_alighn_box {
+    border: 1px solid black;
+    border-radius: 20px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    width: 150px;
+    justify-content: space-around;
+}
+

@@ -1,0 +1,64 @@
+.leave_list_start {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    gap: 40px;
+}
+
+.leave_list_set_table {
+    width: 90%;
+    height: 600px;
+    overflow-y: scroll;
+    border-radius: 15px;
+    border: 1px solid black;
+}
+
+.leave_list_set_head_set {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    height: 40px;
+    border-bottom: 1px solid black;
+}
+
+.leave_list_table_data {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    height: 40px;
+}
+
+.leave_list_1_btn1_color {
+    height: 25px;
+    background-color: rgba(9, 255, 0, 0.9);
+    border-radius: 6px;
+    border: none;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.1) -4px 9px 25px -6px;
+    font-size: 12px;
+}
+
+.leave_list_1_btn2_color {
+    height: 25px;
+    background-color: rgba(211, 91, 6, 0.9);
+    border-radius: 6px;
+    border: none;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.1) -4px 9px 25px -6px;
+    font-size: 12px;
+}
+
+#leave_list_head_ptag {
+    font-size: 0.7rem;
+    height: 0px;
+}
+
+.leave_list_1_head {
+    width: 13%;
+    height: 40px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
