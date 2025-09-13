@@ -16,6 +16,7 @@ import OrderPage from "../../../Admin/Order_history/OrderPage";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import { axiosPrivate } from "../../../../api/axios";
 import useDivBoxCloser from "../../../../hooks/useDivBoxCloser";
+import BarcodeListener from "../../../../components/Suppliercomponent/BarcodeListener";
 export default function New_sales_order() {
   const location = useLocation();
   const [prdctflse, setprdctflse] = useState(false);
@@ -673,6 +674,94 @@ export default function New_sales_order() {
     [closeFunction]
   );
   console.log(products);
+
+// --- inside New_sales_order.jsx ---
+
+// 
+const handleScan = async (code) => {
+  // ✅ Basic input validation
+  // if (!code || code.trim().length < 5) { // adjust minimum length as needed
+  //   alert("❌ Invalid barcode");
+  //   return;
+  // }
+
+  try {
+    // Send GET request to backend
+    const res = await axiosPrivate.get(`/inventory/scanBarcode?barcode=${code}`);
+    
+    // Extract product from response
+    const product = res.data.data;
+
+    // Check if product exists in response
+    if (!product || Object.keys(product).length === 0) {
+      alert("❌ Product not found");
+      return; // stop execution
+    }
+
+    // Update product list
+    setTotalData((prev) => {
+      const existingProducts = prev.products || [];
+      const existingIndex = existingProducts.findIndex(
+        (p) => p.product_id === product.product_id
+      );
+
+      let updatedProducts;
+
+      if (existingIndex > -1) {
+        // Product already exists → increment quantity
+        const existing = existingProducts[existingIndex];
+        const newQty = (existing.qty || 0) + 1;
+
+        updatedProducts = [...existingProducts];
+        updatedProducts[existingIndex] = {
+          ...existing,
+          qty: newQty,
+          total: newQty * (existing.mrp || existing.selling_price || 0),
+        };
+      } else {
+        // New product → add with qty = 1
+        updatedProducts = [
+          ...existingProducts,
+          {
+            ...product,
+            qty: 1,
+            total: product.mrp || product.selling_price || 0,
+          },
+        ];
+      }
+
+      // Recalculate totals (grandTotal, discounts, etc.)
+      const updatedData = { ...prev, products: updatedProducts };
+      ProductCalculation(updatedData);
+
+      return updatedData;
+    });
+  } catch (err) {
+    // Handle backend errors
+    if (err.response) {
+      switch (err.response.status) {
+        case 404:
+          alert("❌ Product not found");
+          break;
+        case 401:
+          alert("⚠️ Unauthorized – please log in again");
+          break;
+        default:
+          alert(`⚠️ Error: ${err.response.data.error || "Something went wrong"}`);
+      }
+    } else {
+      alert("⚠️ Network error – backend not reachable");
+    }
+    console.error("Scan error:", err);
+  }
+};
+
+
+
+
+
+
+
   return (
     <>
       <Backdrop
@@ -2188,6 +2277,19 @@ export default function New_sales_order() {
           <OrderPage sales_id={location?.state?.data} />
         </div>
       </Modal>
+      <BarcodeListener onScan={handleScan} />
+      <input
+  type="text"
+  placeholder="Enter barcode manually"
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      handleScan(e.target.value);
+      e.target.value = ""; // clear input after scan
+    }
+  }}
+/>
+
     </>
+    
   );
 }
