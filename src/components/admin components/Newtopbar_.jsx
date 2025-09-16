@@ -168,7 +168,11 @@ export default function Newtopbar_() {
         <div className="admin_na_image">
           <div
             onClick={() => {
-              navigate("/adm_navigate");
+              if (auth?.userType === "ADM") {
+                navigate("/addproducts");
+              } else {
+                navigate("/adm_navigate"); 
+              }
             }}
             style={{ cursor: "pointer" }}
             className="admin_na_image_setting"

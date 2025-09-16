@@ -50,7 +50,8 @@ export default function () {
               navigate("/adm_navigate");
               break;
             case "ADM":
-              navigate("/addproducts");
+              navigate("/adm_navigate");
+              // navigate("/addproducts");
               break;
             case "SUP":
               navigate("/supplier_view");
