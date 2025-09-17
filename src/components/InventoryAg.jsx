@@ -243,97 +243,265 @@ export default function InventoryAg({ onOpenModal }) {
                       type="print"
                       text="Print"
                       onClick={() => {
-  if (params.data.barcode) {
-    const printWindow = window.open("", "_blank", "width=800,height=600");
+  const { barcode, barcode_base64, product_master, barcode_text } = params.data;
 
-    if (printWindow) {
-      const doc = printWindow.document;
-      doc.open();
-      doc.write(`
-        <html>
-          <head>
-            <title>Print Labels (100×30mm Roll)</title>
-            <style>
-              @page {
-                size: 100mm 30mm; /* paper roll size */
-                margin: 0;
-              }
-              body {
-                margin: 0;
-                padding: 0;
-                font-family: Arial, sans-serif;
-              }
-              .row {
-                display: flex;
-                width: 100mm; /* exactly 2 labels per row */
-                height: 30mm;
-                page-break-inside: avoid;
-              }
-              .label {
-                width: 50mm;
-                height: 30mm;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                align-items: center;
-                text-align: center;
-                font-size: 10px;
-                box-sizing: border-box;
-              }
-              .top-text {
-                font-weight: bold;
-                margin-bottom: 2px;
-              }
-              .barcode {
-                margin: 2px 0;
-              }
-              .small-text {
-                font-size: 8px;
-                margin: 1px 0;
-              }
-              .bottom-text {
-                font-weight: bold;
-                margin-top: 2px;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="row">
-              <div class="label">
-                <div class="top-text">${params.data.product_master.product_name}</div>
-                <div class="barcode">
-                  <img src="${params.data.barcode}" style="max-height:12mm;" />
-                </div>
-                <div class="small-text">LTO</div>
-                <div class="bottom-text">TO</div>
-              </div>
-              <div class="label">
-                <div class="top-text">${params.data.product_master.product_name}</div>
-                <div class="barcode">
-                  <img src="${params.data.barcode}" style="max-height:12mm;" />
-                </div>
-                <div class="small-text">LTO</div>
-                <div class="bottom-text">TO</div>
-              </div>
-            </div>
-          </body>
-        </html>
-      `);
-      doc.close();
-
-      printWindow.onload = () => {
-        printWindow.focus();
-        printWindow.print();
-        setTimeout(() => {
-          printWindow.close();
-        }, 500);
-      };
-    }
-  } else {
+  // 1️⃣ Validate data
+  if (!barcode && !barcode_base64) {
     alert("No barcode available to print.");
+    return;
   }
+  if (!product_master?.product_name) {
+    alert("No product name available to print.");
+    return;
+  }
+
+  // 2️⃣ Prefer base64 (safer), fallback to S3 URL
+  const barcodeImg = barcode_base64 || barcode;
+
+  // 3️⃣ How many rows to print (10 rows = 20 labels)
+  const rowsCount = 10;
+  const rowsHtml = Array(rowsCount)
+    .fill("")
+    .map(
+      () => `
+        <div class="row">
+          <div class="label">
+            <div class="top-text">${product_master.product_name}</div>
+            <div class="barcode">
+              <img src="${barcodeImg}" style="max-height:12mm;" />
+            </div>
+            <div class="bottom-text">${barcode_text || ""}</div>
+          </div>
+          <div class="label">
+            <div class="top-text">${product_master.product_name}</div>
+            <div class="barcode">
+              <img src="${barcodeImg}" style="max-height:12mm;" />
+            </div>
+            <div class="bottom-text">${barcode_text || ""}</div>
+          </div>
+        </div>`
+    )
+    .join("");
+
+  // 4️⃣ Full HTML with styles
+  const labelHtml = `
+    <html>
+      <head>
+        <title>Print Labels (100×30mm Roll)</title>
+        <style>
+          @page {
+            size: 100mm 30mm;
+            margin: 0;
+          }
+          body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+          }
+          .row {
+            display: flex;
+            width: 100mm;
+            height: 30mm;
+            page-break-inside: avoid;
+          }
+          .label {
+            width: 50mm;
+            height: 30mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-sizing: border-box;
+          }
+          .top-text {
+            font-weight: bold;
+            font-size: 11px;
+            margin-bottom: 2px;
+          }
+          .barcode {
+            margin: 2px 0;
+          }
+          .bottom-text {
+            font-size: 9px;
+            margin-top: 2px;
+          }
+        </style>
+      </head>
+      <body>
+        ${rowsHtml}
+      </body>
+    </html>
+  `;
+
+  // 5️⃣ Open popup
+  const printWindow = window.open("", "_blank", "width=800,height=600");
+  if (!printWindow) return;
+
+  // 6️⃣ Replace DOM content instead of deprecated document.write
+  printWindow.document.documentElement.innerHTML = labelHtml;
+
+  // 7️⃣ Wait for all images to load before printing
+  const checkLoaded = () => {
+    const imgs = printWindow.document.querySelectorAll("img");
+    if (!imgs.length) {
+      triggerPrint();
+      return;
+    }
+
+    let loaded = 0;
+    imgs.forEach(img => {
+      if (img.complete) {
+        loaded++;
+      } else {
+        img.onload = () => {
+          loaded++;
+          if (loaded === imgs.length) triggerPrint();
+        };
+      }
+    });
+
+    if (loaded === imgs.length) triggerPrint();
+  };
+
+  const triggerPrint = () => {
+    printWindow.focus();
+    printWindow.print();
+    setTimeout(() => printWindow.close(), 500);
+  };
+
+  setTimeout(checkLoaded, 500); // give DOM a moment
 }}
-// onClick={() => {
+
+//                       onClick={() => {
+//   const { barcode, barcode_base64, product_master, barcode_text } = params.data;
+
+//   // 1️⃣ Validate data
+//   if (!barcode && !barcode_base64) {
+//     alert("No barcode available to print.");
+//     return;
+//   }
+//   if (!product_master?.product_name) {
+//     alert("No product name available to print.");
+//     return;
+//   }
+
+//   // 2️⃣ Prefer base64 (safer), fallback to S3 URL
+//   const barcodeImg = barcode_base64 || barcode;
+
+//   // 3️⃣ Open popup
+//   const printWindow = window.open("", "_blank", "width=800,height=600");
+//   if (!printWindow) return;
+
+//   // 4️⃣ Build multiple rows (batch printing)
+//   const rowsCount = 10; // 🔧 adjust: 10 rows = 20 labels
+//   const rowsHtml = Array(rowsCount)
+//     .fill("")
+//     .map(
+//       () => `
+//         <div class="row">
+//           <div class="label">
+//             <div class="top-text">${product_master.product_name}</div>
+//             <div class="barcode">
+//               <img src="${barcodeImg}" style="max-height:12mm;" />
+//             </div>
+//             <div class="bottom-text">${barcode_text || ""}</div>
+//           </div>
+//           <div class="label">
+//             <div class="top-text">${product_master.product_name}</div>
+//             <div class="barcode">
+//               <img src="${barcodeImg}" style="max-height:12mm;" />
+//             </div>
+//             <div class="bottom-text">${barcode_text || ""}</div>
+//           </div>
+//         </div>`
+//     )
+//     .join("");
+
+//   // 5️⃣ Final HTML
+//   const labelHtml = `
+//     <html>
+//       <head>
+//         <title>Print Labels (100×30mm Roll)</title>
+//         <style>
+//           @page {
+//             size: 100mm 30mm; /* roll: 100mm wide, 30mm high per row */
+//             margin: 0;
+//           }
+//           body {
+//             margin: 0;
+//             padding: 0;
+//             font-family: Arial, sans-serif;
+//           }
+//           .row {
+//             display: flex;
+//             width: 100mm;
+//             height: 30mm;
+//             page-break-inside: avoid;
+//           }
+//           .label {
+//             width: 50mm;
+//             height: 30mm;
+//             display: flex;
+//             flex-direction: column;
+//             justify-content: center;
+//             align-items: center;
+//             text-align: center;
+//             box-sizing: border-box;
+//           }
+//           .top-text {
+//             font-weight: bold;
+//             font-size: 11px;
+//             margin-bottom: 2px;
+//           }
+//           .barcode {
+//             margin: 2px 0;
+//           }
+//           .bottom-text {
+//             font-size: 9px;
+//             margin-top: 2px;
+//           }
+//         </style>
+//       </head>
+//       <body>
+//         ${rowsHtml}
+//       </body>
+//     </html>
+//   `;
+
+//   // 6️⃣ Write into popup
+//   printWindow.document.open();
+//   printWindow.document.write(labelHtml);
+//   printWindow.document.close();
+
+//   // 7️⃣ Wait for all images to load before printing
+//   const checkLoaded = () => {
+//     const imgs = printWindow.document.querySelectorAll("img");
+//     if (!imgs.length) return;
+
+//     let loaded = 0;
+//     imgs.forEach(img => {
+//       if (img.complete) loaded++;
+//       else img.onload = () => {
+//         loaded++;
+//         if (loaded === imgs.length) triggerPrint();
+//       };
+//     });
+
+//     if (loaded === imgs.length) triggerPrint();
+//   };
+
+//   const triggerPrint = () => {
+//     printWindow.focus();
+//     printWindow.print();
+//     setTimeout(() => printWindow.close(), 500);
+//   };
+
+//   setTimeout(checkLoaded, 500); // small delay for DOM render
+// }}
+
+
+//                       onClick={() => {
 //   if (params.data.barcode) {
 //     const printWindow = window.open("", "_blank", "width=800,height=600");
 
@@ -343,11 +511,11 @@ export default function InventoryAg({ onOpenModal }) {
 //       doc.write(`
 //         <html>
 //           <head>
-//             <title>Print Labels (A4 Preview)</title>
+//             <title>Print Labels (100×30mm Roll)</title>
 //             <style>
 //               @page {
-//                 size: A4;
-//                 margin: 5mm;
+//                 size: 100mm 30mm; /* paper roll size */
+//                 margin: 0;
 //               }
 //               body {
 //                 margin: 0;
@@ -356,14 +524,13 @@ export default function InventoryAg({ onOpenModal }) {
 //               }
 //               .row {
 //                 display: flex;
-//                 width: 100mm; /* lock row to 100mm = 2 labels only */
-//                 margin: 2mm auto; /* center row on page */
+//                 width: 100mm; /* exactly 2 labels per row */
+//                 height: 30mm;
 //                 page-break-inside: avoid;
 //               }
 //               .label {
 //                 width: 50mm;
 //                 height: 30mm;
-//                 border: 1px dotted #ccc; /* keep for preview */
 //                 display: flex;
 //                 flex-direction: column;
 //                 justify-content: flex-start;
@@ -390,30 +557,24 @@ export default function InventoryAg({ onOpenModal }) {
 //             </style>
 //           </head>
 //           <body>
-//             ${Array(10) // 10 rows = 20 labels
-//               .fill("")
-//               .map(
-//                 () => `
-//                   <div class="row">
-//                     <div class="label">
-//                       <div class="top-text">${params.data.product_master.product_name}</div>
-//                       <div class="barcode">
-//                         <img src="${params.data.barcode}" style="max-height:12mm;" />
-//                       </div>
-//                       <div class="small-text">LTO</div>
-//                       <div class="bottom-text">TO</div>
-//                     </div>
-//                     <div class="label">
-//                       <div class="top-text">${params.data.product_master.product_name}</div>
-//                       <div class="barcode">
-//                         <img src="${params.data.barcode}" style="max-height:12mm;" />
-//                       </div>
-//                       <div class="small-text">LTO</div>
-//                       <div class="bottom-text">TO</div>
-//                     </div>
-//                   </div>`
-//               )
-//               .join("")}
+//             <div class="row">
+//               <div class="label">
+//                 <div class="top-text">${params.data.product_master.product_name}</div>
+//                 <div class="barcode">
+//                   <img src="${params.data.barcode}" style="max-height:12mm;" />
+//                 </div>
+//                 <div class="small-text">LTO</div>
+//                 <div class="bottom-text">TO</div>
+//               </div>
+//               <div class="label">
+//                 <div class="top-text">${params.data.product_master.product_name}</div>
+//                 <div class="barcode">
+//                   <img src="${params.data.barcode}" style="max-height:12mm;" />
+//                 </div>
+//                 <div class="small-text">LTO</div>
+//                 <div class="bottom-text">TO</div>
+//               </div>
+//             </div>
 //           </body>
 //         </html>
 //       `);
@@ -432,53 +593,6 @@ export default function InventoryAg({ onOpenModal }) {
 //   }
 // }}
 
-
-
-                      // onClick={() => {
-                      //   if (params.data.barcode) {
-                      //     const printWindow = window.open("", "_blank", "width=400,height=400");
-
-                      //     if (printWindow) {
-                      //       const doc = printWindow.document;
-
-                      //       // Reset document cleanly
-                      //       doc.open();
-                      //       doc.close();
-
-                      //       // Set title
-                      //       printWindow.document.title = "Print Barcode";
-
-                      //       // Apply body styles
-                      //       doc.body.style.margin = "0";
-                      //       doc.body.style.display = "flex";
-                      //       doc.body.style.justifyContent = "center";
-                      //       doc.body.style.alignItems = "center";
-                      //       doc.body.style.height = "100vh";
-
-                      //       // Add barcode image
-                      //       const img = doc.createElement("img");
-                      //       img.src = params.data.barcode;
-                      //       img.style.maxWidth = "100%";
-                      //       img.style.maxHeight = "100%";
-                      //       doc.body.appendChild(img);
-
-                      //       // Delay print until DOM is ready
-                      //       img.onload = () => {
-                      //         printWindow.focus();
-                      //         printWindow.print();
-                      //         setTimeout(() => {
-                      //           printWindow.close();
-                      //         }, 500);
-                      //         //  printWindow.onafterprint = () => {
-                      //         //   printWindow.close();
-                      //         // };
-
-                      //       };
-                      //     }
-                      //   } else {
-                      //     alert("No barcode available to print.");
-                      //   }
-                      // }}
                     />
                   </div>
                   <div>
