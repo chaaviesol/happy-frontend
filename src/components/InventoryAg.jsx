@@ -6,7 +6,6 @@ import React, {
   useCallback,
   useContext,
 } from "react";
-import JsBarcode from "jsbarcode";
 import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -239,18 +238,14 @@ export default function InventoryAg({ onOpenModal }) {
                   minHeight: "100px", // <-- makes sure row has enough height
                 }}>
                   <div>
-
-
-
-
 <ButtonComp
   type="print"
   text="Print"
   onClick={() => {
-    const { product_master, barcode_text } = params.data;
+    const { barcode, barcode_base64, product_master, barcode_text } = params.data;
 
-    // 1️⃣ Validate
-    if (!barcode_text) {
+    // 1️⃣ Validate data
+    if (!barcode && !barcode_base64) {
       alert("No barcode available to print.");
       return;
     }
@@ -259,38 +254,30 @@ export default function InventoryAg({ onOpenModal }) {
       return;
     }
 
-    // 2️⃣ Generate barcode as PNG
-    const canvas = document.createElement("canvas");
-    JsBarcode(canvas, barcode_text, {
-      format: "CODE128",
-      width: 2,
-      height: 60,
-      displayValue: false,
-      margin: 0,
-    });
-    const barcodeImg = canvas.toDataURL("image/png");
+    // 2️⃣ Prefer base64 (safer), fallback to S3 URL
+    const barcodeImg = barcode_base64 || barcode;
 
-    // 3️⃣ Build only one row = 2 labels
-    const rowHtml = `
+    // 3️⃣ Single row with 2 labels
+    const rowsHtml = `
       <div class="row">
         <div class="label">
           <div class="top-text">${product_master.product_name}</div>
           <div class="barcode">
-            <img src="${barcodeImg}" style="width:40mm;height:12mm;object-fit:contain;" />
+            <img src="${barcodeImg}" style="max-height:12mm;" />
           </div>
-          <div class="bottom-text">${barcode_text}</div>
+          <div class="bottom-text">${barcode_text || ""}</div>
         </div>
         <div class="label">
           <div class="top-text">${product_master.product_name}</div>
           <div class="barcode">
-            <img src="${barcodeImg}" style="width:40mm;height:12mm;object-fit:contain;" />
+            <img src="${barcodeImg}" style="max-height:12mm;" />
           </div>
-          <div class="bottom-text">${barcode_text}</div>
+          <div class="bottom-text">${barcode_text || ""}</div>
         </div>
       </div>
     `;
 
-    // 4️⃣ Full HTML
+    // 4️⃣ Full HTML with styles
     const labelHtml = `
       <html>
         <head>
@@ -336,41 +323,29 @@ export default function InventoryAg({ onOpenModal }) {
           </style>
         </head>
         <body>
-          ${rowHtml}
+          ${rowsHtml}
         </body>
       </html>
     `;
 
-    // 5️⃣ Open print popup
+    // 5️⃣ Open popup
     const printWindow = window.open("", "_blank", "width=800,height=600");
     if (!printWindow) return;
 
-    // ✅ Replace HTML safely (no deprecated write)
-    // @ts-ignore
-   printWindow.document.write(labelHtml);
-printWindow.document.close();
+    printWindow.document.documentElement.innerHTML = labelHtml;
 
-    // 6️⃣ Ensure images are loaded before print
-    const triggerPrint = () => {
-      printWindow.focus();
+    // 6️⃣ Wait for all images to load before printing
+    const checkLoaded = () => {
+      const imgs = printWindow.document.querySelectorAll("img");
+      if (!imgs.length) {
+        triggerPrint();
+        return;
+      }
 
-      // Auto-close after printing
-      printWindow.onafterprint = () => {
-        printWindow.close();
-      };
-
-      printWindow.print(); // ✅ dialog appears
-    };
-
-    const imgs = printWindow.document.querySelectorAll("img");
-    if (!imgs.length) {
-      triggerPrint();
-    } else {
       let loaded = 0;
-      imgs.forEach((img) => {
+      imgs.forEach(img => {
         if (img.complete) {
           loaded++;
-          if (loaded === imgs.length) triggerPrint();
         } else {
           img.onload = () => {
             loaded++;
@@ -378,10 +353,18 @@ printWindow.document.close();
           };
         }
       });
-    }
+
+      if (loaded === imgs.length) triggerPrint();
+    };
+
+    const triggerPrint = () => {
+      printWindow.focus();
+      printWindow.print();
+      setTimeout(() => printWindow.close(), 500);
+    };
+
+    setTimeout(checkLoaded, 500);
   }}
-
-
 
 
 

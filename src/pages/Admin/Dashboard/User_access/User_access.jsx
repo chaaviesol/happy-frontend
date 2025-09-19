@@ -6,6 +6,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../../../components/admin components/Sidebar";
+import Newtopbar_ from "../../../../components/admin components/Newtopbar_";
 // import { prismaBaseApi } from "../../../../config";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -176,8 +177,12 @@ export default function User_access() {
 
   return (
     <>
-      <Sidebar>
+      <div style={{ display: "flex" }}>
+        <Sidebar />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <Newtopbar_ />
         <div className={user_access.mainContainer}>
+
           <div style={{ marginBottom: "2rem" }}></div>
           <div style={{ textAlign: "left" }}></div>
           <div className={user_access.table}>
@@ -423,7 +428,8 @@ export default function User_access() {
             closeOnClick rtl={false}, pauseOnFocusLoss draggable pauseOnHover
           </ToastContainer>
         </div>
-      </Sidebar>
+        </div>
+      </div>
 
       <Backdrop
         sx={{

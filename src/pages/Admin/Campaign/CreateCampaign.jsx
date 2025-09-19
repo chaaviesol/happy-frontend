@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./createcampaign.module.css";
 import Sidebar from "../../../components/admin components/Sidebar";
+import Newtopbar_ from "../../../components/admin components/Newtopbar_";
 import { IconButton } from "@mui/material";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -291,8 +292,13 @@ export const CreateCampaign = () => {
   // console.log({ prodData });
   // console.log({ filteredProdData });
   return (
-    <Sidebar type="createCampaign">
-      <div className={styles.container}>
+    <div style={{ display: "flex" }}>
+      <Sidebar type="createCampaign" />
+      <div
+        style={{ flex: 1, display: "flex", flexDirection: "column" }}
+        className={styles.container}
+      >
+        <Newtopbar_ />
         <div className={styles.upperSection}>
           <div className={styles.heading}>
             <span>Create Campaign</span>
@@ -508,6 +514,6 @@ export const CreateCampaign = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       </div>
-    </Sidebar>
+    </div>
   );
 };

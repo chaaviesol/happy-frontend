@@ -7,6 +7,7 @@ import {
   useReducer,
 } from "react";
 import Sidebar from "../../../../components/admin components/Sidebar";
+import _newtopbar_ from "../../../../components/admin components/Newtopbar_";
 import Products from "./Products";
 import { Row, Col, Container, Form } from "react-bootstrap";
 import { selectedTypeContext } from "../../../../Contexts/SelectedTypeContext";
@@ -96,6 +97,8 @@ export default function AddproductsWrapper() {
   return (
     <>
       <Sidebar type="product">
+        <_newtopbar_ />
+        
         <Row style={{ width: "100%" }}>
           {/* ------------------------------------------------------------------ */}
           {/* Right Side */}
@@ -109,7 +112,7 @@ export default function AddproductsWrapper() {
               className="products-addproducts"
               // style={{ paddingleft: "5rem" }}
             >
-              {auth.userType === "SU" ? (
+              {/* {auth.userType === "SU" ? (
                 <Topbar
                   handleApi={handleApiData}
                   productType={setProductType}
@@ -117,7 +120,7 @@ export default function AddproductsWrapper() {
                 />
               ) : (
                 <Categorytopbar />
-              )}
+              )} */}
               <Products prodData={auth.userType==="ADM" ?state: prodDatas} productType={productType} />
             </div>
           </Col>

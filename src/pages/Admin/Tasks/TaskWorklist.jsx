@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { InputAdornment, TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import Sidebar from "../../../components/admin components/Sidebar";
+import Newtopbar_ from "../../../components/admin components/Newtopbar_";
 
 export default function TaskWorklist() {
   const [columnData, setColumnData] = useState([]);
@@ -194,8 +196,13 @@ export default function TaskWorklist() {
   console.log(salesOrderDetails);
 
   // console.log("columnData", columnData);
-  return (
-    <div style={{ height: "100vh", padding: "2rem", position: "relative" }}>
+ return (
+  
+  <div style={{ display: "flex" }}>
+    <Sidebar />
+    <div style={{ flex: 1, padding: "2rem", position: "relative" }}>
+      <Newtopbar_/>
+      {/* ...existing TaskWorklist content... */}
       {isShowSearchField && (
         <div className={styles.searchBox}>
           <TextField
@@ -228,5 +235,7 @@ export default function TaskWorklist() {
       />
       <ToastContainer />
     </div>
-  );
+  </div>
+
+);
 }

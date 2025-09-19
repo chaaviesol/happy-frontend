@@ -21,6 +21,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Chart as ChartJS } from "chart.js/auto";
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import useAuth from '../../../hooks/useAuth';
 export default function Admin_navigate() {
     const navigate = useNavigate()
     const [notifications, setnotifications] = useState({})
@@ -31,29 +32,10 @@ export default function Admin_navigate() {
 
     ])
     const axiosPrivate=useAxiosPrivate()
-    const usertype="SU"
-    // const allowedpages=["HeyChavie", "inventory", "NewProducts", "productlist", "CreatePO", "polist","SOlist"]
-    // const allowedpages=[]
-    // const allowedpages = ["Inventory", "Newsalesorder", "Solist","Salesorders", "Quotationworklist", "Service&Return"];
-    const allowedpages=[
-        "HeyChavie",
-        "Inventory",
-        "NewProducts",
-        "Productlist",
-        "Category",
-        "NewUser",
-        "Worklist",
-        "CreatePO",
-        "POlist",
-        "Supplierlist",
-        "Customerlist",
-        "Newsalesorder",
-        "SOlist",
-        "Quotationworklist",
-        "Service&Return",
-        "Leavelist",
-        "Staffclaim",
-      ]
+    const { auth } = useAuth();
+    const usertype = auth?.userType;
+    const allowedpages = auth?.allowedPages || [];
+    const division = auth?.division;
 
 
 
@@ -99,105 +81,121 @@ export default function Admin_navigate() {
             UR = UR.filter((ele => (ele.read == "N")))
             SR = SR.filter((ele => (ele.read == "N")))
 
-            setdata([
-                {
-                    name: "New Products",
-                    pageName:"NewProducts",
-                    logo: <AddCircle style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/addproducts"
-                }, {
-                    name: "New User",
-                    pageName:"NewUser",
-                    logo: <PersonAdd style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/register_new"
-                }, {
-                    name: "Create PO",
-                    pageName:"CreatePO",
-                    logo: <AddShoppingCart style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/purchase"
-                }, {
-                    name: "New sales order",
-                    pageName:"Newsalesorder",
-                    logo: <ShoppingCartCheckoutIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/new_sales_order"
-                }, {
-                    name: "PO list",
-                    pageName:"POlist",
-                    logo: <Toc style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/purchaseorders"
-                }, {
-                    name: "Sales orders",
-                    pageName:"SOlist",
-                    logo: <FormatListNumberedIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/so_list",
-                    notification: CO.length
-                }, {
-                    name: "Supplier list",
-                    pageName:"Supplierlist",
-                    logo: <GroupIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/supplierlist",
-                },
-                {
-                    name: "Customer list",
-                    pageName:"Customerlist",
-                    logo: <GroupIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/customerlist",
-                }, {
-                    name: "Quotation worklist",
-                    pageName:"Quotationworklist",
-                    logo: <RequestQuoteIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/admin_quotation",
-                    notification: OR.length
-                }, {
-                    name: "Inventory",
-                    pageName:"Inventory",
-                    logo: <Warehouse style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/inventory"
-                }, {
-                    name: "Product list",
-                    pageName:"productlist",
-                    logo: <FeaturedPlayList style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/prodlist"
-                }, {
-                    name: "Category",
-                    pageName:"Category",
-                    logo: <Category style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/category_manager"
-                }, {
-                    name: "Work list",
-                    pageName:"Worklist",
-                    logo: <CheckCircle style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/worklist",
-                    notification: UR.length
-                }, {
-                    name: "Product worklist",
-                    pageName:"SO list",
-                    logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/productworklist",
-                    notification: PD.length
-                }, {
-                    name: "Leave list",
-                    pageName:"Leavelist",
-                    logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/leave_list",
-                    notification: PD.length
-                }, {
-                    name: "Staff claim",
-                    pageName:"Staffclaim",
-                    logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/staff_claim",
-                    notification: PD.length
-                }, {
-                    name: "Service & Return",
-                    pageName:"Service&Return",
-                    logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />,
-                    redirect: "/adm_service_view",
-                    notification: SR.length + RT.length
-                }
-            ])
-        }
+            const allCards = {
+                Inventory: { name: "Inventory", pageName: "Inventory", logo: <Warehouse style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/inventory" },
+                NewProducts: { name: "New products", pageName: "NewProducts", logo: <AddCircle style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/addproducts" },
+                ProductList: { name: "Product list", pageName: "Productlist", logo: <FeaturedPlayList style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/prodlist" },
+                Category: { name: "Category", pageName: "Category", logo: <Category style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/category_manager" },
+                NewUser: { name: "New User", pageName: "NewUser", logo: <PersonAdd style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/register_new" },
+                UserWorklist: { name: "User Worklist", pageName: "UserWorklist", logo: <CheckCircle style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/worklist", notification: UR.length },
+                ProductWorklist: { name: "Product worklist", pageName: "ProductWorklist", logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/productworklist", notification: PD.length },
+                CreatePO: { name: "Create PO", pageName: "CreatePO", logo: <AddShoppingCart style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/purchase" },
+                POList: { name: "PO list", pageName: "POlist", logo: <Toc style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/purchaseorders" },
+                SupplierList: { name: "Supplier List", pageName: "Supplierlist", logo: <GroupIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/supplierlist" },
+                CustomerList: { name: "Customer List", pageName: "Customerlist", logo: <GroupIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/customerlist" },
+                NewSalesOrder: { name: "New Sales order", pageName: "Newsalesorder", logo: <ShoppingCartCheckoutIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/new_sales_wrapper" },
+                SOList: { name: "SO list", pageName: "SOlist", logo: <FormatListNumberedIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/so_list", notification: CO.length },
+                QuotationWorklist: { name: "Quotation worklist", pageName: "Quotationworklist", logo: <RequestQuoteIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/admin_quotation", notification: OR.length },
+                ServiceReturn: { name: "Service & Return", pageName: "Service&Return", logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/adm_service_view", notification: SR.length + RT.length },
+                LeaveList: { name: "Leave List", pageName: "Leavelist", logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/leave_list", notification: PD.length },
+                StaffClaim: { name: "Staff Claim", pageName: "Staffclaim", logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/staff_claim", notification: PD.length },
+                TaskWorklist: { name: "Task Worklist", pageName: "TaskWorklist", logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/taskworklist" },
+                Profile: { name: "Profile", pageName: "HeyChavie", logo: <GroupIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "#" },
+                StaffAccess: { name: "Staff Access", pageName: "Staffaccess", logo: <GroupIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/user_access" },
+                CreateCampaign: { name: "Create Campaign", pageName: "Createcampaign", logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/createcampaign" },
+                UpdateAccounts: { name: "Update accounts", pageName: "Updateaccounts", logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/createshare" },
+                AccountDetails: { name: "Account Details", pageName: "Accountdetails", logo: <ConstructionIcon style={{ fontSize: '30px', color: 'white', textAlign: "center" }} />, redirect: "/viewdistribution" },
+            };
 
-    }, [notifications])
+            let cardsToShow = [];
+
+            switch (usertype) {
+                case "ADM":
+                    if (division === 'toys') {
+                        cardsToShow = [
+                            allCards.Profile,
+                            allCards.Inventory,
+                            allCards.NewProducts,
+                            allCards.ProductList,
+                            allCards.Category,
+                            allCards.NewUser,
+                            allCards.UserWorklist,
+                            allCards.ProductWorklist,
+                            allCards.CreatePO,
+                            allCards.POList,
+                            allCards.SupplierList,
+                            allCards.CustomerList,
+                            allCards.NewSalesOrder,
+                            allCards.SOList,
+                            allCards.QuotationWorklist,
+                            allCards.ServiceReturn,
+                            allCards.LeaveList,
+                            allCards.StaffClaim,
+                            allCards.StaffAccess,
+                            allCards.CreateCampaign,
+                            allCards.TaskWorklist,
+                            allCards.UpdateAccounts,
+                            allCards.AccountDetails,
+                        ];
+                    } else {
+                        cardsToShow = [
+                            allCards.Inventory,
+                            allCards.NewProducts,
+                            allCards.ProductList,
+                            allCards.Category,
+                            allCards.NewUser,
+                            allCards.UserWorklist,
+                            allCards.ProductWorklist,
+                            allCards.CreatePO,
+                            allCards.POList,
+                            allCards.SupplierList,
+                            allCards.CustomerList,
+                            allCards.NewSalesOrder,
+                            allCards.SOList,
+                            allCards.QuotationWorklist,
+                            allCards.ServiceReturn,
+                            allCards.LeaveList,
+                            allCards.StaffClaim,
+                            allCards.TaskWorklist,
+                        ];
+                    }
+                    break;
+
+                case "SU":
+                    cardsToShow = [
+                        allCards.Profile,
+                        allCards.Inventory,
+                        allCards.NewProducts,
+                        allCards.ProductList,
+                        allCards.Category,
+                        allCards.NewUser,
+                        allCards.UserWorklist,
+                        allCards.ProductWorklist,
+                        allCards.CreatePO,
+                        allCards.POList,
+                        allCards.SupplierList,
+                        allCards.CustomerList,
+                        allCards.NewSalesOrder,
+                        allCards.SOList,
+                        allCards.QuotationWorklist,
+                        allCards.ServiceReturn,
+                        allCards.LeaveList,
+                        allCards.StaffClaim,
+                        allCards.StaffAccess,
+                        allCards.CreateCampaign,
+                        allCards.UpdateAccounts,
+                        allCards.AccountDetails,
+                    ]; // Assuming "toysadmin" is represented by "TOYS"
+                    break;
+        
+                    
+                default:
+                    cardsToShow = [];
+            }
+
+            setdata(cardsToShow);
+        }
+    }, [notifications, usertype, division])
 
 
     // console.log("present_staff==>", PresentStaff)
@@ -290,17 +288,7 @@ export default function Admin_navigate() {
         // Other options...
     };
 
-    const filteredData = allowedpages.length > 0
-  ? data.filter(dt => {
-    if(dt.pageName){
-
-        const formattedName = dt.pageName.replace(/\s/g, '')
-        return allowedpages.includes(formattedName);
-    }
-    
-    })
-  : data;
-//   console.log(">>>>>",filteredData)
+    const filteredData = data;
 // const filteredData = allowedpages.length > 0
 //   ? data.filter(dt => allowedpages.includes(dt.name))
 //   : data;
@@ -311,7 +299,7 @@ export default function Admin_navigate() {
                 <Newtopbar_ />
                 <div className='setting_alignment_nav' >
                     <div style={{ height: "40px" }}></div>
-                    {usertype==="SU" &&
+                    {(usertype==="SU" || usertype === "ADM" || usertype === "TA") &&
                         
                     <div className='admn_na_startcards'>
                         <div data-aos="fade-right" data-aos-duration="1500" className='admn_na_startcard p-4'>
@@ -372,4 +360,3 @@ export default function Admin_navigate() {
         </>
     )
 }
-

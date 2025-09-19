@@ -7,7 +7,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Newtopbar_ from "../../../../components/admin components/Newtopbar_";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import DoneIcon from "@mui/icons-material/Done";
@@ -776,7 +775,6 @@ const handleScan = async (code) => {
       <ToastContainer />
       <div id="Cart_Cntrl_adjst">
         <div id="Cart_Cntrl_inner">
-          <Newtopbar_ />
           <div id="Cart_Cntrl_heading">
             <p>
               {location.state?.quoted && !location.state?.solist

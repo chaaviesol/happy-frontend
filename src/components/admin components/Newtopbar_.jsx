@@ -100,7 +100,7 @@ export default function Newtopbar_() {
   }, []);
   return (
     <>
-      <div style={{ height: "60px" }} className="topbar p-3 ">
+      <div style={{ height: "60px", marginBottom: "20px" }} className="topbar p-3 ">
         {/* <div className="left topbar_aligh3">
           <div style={{ height: "10px" }}></div>
           <p>
@@ -168,10 +168,9 @@ export default function Newtopbar_() {
         <div className="admin_na_image">
           <div
             onClick={() => {
-              if (auth?.userType === "ADM") {
-                navigate("/addproducts");
-              } else {
-                navigate("/adm_navigate"); 
+              const userType = auth?.userType;
+              if (userType === "ADM" || userType === "SU" || userType === "TA") {
+                navigate("/adm_navigate");
               }
             }}
             style={{ cursor: "pointer" }}

@@ -69,7 +69,6 @@ export default function Products({ prodData, productType }) {
   const subCategoryInputRef = useRef(null);
   const parendIdInputRef = useRef(null);
   const ctrlPressed = useHiddenPages();
-
   const toastConfig = {
     position: "top-right",
     autoClose: 1500,
