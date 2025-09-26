@@ -1,34 +1,34 @@
 // components/BarcodeListener.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 export default function BarcodeListener({ onScan }) {
-  const [buffer, setBuffer] = useState("");
-  const [lastTime, setLastTime] = useState(Date.now());
+  const bufferRef = useRef("");
+  const lastTimeRef = useRef(Date.now());
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       const now = Date.now();
 
       // Reset buffer if typing is too slow (manual typing)
-      if (now - lastTime > 50) {
-        setBuffer("");
+      if (now - lastTimeRef.current > 50) {
+        bufferRef.current = "";
       }
 
       if (e.key === "Enter") {
-        if (buffer.length > 0) {
-          onScan(buffer); // send barcode to parent
-          setBuffer("");
+        if (bufferRef.current.length > 0) {
+          onScan(bufferRef.current); // ✅ full barcode
+          bufferRef.current = "";    // reset buffer
         }
       } else {
-        setBuffer((prev) => prev + e.key);
+        bufferRef.current += e.key;  // ✅ append instantly (no async delay)
       }
 
-      setLastTime(now);
+      lastTimeRef.current = now;
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [buffer, lastTime, onScan]);
+  }, [onScan]);
 
-  return null; // invisible
+  return null; // invisible component
 }
