@@ -107,13 +107,29 @@ export default function New_sales_order() {
       (prod) => prod.product_id == id
     );
     if (!CheckAlready) {
+      // if (findProduct) {
+      //   setTotalData((previous) => ({
+      //     ...previous,
+      //     products: [...(previous.products || []), findProduct],
+      //   }));
+      //   setprdctflse(false);
+      // } 
       if (findProduct) {
-        setTotalData((previous) => ({
-          ...previous,
-          products: [...(previous.products || []), findProduct],
-        }));
-        setprdctflse(false);
-      } else {
+  setTotalData((previous) => ({
+    ...previous,
+    products: [
+      ...(previous.products || []),
+      {
+        ...findProduct,
+        qty: 1, 
+        selecttype: "as is", // ✅ default sale type
+      },
+    ],
+  }));
+  setprdctflse(false);
+}
+
+      else {
         // alert("Product warning")
       }
     } else {
@@ -716,6 +732,7 @@ export default function New_sales_order() {
             ...existing,
             qty: newQty,
             total: newQty * (existing.mrp || existing.selling_price || 0),
+             selecttype: "as is",
           };
         } else {
           // New product → add with qty = 1
@@ -755,6 +772,16 @@ export default function New_sales_order() {
     }
   };
 
+// as is show
+useEffect(() => {
+  if (TotalData?.products?.length) {
+    const normalized = TotalData.products.map((p) => ({
+      ...p,
+      selecttype: p.selecttype || "as is",
+    }));
+    setTotalData({ ...TotalData, products: normalized });
+  }
+}, [TotalData?.products?.length]);
 
 
 
@@ -2276,7 +2303,7 @@ export default function New_sales_order() {
         </div>
       </Modal>
       <BarcodeListener onScan={handleScan} />
-      {/* <input
+      <input
         type="text"
         placeholder="Enter barcode manually"
         onKeyDown={(e) => {
@@ -2285,7 +2312,7 @@ export default function New_sales_order() {
             e.target.value = ""; // clear input after scan
           }
         }}
-      /> */}
+      />
 
     </>
 
