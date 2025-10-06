@@ -699,6 +699,7 @@ export default function New_sales_order() {
     //   alert("❌ Invalid barcode");
     //   return;
     // }
+console.log("aa Barcode Passed",code);
 
     try {
       // Send GET request to backend
