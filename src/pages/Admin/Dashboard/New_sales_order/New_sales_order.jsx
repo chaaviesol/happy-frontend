@@ -41,6 +41,11 @@ export default function New_sales_order() {
   const [loading, setLoading] = useState(false);
   const [isShowModal, setIsShowModal] = useState(false);
 
+  const [manualDiscount, setManualDiscount] = useState(0); // store rupee discount
+  const [isManualMode, setIsManualMode] = useState(false); // toggle between % and ₹ modes
+// const [remarks, setRemarks] = useState("");
+
+
   const navigate = useNavigate();
   const cusflse = useRef(null);
   const closer = useRef(null);
@@ -114,20 +119,20 @@ export default function New_sales_order() {
       //   }));
       //   setprdctflse(false);
       // } 
+
       if (findProduct) {
-  setTotalData((previous) => ({
-    ...previous,
-    products: [
-      ...(previous.products || []),
-      {
-        ...findProduct,
-        qty: 1, 
-        selecttype: "as is", // ✅ default sale type
-      },
-    ],
-  }));
-  setprdctflse(false);
-}
+        const newData = {
+          ...TotalData,
+          products: [
+            ...(TotalData.products || []),
+            { ...findProduct, qty: 1, selecttype: "as is" },
+          ],
+        };
+
+        setTotalData(newData);
+        ProductCalculation(newData);
+        setprdctflse(false);
+      }
 
       else {
         // alert("Product warning")
@@ -151,6 +156,7 @@ export default function New_sales_order() {
     const validData = TotalData?.grandTotal || value?.draft;
     let data = {
       ...TotalData,
+      //  remarks: remarks,
       so_status: value?.draft ? "draft" : "placed",
     };
     if (!validData) {
@@ -308,184 +314,217 @@ export default function New_sales_order() {
     }
   };
 
-  const UpdatingCoupons = (coupon) => {
-    let tempProducts = TotalData;
-    if (coupon?.type && coupon?.discount) {
-      if (!coupon.normalDiscount && !coupon.finalDiscount) {
-        tempProducts.products[coupon?.index] = {
-          ...tempProducts.products[coupon?.index],
-          couponDiscount: {
-            discountType: coupon?.type,
-            discount: coupon?.discount,
-            couponCode: coupon?.couponCode,
-            normalDiscount: false,
-          },
-        };
-      } else if (coupon.normalDiscount && !coupon.finalDiscount) {
-        tempProducts.products[coupon?.index] = {
-          ...tempProducts.products[coupon?.index],
-          normalDiscount: { discount: coupon?.discount },
-        };
-      } else if (coupon.finalDiscount) {
-        tempProducts = {
-          ...tempProducts,
-          discount: { discount: coupon?.discount },
-        };
-      }
+  // const UpdatingCoupons = (coupon) => {
+  //   let tempProducts = TotalData;
+  //   if (coupon?.type && coupon?.discount!== undefined) {
+  //     if (!coupon.normalDiscount && !coupon.finalDiscount) {
+  //       tempProducts.products[coupon?.index] = {
+  //         ...tempProducts.products[coupon?.index],
+  //         couponDiscount: {
+  //           discountType: coupon?.type,
+  //           discount: coupon?.discount,
+  //           couponCode: coupon?.couponCode,
+  //           normalDiscount: false,
+  //         },
+  //       };
+  //     } else if (coupon.normalDiscount && !coupon.finalDiscount) {
+  //       tempProducts.products[coupon?.index] = {
+  //         ...tempProducts.products[coupon?.index],
+  //         normalDiscount: { discount: coupon?.discount },
+  //       };
+  //     } else if (coupon.finalDiscount) {
+  //       tempProducts = {
+  //         ...tempProducts,
+  //         discount: { discount: coupon?.discount },
+  //       };
+  //     }
+  //   }
+  //   ProductCalculation(tempProducts);
+  //   setTotalData({ ...tempProducts });
+  // };
+const UpdatingCoupons = (coupon) => {
+  // Deep clone to ensure React sees reference change
+  let tempProducts = JSON.parse(JSON.stringify(TotalData));
+
+  // 🧩 Ensure discount object always has proper structure
+  if (!tempProducts.discount) {
+    tempProducts.discount = { type: "Percentage", discount: 0 };
+  }
+
+  if (coupon?.type && coupon?.discount !== undefined) {
+    const parsedDiscount = parseFloat(coupon.discount) || 0;
+
+    if (!coupon.normalDiscount && !coupon.finalDiscount) {
+      tempProducts.products[coupon?.index] = {
+        ...tempProducts.products[coupon?.index],
+        couponDiscount: {
+          discountType: coupon?.type,
+          discount: parsedDiscount,
+          couponCode: coupon?.couponCode,
+          normalDiscount: false,
+        },
+      };
+    } else if (coupon.normalDiscount && !coupon.finalDiscount) {
+      tempProducts.products[coupon?.index] = {
+        ...tempProducts.products[coupon?.index],
+        normalDiscount: { discount: parsedDiscount },
+      };
+    } else if (coupon.finalDiscount) {
+      // ✅ Always keep a valid type — even if coupon.type is undefined
+      tempProducts.discount = {
+        type: coupon.type || tempProducts.discount.type || "Percentage",
+        discount: parsedDiscount,
+      };
     }
-    ProductCalculation(tempProducts);
-    setTotalData({ ...tempProducts });
-  };
+  } else {
+    tempProducts.discount = { type: "Percentage", discount: 0 };
+  }
 
-  const ProductCalculation = async (Data) => {
-    try {
-      let tempProducts = Data;
-      let netAmount = 0;
-      let grandTotal = 0;
+  // Force recalculation and set new reference
+  const recalculated = ProductCalculation(tempProducts, true);
+  setTotalData({ ...recalculated });
+};
 
-      tempProducts.products.map((pro, index) => {
-        const qty = parseInt(pro?.qty);
-        const product_Price = parseFloat(pro.product_Price);
-        const original_price = parseFloat(pro.original_price);
-        const price_accessory = parseFloat(pro.price_accessory);
 
-        if (pro?.selecttype) {
-          if (pro?.selecttype.toLowerCase() === "as is") {
-            netAmount = (product_Price ? product_Price : original_price) * qty;
-            tempProducts.products[index] = {
-              ...tempProducts.products[index],
-              tl_amt: parseFloat(netAmount.toFixed(2)),
-              total: parseFloat(netAmount.toFixed(2)),
-            };
-          } else {
-            console.log(
-              "product_Price>>>>",
-              product_Price,
-              "price_accessory>>>>",
-              price_accessory
-            );
+//  const ProductCalculation = (Data, returnData = false) => {
+//   try {
+//     let tempProducts = { ...Data };
+//     let grandTotal = 0;
 
-            if (product_Price && price_accessory > 0) {
-              netAmount = (product_Price + price_accessory) * qty;
-              tempProducts.products[index] = {
-                ...tempProducts?.products[index],
-                tl_amt: parseFloat(netAmount.toFixed(2)),
-                total: parseFloat(netAmount.toFixed(2)),
-              };
-            } else if (price_accessory > 0) {
-              console.log(
-                "product_Price>>>>",
-                original_price,
-                "price_accessory>>>>",
-                price_accessory
-              );
-              netAmount = (original_price + price_accessory) * qty;
-              tempProducts.products[index] = {
-                ...tempProducts?.products[index],
-                tl_amt: parseFloat(netAmount.toFixed(2)),
-                total: parseFloat(netAmount.toFixed(2)),
-              };
-            }
-          }
-        }
-      });
+//     tempProducts.products = tempProducts.products.map((pro) => {
+//       const qty = parseFloat(pro.qty || 0);
+//       const productPrice = parseFloat(pro.product_Price || 0);
+//       const originalPrice = parseFloat(pro.original_price || 0);
+//       const priceAccessory = parseFloat(pro.price_accessory || 0);
+//       let total = 0;
 
-      tempProducts.products?.map((prod, index) => {
-        if (
-          prod?.couponDiscount?.discount &&
-          !prod?.couponDiscount?.normalDiscount &&
-          prod?.tl_amt &&
-          prod?.qty &&
-          prod?.original_price
-        ) {
-          if (prod?.couponDiscount.discountType === "Percentage") {
-            const Discount = parseFloat(prod.couponDiscount.discount);
-            const couponDiscount =
-              parseFloat(prod?.original_price) *
-              (Discount / 100) *
-              parseFloat(prod.qty);
-            const finalCoupon = parseFloat(prod?.tl_amt) - couponDiscount;
+//       if (pro.selecttype?.toLowerCase() === "as is") {
+//         total = (productPrice || originalPrice) * qty;
+//       } else {
+//         total = (productPrice || originalPrice) * qty + priceAccessory * qty;
+//       }
 
-            if (couponDiscount && finalCoupon) {
-              if (prod?.normalDiscount?.discount) {
-                const normalDiscount = parseFloat(
-                  prod?.normalDiscount?.discount
-                );
-                const finalDisc = finalCoupon * (normalDiscount / 100);
-                const total = finalCoupon - finalDisc;
-                tempProducts.products[index].total = parseFloat(
-                  total.toFixed(2)
-                );
-              } else {
-                tempProducts.products[index].total = parseFloat(
-                  finalCoupon.toFixed(2)
-                );
-              }
-            }
-          } else if (prod?.couponDiscount.discountType === "Amount") {
-            const qty = parseFloat(prod.qty);
-            const couponDiscount =
-              parseFloat(prod.couponDiscount.discount) * qty;
-            const finalCoupon = prod.tl_amt - couponDiscount;
+//       // Discounts
+//       if (pro.couponDiscount?.discount) {
+//         if (pro.couponDiscount.discountType === "Percentage") {
+//           total -= (total * parseFloat(pro.couponDiscount.discount)) / 100;
+//         } else if (pro.couponDiscount.discountType === "Amount") {
+//           total -= parseFloat(pro.couponDiscount.discount) * qty;
+//         }
+//       }
 
-            if (finalCoupon) {
-              if (prod?.normalDiscount?.discount) {
-                const normalDiscount = parseFloat(prod.normalDiscount.discount);
-                const finalDisc = finalCoupon * (normalDiscount / 100);
-                const total = finalCoupon - finalDisc;
-                tempProducts.products[index].total = parseFloat(
-                  total.toFixed(2)
-                );
-              } else {
-                tempProducts.products[index].total = parseFloat(
-                  finalCoupon.toFixed(2)
-                );
-              }
-            }
-          }
-        } else if (
-          prod?.normalDiscount?.discount &&
-          prod?.tl_amt &&
-          prod?.qty &&
-          prod?.original_price
-        ) {
-          const discount = parseFloat(prod?.normalDiscount?.discount);
-          const normalDiscount = prod?.tl_amt * (discount / 100);
-          const total = prod?.tl_amt - normalDiscount;
-          if (normalDiscount && total) {
-            tempProducts.products[index].total = parseFloat(total.toFixed(2));
-          }
-        }
-      });
+//       if (pro.normalDiscount?.discount) {
+//         total -= (total * parseFloat(pro.normalDiscount.discount)) / 100;
+//       }
 
-      await setTotalData({ ...tempProducts });
+//       return {
+//         ...pro,
+//         total: parseFloat(total.toFixed(2)),
+//         tl_amt: parseFloat(total.toFixed(2)),
+//       };
+//     });
 
-      tempProducts?.products?.forEach((prod) => {
-        grandTotal += prod?.total;
-      });
+//     tempProducts.products.forEach((p) => {
+//       grandTotal += p.total || 0;
+//     });
 
-      if (!tempProducts?.discount?.discount) {
-        tempProducts = {
-          ...tempProducts,
-          grandTotal: parseFloat(grandTotal.toFixed(2)),
-          tl_amt: parseFloat(grandTotal.toFixed(2)),
-        };
+//     const { type, discount } = tempProducts.discount || {};
+//     let finalAmount = grandTotal;
+
+//     if (type === "Percentage" && discount > 0) {
+//       finalAmount = grandTotal - (grandTotal * discount) / 100;
+//     } else if (type === "Rupees" && discount > 0) {
+//       finalAmount = grandTotal - discount;
+//     }
+
+//     if (finalAmount < 0) finalAmount = 0;
+
+//     tempProducts = {
+//       ...tempProducts,
+//       grandTotal: parseFloat(grandTotal.toFixed(2)),
+//       tl_amt: parseFloat(finalAmount.toFixed(2)),
+//     };
+
+//     if (returnData) return tempProducts; // ✅ Return for use in UpdatingCoupons
+//     else setTotalData({ ...tempProducts });
+//   } catch (error) {
+//     console.error("Error in ProductCalculation:", error);
+//   }
+// };
+const ProductCalculation = (Data, returnData = false) => {
+  try {
+    let tempProducts = { ...Data };
+    let grandTotal = 0;
+
+    // 🧮 Per-product totals
+    tempProducts.products = tempProducts.products.map((pro) => {
+      const qty = parseFloat(pro.qty || 0);
+      const productPrice = parseFloat(pro.product_Price || 0);
+      const originalPrice = parseFloat(pro.original_price || 0);
+      const priceAccessory = parseFloat(pro.price_accessory || 0);
+      let total = 0;
+
+      if (pro.selecttype?.toLowerCase() === "as is") {
+        total = (productPrice || originalPrice) * qty;
       } else {
-        const finalAmount =
-          grandTotal -
-          grandTotal * (parseFloat(tempProducts.discount?.discount) / 100);
-        tempProducts = {
-          ...tempProducts,
-          grandTotal: parseFloat(grandTotal.toFixed(2)),
-          tl_amt: parseFloat(finalAmount.toFixed(2)),
-        };
+        total = (productPrice || originalPrice) * qty + priceAccessory * qty;
       }
 
-      await setTotalData({ ...tempProducts });
-    } catch (error) {
-      console.log(error);
+      // 🎟️ Product-level discounts
+      if (pro.couponDiscount?.discount) {
+        if (pro.couponDiscount.discountType === "Percentage") {
+          total -= (total * parseFloat(pro.couponDiscount.discount)) / 100;
+        } else if (pro.couponDiscount.discountType === "Amount") {
+          total -= parseFloat(pro.couponDiscount.discount) * qty;
+        }
+      }
+
+      if (pro.normalDiscount?.discount) {
+        total -= (total * parseFloat(pro.normalDiscount.discount)) / 100;
+      }
+
+      return {
+        ...pro,
+        total: parseFloat(total.toFixed(2)),
+        tl_amt: parseFloat(total.toFixed(2)),
+      };
+    });
+
+    // 🧮 Grand total
+    tempProducts.products.forEach((p) => {
+      grandTotal += p.total || 0;
+    });
+
+    // 💰 Final discount (percentage or rupee)
+    const { type } = tempProducts.discount || {};
+    let discount = parseFloat(tempProducts.discount?.discount) || 0;
+    let finalAmount = grandTotal;
+
+    if (type === "Percentage" && discount > 0) {
+      finalAmount = grandTotal - (grandTotal * discount) / 100;
+    } else if (type === "Rupees" && discount > 0) {
+      if (discount > grandTotal) discount = grandTotal;
+      finalAmount = grandTotal - discount;
     }
-  };
+
+    if (finalAmount < 0) finalAmount = 0;
+
+    tempProducts = {
+      ...tempProducts,
+      grandTotal: parseFloat(grandTotal.toFixed(2)),
+      tl_amt: parseFloat(finalAmount.toFixed(2)),
+    };
+
+    if (returnData) {
+      return tempProducts;
+    } else {
+      setTotalData({ ...tempProducts });
+    }
+  } catch (error) {
+    console.error("Error in ProductCalculation:", error);
+  }
+};
+
 
   // console.log("TotalData>>>>>", TotalData)
   useEffect(() => {
@@ -699,7 +738,7 @@ export default function New_sales_order() {
     //   alert("❌ Invalid barcode");
     //   return;
     // }
-console.log("aa Barcode Passed",code);
+    console.log("aa Barcode Passed", code);
 
     try {
       // Send GET request to backend
@@ -733,7 +772,7 @@ console.log("aa Barcode Passed",code);
             ...existing,
             qty: newQty,
             total: newQty * (existing.mrp || existing.selling_price || 0),
-             selecttype: "as is",
+            selecttype: "as is",
           };
         } else {
           // New product → add with qty = 1
@@ -773,16 +812,16 @@ console.log("aa Barcode Passed",code);
     }
   };
 
-// as is show
-useEffect(() => {
-  if (TotalData?.products?.length) {
-    const normalized = TotalData.products.map((p) => ({
-      ...p,
-      selecttype: p.selecttype || "as is",
-    }));
-    setTotalData({ ...TotalData, products: normalized });
-  }
-}, [TotalData?.products?.length]);
+  // as is show
+  useEffect(() => {
+    if (TotalData?.products?.length) {
+      const normalized = TotalData.products.map((p) => ({
+        ...p,
+        selecttype: p.selecttype || "as is",
+      }));
+      setTotalData({ ...TotalData, products: normalized });
+    }
+  }, [TotalData?.products?.length]);
 
 
 
@@ -850,7 +889,7 @@ useEffect(() => {
                   )}
                   {cuslistflse && !location.state?.quoted ? (
                     <>
-                      <div ref={cusflse} id="Cart_Cntrl_prdct_list2">
+                      <div ref={cusflse} id="Cart_Cntrl_prdct_list2" >
                         <p
                           style={{
                             backgroundColor: "#b6e1e0",
@@ -1508,8 +1547,34 @@ useEffect(() => {
           </div>
           <div style={{ height: "1rem" }}></div>
 
-          <div style={{ width: "97%", display: "flex", justifyContent: "end" }}>
-            <div style={{ display: "flex" }}>
+          <div style={{ width: "97%", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+  {/* ✅ Remarks textarea on left */}
+<div style={{ flex: "0 0 300px", marginRight: "20px" }}>
+  <p>Remarks</p>
+  <textarea
+    value={TotalData?.remarks || ""}  // ✅ shows value from TotalData
+    onChange={(e) =>
+      setTotalData({
+        ...TotalData,
+        remarks: e.target.value,       // ✅ updates TotalData dynamically
+      })
+    }
+    placeholder="Enter remarks..."
+    rows="3"
+    style={{
+      width: "100%",
+      padding: "6px",
+      borderRadius: "6px",
+      border: "1px solid #ccc",
+      resize: "vertical",
+      fontSize: "0.85rem",
+    }}
+  />
+</div>
+
+  {/* ✅ Grand total + discount section on right */}
+  <div style={{ display: "flex" }}>
+
               <div>
                 <p>Grand Total </p>
                 <p className="new_sales_fontfamily">
@@ -1520,7 +1585,7 @@ useEffect(() => {
                 </p>
               </div>
               <div style={{ width: "50px" }}></div>
-              <div>
+              {/* <div>
                 <p>Discount </p>
                 {!location?.state?.solist ? (
                   <select
@@ -1572,8 +1637,12 @@ useEffect(() => {
                 ) : (
                   <p> {TotalData?.discount?.discount}% </p>
                 )}
-              </div>
-              <div style={{ width: "50px" }}></div>
+              </div> */}
+
+
+
+
+              {/* <div style={{ width: "50px" }}></div>
               <div>
                 <p>Final amount</p>
                 <p className="new_sales_fontfamily">
@@ -1582,6 +1651,138 @@ useEffect(() => {
                     ? parseFloat(TotalData?.tl_amt).toFixed(2)
                     : ""}
                 </p>
+              </div>
+            </div> */}
+              {/* ===== Discount Section ===== */}
+              <div style={{ display: "flex", gap: "20px" }}>
+                {/* Discount Dropdown */}
+                <div>
+                  <p>Discount</p>
+                  {!location?.state?.solist ? (
+                    <select
+                      id="New_sales_order_drpdwn"
+                      value={
+                        manualDiscount
+                          ? JSON.stringify({
+                            type: "Rupees",
+                            discount: manualDiscount,
+                            finalDiscount: true,
+                          })
+                          : JSON.stringify({
+                            type: "Percentage",
+                            discount: TotalData?.discount?.type === "Percentage"
+                              ? TotalData?.discount?.discount || 0
+                              : 0,
+                            finalDiscount: true,
+                          })
+                      }
+                      disabled={!!manualDiscount} // Disable dropdown if manual ₹ discount is active
+                      onChange={(e) => {
+                        const selected = JSON.parse(e.target.value);
+                        setManualDiscount(""); // Reset rupee field
+                        UpdatingCoupons(selected);
+                      }}
+                    >
+                      <option
+                        value={JSON.stringify({
+                          type: "Percentage",
+                          discount: 0,
+                          finalDiscount: true,
+                        })}
+                      >
+                        0%
+                      </option>
+                      <option
+                        value={JSON.stringify({
+                          type: "Percentage",
+                          discount: 5,
+                          finalDiscount: true,
+                        })}
+                      >
+                        5%
+                      </option>
+                      <option
+                        value={JSON.stringify({
+                          type: "Percentage",
+                          discount: 10,
+                          finalDiscount: true,
+                        })}
+                      >
+                        10%
+                      </option>
+                      <option
+                        value={JSON.stringify({
+                          type: "Percentage",
+                          discount: 15,
+                          finalDiscount: true,
+                        })}
+                      >
+                        15%
+                      </option>
+                    </select>
+                  ) : (
+                    <p>
+  {TotalData?.discount?.type === "Rupees"
+    ? `₹${TotalData?.discount?.discount || 0}`
+    : `${TotalData?.discount?.discount || 0}%`}
+</p>
+
+                  )}
+                </div>
+
+                {/* Manual Rupee Discount */}
+                {!location?.state?.solist && (
+                  <div>
+                    <p>or Discount (₹)</p>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="Enter ₹"
+                      value={manualDiscount || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setManualDiscount(val);
+
+                        let discountValue = parseFloat(val) || 0;
+
+                        if (discountValue > 0) {
+                          // Switch to rupee discount mode
+                          UpdatingCoupons({
+                            type: "Rupees",
+                            discount: discountValue,
+                            finalDiscount: true,
+                          });
+                        } else {
+                          // Switch back to 0% mode cleanly
+                          setManualDiscount("");
+                          UpdatingCoupons({
+                            type: "Percentage",
+                            discount: 0,
+                            finalDiscount: true,
+                          });
+                        }
+                      }}
+
+                    style={{
+                      width: "100px",
+                      padding: "4px 6px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+      />
+                  </div>
+                )}
+
+                {/* Final Amount */}
+                <div>
+                  <p>Final Amount</p>
+                  <p className="new_sales_fontfamily">
+                    ₹{" "}
+                    {TotalData?.tl_amt
+                      ? parseFloat(TotalData?.tl_amt).toFixed(2)
+                      : "0.00"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -1751,7 +1952,7 @@ useEffect(() => {
                         }}
                       >
                         <div style={{ width: "5px" }}></div>
-                        History
+                        Status
                       </div>
                     </button>
                   ) : (
@@ -2304,7 +2505,7 @@ useEffect(() => {
         </div>
       </Modal>
       <BarcodeListener onScan={handleScan} />
-      <input
+      {/* <input
         type="text"
         placeholder="Enter barcode manually"
         onKeyDown={(e) => {
@@ -2313,7 +2514,7 @@ useEffect(() => {
             e.target.value = ""; // clear input after scan
           }
         }}
-      />
+      /> */}
 
     </>
 

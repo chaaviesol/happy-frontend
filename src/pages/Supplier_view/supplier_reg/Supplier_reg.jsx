@@ -205,19 +205,19 @@ export default function Supplier_reg() {
     setreq_check((previous) => ({ ...previous, [field]: value }));
   };
   const validateInputs = () => {
-    updateReqCheck("address", checkinput_address.current?.value);
+    // updateReqCheck("address", checkinput_address.current?.value);
     updateReqCheck("state", checkinput_state?.current?.value);
-    updateReqCheck("building", checkinput_building.current?.value);
+    // updateReqCheck("building", checkinput_building.current?.value);
     updateReqCheck("dis", checkinput_dis.current?.value);
-    updateReqCheck("email", checkinput_email.current?.value);
+    // updateReqCheck("email", checkinput_email.current?.value);
     updateReqCheck("mob", checkinput_mob.current?.value);
     updateReqCheck("name", checkinput_name.current?.value);
-    updateReqCheck("website", checkinput_website.current?.value);
-    updateReqCheck("trade", checkinput_trade.current?.value);
-    updateReqCheck("landline", checkinput_landline.current?.value);
-    updateReqCheck("pin", checkinput_pin.current?.value);
-    updateReqCheck("gst", checkinput_gst.current?.value);
-    updateReqCheck("password", checkinput_pass.current?.value);
+    // updateReqCheck("website", checkinput_website.current?.value);
+    // updateReqCheck("trade", checkinput_trade.current?.value);
+    // updateReqCheck("landline", checkinput_landline.current?.value);
+    // updateReqCheck("pin", checkinput_pin.current?.value);
+    // updateReqCheck("gst", checkinput_gst.current?.value);
+    // updateReqCheck("password", checkinput_pass.current?.value);
   };
   const validateMob = (mobileNumber) => {
     return new Promise((resolve, reject) => {
@@ -244,21 +244,33 @@ export default function Supplier_reg() {
   const handleFormSubmit = async (event) => {
     validateInputs();
     if (
+    //   Object.values(req_check).every((value) => !value) &&
+    //   Object.values(data).every((value) => value != "")
+    // ) 
       Object.values(req_check).every((value) => !value) &&
-      Object.values(data).every((value) => value != "")
-    ) {
+    data.name !==""&&
+    data.mob !==""&&
+    data.dis !==""&&
+    data.state!==""
+  )
+    {
 
-      const [isMobileValid, isEmailValid] = await Promise.all([
-        validateMob(data.mob), validateEmail(data.email)
-      ])
-      setValidationErrors({
-        mob: !isMobileValid,
-        email: !isEmailValid
-      })
+      // const [isMobileValid, isEmailValid] = await Promise.all([
+      //   validateMob(data.mob), validateEmail(data.email)
+      // ])
+      // setValidationErrors({
+      //   mob: !isMobileValid,
+      //   email: !isEmailValid
+      // })
 
-      if (!isMobileValid || !isEmailValid) {
-        return;
-      }
+      // // if (!isMobileValid || !isEmailValid) {
+      // if (!isMobileValid) {
+      //   return;
+      // }
+       const isMobileValid = await validateMob(data.mob);
+    setValidationErrors({ mob: !isMobileValid });
+
+    if (!isMobileValid) return;
 
 
       try {
@@ -335,19 +347,19 @@ export default function Supplier_reg() {
                     id="outlined-basic2"
                     label="Trade name"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
 
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red", left: "10px"
                   }}
                 >
                   {req_check.trade && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -361,19 +373,19 @@ export default function Supplier_reg() {
                     id="outlined-basic3"
                     label="Gst IN"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
 
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red", left: "10px"
                   }}
                 >
                   {req_check.gst && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div
@@ -384,7 +396,7 @@ export default function Supplier_reg() {
                   htmlFor="mobileNumber"
                   className="col-sm-4 col-form-label"
                 >
-                  <b style={{ color: "red" }}>*</b>
+                  {/* <b style={{ color: "red" }}>*</b> */}
                   Years In Business
                 </label>
 
@@ -415,21 +427,51 @@ export default function Supplier_reg() {
                     id="outlined-basic4"
                     label="Website"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red", left: "10px"
                   }}
                 >
                   {req_check.website && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
+  <ThemeProvider theme={theme}>
+    <TextField
+      inputRef={checkinput_email}
+      onChange={handleInputChange}
+      name="email"
+      type="email"
+      placeholder=""
+      id="outlined-basic5"
+      label="Email"
+      variant="outlined"
+      // required
+      sx={{ width: "100%", height: "55px" }}
+    />
+  </ThemeProvider>
+
+  {/* Show only format validation */}
+  {validationErrors.email && (
+    <FormHelperText
+      sx={{
+        position: "absolute",
+        color: "red",
+        left: "10px",
+      }}
+    >
+      format error
+    </FormHelperText>
+  )}
+</div>
+
+              {/* <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
                   <TextField
                     inputRef={checkinput_email}
@@ -454,7 +496,7 @@ export default function Supplier_reg() {
 
                     !req_check.email ? validationErrors.email && "format error" : "required"}
                 </FormHelperText>
-              </div>
+              </div> */}
               <br />
               <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
@@ -467,19 +509,19 @@ export default function Supplier_reg() {
                     id="outlined-basic6"
                     label="Landline"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
 
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red", left: "10px"
                   }}
                 >
                   {req_check.landline && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -524,19 +566,19 @@ export default function Supplier_reg() {
                     id="outlined-basic8"
                     label="Building"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
 
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red", left: "10px"
                   }}
                 >
                   {req_check.building && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -550,19 +592,19 @@ export default function Supplier_reg() {
                     id="outlined-basic9"
                     label="Address"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
 
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red", left: "10px"
                   }}
                 >
                   {req_check.address && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -628,18 +670,18 @@ export default function Supplier_reg() {
                     id="outlined-basic12"
                     label="Pincode"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red", left: "10px"
                   }}
                 >
                   {req_check.pin && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -653,18 +695,18 @@ export default function Supplier_reg() {
                     id="outlined-basic13"
                     label="Password"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red", left: "10px"
                   }}
                 >
                   {req_check.password && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div
@@ -672,7 +714,7 @@ export default function Supplier_reg() {
                 className="form-group row registration-form__checkboxes"
               >
                 <span>
-                  <b style={{ color: "red" }}>*</b>
+                  {/* <b style={{ color: "red" }}>*</b> */}
                   Product Types
                 </span>
                 <br />

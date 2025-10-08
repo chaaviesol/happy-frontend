@@ -40,8 +40,8 @@ export default function AddproductsWrapper() {
         await axiosPrivate
           .post(`/product/categories`, data)
           .then((apiData) => {
-            console.log(apiData);
-            console.log(division);
+            console.log("aa Apidata",apiData);
+            console.log("aa division",division);
             dispatch({ type: "Type", payload: division });
 
             dispatch({ type: "CATEGORY_SPECS", payload: apiData.data });

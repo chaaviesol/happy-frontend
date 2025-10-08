@@ -164,31 +164,31 @@ export default function Register() {
     event.preventDefault();
     setentertrue(true);
 
-    if (!checkinput_address.current?.value) {
-      setreq_check((previous) => ({ ...previous, address: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, address: false }));
-    }
+    // if (!checkinput_address.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, address: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, address: false }));
+    // }
     if (!checkinput_state?.current?.value) {
       setreq_check((previous) => ({ ...previous, state: true }));
     } else {
       setreq_check((previous) => ({ ...previous, state: false }));
     }
-    if (!checkinput_building.current?.value) {
-      setreq_check((previous) => ({ ...previous, building: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, building: false }));
-    }
+    // if (!checkinput_building.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, building: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, building: false }));
+    // }
     if (!checkinput_dis.current?.value) {
       setreq_check((previous) => ({ ...previous, dis: true }));
     } else {
       setreq_check((previous) => ({ ...previous, dis: false }));
     }
-    if (!checkinput_email.current?.value) {
-      setreq_check((previous) => ({ ...previous, email: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, email: false }));
-    }
+    // if (!checkinput_email.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, email: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, email: false }));
+    // }
     if (!checkinput_mob.current?.value) {
       setreq_check((previous) => ({ ...previous, mob: true }));
     } else {
@@ -199,55 +199,55 @@ export default function Register() {
     } else {
       setreq_check((previous) => ({ ...previous, name: false }));
     }
-    if (!checkinput_website.current?.value) {
-      setreq_check((previous) => ({ ...previous, website: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, website: false }));
-    }
-    if (!checkinput_trade.current?.value) {
-      setreq_check((previous) => ({ ...previous, trade: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, trade: false }));
-    }
-    if (!checkinput_landline.current?.value) {
-      setreq_check((previous) => ({ ...previous, landline: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, landline: false }));
-    }
-    if (!checkinput_pin.current?.value) {
-      setreq_check((previous) => ({ ...previous, pin: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, pin: false }));
-    }
-    if (!checkinput_gst.current?.value) {
-      setreq_check((previous) => ({ ...previous, gst: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, gst: false }));
-    }
-    if (!checkinput_pass.current?.value) {
-      setreq_check((previous) => ({ ...previous, password: true }));
-    } else {
-      setreq_check((previous) => ({ ...previous, password: false }));
-    }
+    // if (!checkinput_website.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, website: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, website: false }));
+    // }
+    // if (!checkinput_trade.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, trade: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, trade: false }));
+    // }
+    // if (!checkinput_landline.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, landline: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, landline: false }));
+    // }
+    // if (!checkinput_pin.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, pin: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, pin: false }));
+    // }
+    // if (!checkinput_gst.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, gst: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, gst: false }));
+    // }
+    // if (!checkinput_pass.current?.value) {
+    //   setreq_check((previous) => ({ ...previous, password: true }));
+    // } else {
+    //   setreq_check((previous) => ({ ...previous, password: false }));
+    // }
 
     if (
-      !req_check.address &&
-      !req_check.building &&
+      // !req_check.address &&
+      // !req_check.building &&
       !req_check.dis &&
-      !req_check.email &&
-      !req_check.gst &&
-      !req_check.landline &&
-      !req_check.mob &&
+      // !req_check.email &&
+      // !req_check.gst &&
+      // !req_check.landline &&
+      // !req_check.mob &&
       !req_check.name &&
-      !req_check.pin &&
-      !req_check.state &&
-      !req_check.trade &&
-      !req_check.website
+      // !req_check.pin &&
+      !req_check.state 
+      // !req_check.trade &&
+      // !req_check.website
     ) {
       try {
-        const EmailValidationResponse = await validateEmail(data.email);
+        // const EmailValidationResponse = await validateEmail(data.email);
         const isMobileValidResponse = await validateMob(data.mob);
-        if (EmailValidationResponse && isMobileValidResponse) {
+        if ( isMobileValidResponse) {
           axios
             .post(`${prismaBaseApi}/user/add`,data)
             .then((res) => {
@@ -408,18 +408,18 @@ export default function Register() {
                     id="outlined-basghic"
                     label="Trade Name"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red",
                   }}
                 >
                   {req_check.trade && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -433,18 +433,18 @@ export default function Register() {
                     id="outlined-basghic"
                     label="Gst IN"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red",
                   }}
                 >
                   {req_check.gst && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div style={{ alignItems: "center" }} className="form-group row">
@@ -452,7 +452,7 @@ export default function Register() {
                   htmlFor="tradeOption"
                   className="col-sm-4 col-form-label"
                 >
-                  <b style={{ color: "red" }}>*</b>
+                  {/* <b style={{ color: "red" }}>*</b> */}
                   Trade Type
                 </label>
                 <div className="col-sm-8">
@@ -518,21 +518,49 @@ export default function Register() {
                     id="outlined-basghic"
                     label="Website"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red",
                   }}
                 >
                   {req_check.website && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
+  <ThemeProvider theme={theme}>
+    <TextField
+      inputRef={checkinput_email}
+      onChange={handleInputChange}
+      name="email"
+      type="email"
+      placeholder=""
+      id="outlined-basghic"
+      label="Email"
+      variant="outlined"
+      sx={{ width: "100%", height: "55px" }}
+    />
+  </ThemeProvider>
+
+  {/* Show only format validation, not required */}
+  {!isEmailValid && data.email && (
+    <FormHelperText
+      sx={{
+        position: "absolute",
+        color: "red",
+      }}
+    >
+      invalid email
+    </FormHelperText>
+  )}
+</div>
+
+              {/* <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
                   <TextField
                     inputRef={checkinput_email}
@@ -543,7 +571,7 @@ export default function Register() {
                     id="outlined-basghic"
                     label="Email"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
@@ -557,7 +585,7 @@ export default function Register() {
                     ? "required"
                     : !isEmailValid && data.email && "invalid email"}
                 </FormHelperText>
-              </div>
+              </div> */}
               <br />
               <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
@@ -572,18 +600,18 @@ export default function Register() {
                     id="outlined-basghic"
                     label="Landline"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red",
                   }}
                 >
                   {req_check.landline && "required"}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -631,18 +659,18 @@ export default function Register() {
                     id="outlined-basic1"
                     label="Building"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red",
                   }}
                 >
                   {req_check.building && "required * "}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -656,18 +684,18 @@ export default function Register() {
                     id="outlined-basghic"
                     label="Address"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red",
                   }}
                 >
                   {req_check.address && "required * "}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -735,18 +763,18 @@ export default function Register() {
                     id="outlined-basghic"
                     label="Pincode"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red",
                   }}
                 >
                   {req_check.pin && "required * "}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div className="admn_reg_inputBox">
@@ -760,18 +788,18 @@ export default function Register() {
                     id="outlined-basghic"
                     label="Password"
                     variant="outlined"
-                    required={true}
+                    // required={true}
                     sx={{ width: "100%", height: "55px" }}
                   />
                 </ThemeProvider>
-                <FormHelperText
+                {/* <FormHelperText
                   sx={{
                     position: "absolute",
                     color: "red",
                   }}
                 >
                   {req_check.password && "required * "}
-                </FormHelperText>
+                </FormHelperText> */}
               </div>
               <br />
               <div
@@ -779,7 +807,7 @@ export default function Register() {
                 className="form-group row registration-form__checkboxes"
               >
                 <span>
-                  <b style={{ color: "red" }}>*</b>
+                  {/* <b style={{ color: "red" }}>*</b> */}
                   Product Types
                 </span>
                 <br />
