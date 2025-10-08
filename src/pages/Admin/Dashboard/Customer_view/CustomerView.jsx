@@ -56,20 +56,36 @@ export default function CustomerView() {
     fetchData();
   }, []);
     const navigate=useNavigate()
-    const cellClickedListener = useCallback((event) => {
-        const { id } = event.data;
-        const data = { id, user_type: "" };
-        navigate("/customerdetails",{state : data});
-        // axiosPrivate 
-        //   .post(`/user/userinfo`, data)
-        //   .then((res) => {
-        //     setcustomerlist(event.data);
-        //     navigate("/supp");
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error fetching user info:", error);
-        //   });
-      }, []);
+   
+
+const cellClickedListener = useCallback((event) => {
+  const { id, user_type } = event.data; // extract numeric id from grid row
+console.log("List id type",id,user_type);
+
+  const data = {
+    user_id: id, // backend expects numeric id
+    user_type: user_type || "CUS",
+  };
+
+  console.log("Selected customer data:", data);
+  navigate("/customerdetails", { state: data });
+}, [navigate]);
+
+
+    // const cellClickedListener = useCallback((event) => {
+    //     const { id } = event.data;
+    //     const data = { id, user_type: "" };
+    //     navigate("/customerdetails",{state : data});
+    //     // axiosPrivate 
+    //     //   .post(`/user/userinfo`, data)
+    //     //   .then((res) => {
+    //     //     setcustomerlist(event.data);
+    //     //     navigate("/supp");
+    //     //   })
+    //     //   .catch((error) => {
+    //     //     console.error("Error fetching user info:", error);
+    //     //   });
+    //   }, []);
 
       
   const columnDefs = useMemo(

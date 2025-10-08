@@ -17,6 +17,7 @@ import { axiosPrivate } from "../../../../api/axios";
 import useDivBoxCloser from "../../../../hooks/useDivBoxCloser";
 import BarcodeListener from "../../../../components/Suppliercomponent/BarcodeListener";
 import InvoicePrint from "./InvoicePrint";
+import useAuth from "../../../../hooks/useAuth";
 export default function New_sales_order() {
   const location = useLocation();
   const [prdctflse, setprdctflse] = useState(false);
@@ -44,8 +45,10 @@ export default function New_sales_order() {
 
   const [manualDiscount, setManualDiscount] = useState(0); // store rupee discount
   const [isManualMode, setIsManualMode] = useState(false); // toggle between % and ₹ modes
-// const [remarks, setRemarks] = useState("");
+  // const [remarks, setRemarks] = useState("");
 
+  const { auth } = useAuth({});
+  const division = auth?.division;
 
   const navigate = useNavigate();
   const cusflse = useRef(null);
@@ -87,13 +90,21 @@ export default function New_sales_order() {
     });
   }, []);
   useEffect(() => {
-    axioPrivate.post(`/sales/product_list`).then((res) => {
-      console.log("res>>>>>", res);
-      setproducts(res.data.data);
-    });
-  }, []);
+    console.log("zxzx", division);
 
-console.log("aa userdata",userdata);
+    if (!division) return;
+    axioPrivate.post(`/sales/product_list`, { division })
+      .then((res) => {
+        console.log("res>>>>>", res);
+        setproducts(res.data.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching product list:", err);
+      });
+  }, [division]);
+
+
+  console.log("aa userdata", userdata);
 
 
   const inponchange = (e, index) => {
@@ -346,188 +357,188 @@ console.log("aa userdata",userdata);
   //   ProductCalculation(tempProducts);
   //   setTotalData({ ...tempProducts });
   // };
-const UpdatingCoupons = (coupon) => {
-  // Deep clone to ensure React sees reference change
-  let tempProducts = JSON.parse(JSON.stringify(TotalData));
+  const UpdatingCoupons = (coupon) => {
+    // Deep clone to ensure React sees reference change
+    let tempProducts = JSON.parse(JSON.stringify(TotalData));
 
-  // 🧩 Ensure discount object always has proper structure
-  if (!tempProducts.discount) {
-    tempProducts.discount = { type: "Percentage", discount: 0 };
-  }
+    // 🧩 Ensure discount object always has proper structure
+    if (!tempProducts.discount) {
+      tempProducts.discount = { type: "Percentage", discount: 0 };
+    }
 
-  if (coupon?.type && coupon?.discount !== undefined) {
-    const parsedDiscount = parseFloat(coupon.discount) || 0;
+    if (coupon?.type && coupon?.discount !== undefined) {
+      const parsedDiscount = parseFloat(coupon.discount) || 0;
 
-    if (!coupon.normalDiscount && !coupon.finalDiscount) {
-      tempProducts.products[coupon?.index] = {
-        ...tempProducts.products[coupon?.index],
-        couponDiscount: {
-          discountType: coupon?.type,
+      if (!coupon.normalDiscount && !coupon.finalDiscount) {
+        tempProducts.products[coupon?.index] = {
+          ...tempProducts.products[coupon?.index],
+          couponDiscount: {
+            discountType: coupon?.type,
+            discount: parsedDiscount,
+            couponCode: coupon?.couponCode,
+            normalDiscount: false,
+          },
+        };
+      } else if (coupon.normalDiscount && !coupon.finalDiscount) {
+        tempProducts.products[coupon?.index] = {
+          ...tempProducts.products[coupon?.index],
+          normalDiscount: { discount: parsedDiscount },
+        };
+      } else if (coupon.finalDiscount) {
+        // ✅ Always keep a valid type — even if coupon.type is undefined
+        tempProducts.discount = {
+          type: coupon.type || tempProducts.discount.type || "Percentage",
           discount: parsedDiscount,
-          couponCode: coupon?.couponCode,
-          normalDiscount: false,
-        },
-      };
-    } else if (coupon.normalDiscount && !coupon.finalDiscount) {
-      tempProducts.products[coupon?.index] = {
-        ...tempProducts.products[coupon?.index],
-        normalDiscount: { discount: parsedDiscount },
-      };
-    } else if (coupon.finalDiscount) {
-      // ✅ Always keep a valid type — even if coupon.type is undefined
-      tempProducts.discount = {
-        type: coupon.type || tempProducts.discount.type || "Percentage",
-        discount: parsedDiscount,
-      };
-    }
-  } else {
-    tempProducts.discount = { type: "Percentage", discount: 0 };
-  }
-
-  // Force recalculation and set new reference
-  const recalculated = ProductCalculation(tempProducts, true);
-  setTotalData({ ...recalculated });
-};
-
-
-//  const ProductCalculation = (Data, returnData = false) => {
-//   try {
-//     let tempProducts = { ...Data };
-//     let grandTotal = 0;
-
-//     tempProducts.products = tempProducts.products.map((pro) => {
-//       const qty = parseFloat(pro.qty || 0);
-//       const productPrice = parseFloat(pro.product_Price || 0);
-//       const originalPrice = parseFloat(pro.original_price || 0);
-//       const priceAccessory = parseFloat(pro.price_accessory || 0);
-//       let total = 0;
-
-//       if (pro.selecttype?.toLowerCase() === "as is") {
-//         total = (productPrice || originalPrice) * qty;
-//       } else {
-//         total = (productPrice || originalPrice) * qty + priceAccessory * qty;
-//       }
-
-//       // Discounts
-//       if (pro.couponDiscount?.discount) {
-//         if (pro.couponDiscount.discountType === "Percentage") {
-//           total -= (total * parseFloat(pro.couponDiscount.discount)) / 100;
-//         } else if (pro.couponDiscount.discountType === "Amount") {
-//           total -= parseFloat(pro.couponDiscount.discount) * qty;
-//         }
-//       }
-
-//       if (pro.normalDiscount?.discount) {
-//         total -= (total * parseFloat(pro.normalDiscount.discount)) / 100;
-//       }
-
-//       return {
-//         ...pro,
-//         total: parseFloat(total.toFixed(2)),
-//         tl_amt: parseFloat(total.toFixed(2)),
-//       };
-//     });
-
-//     tempProducts.products.forEach((p) => {
-//       grandTotal += p.total || 0;
-//     });
-
-//     const { type, discount } = tempProducts.discount || {};
-//     let finalAmount = grandTotal;
-
-//     if (type === "Percentage" && discount > 0) {
-//       finalAmount = grandTotal - (grandTotal * discount) / 100;
-//     } else if (type === "Rupees" && discount > 0) {
-//       finalAmount = grandTotal - discount;
-//     }
-
-//     if (finalAmount < 0) finalAmount = 0;
-
-//     tempProducts = {
-//       ...tempProducts,
-//       grandTotal: parseFloat(grandTotal.toFixed(2)),
-//       tl_amt: parseFloat(finalAmount.toFixed(2)),
-//     };
-
-//     if (returnData) return tempProducts; // ✅ Return for use in UpdatingCoupons
-//     else setTotalData({ ...tempProducts });
-//   } catch (error) {
-//     console.error("Error in ProductCalculation:", error);
-//   }
-// };
-const ProductCalculation = (Data, returnData = false) => {
-  try {
-    let tempProducts = { ...Data };
-    let grandTotal = 0;
-
-    // 🧮 Per-product totals
-    tempProducts.products = tempProducts.products.map((pro) => {
-      const qty = parseFloat(pro.qty || 0);
-      const productPrice = parseFloat(pro.product_Price || 0);
-      const originalPrice = parseFloat(pro.original_price || 0);
-      const priceAccessory = parseFloat(pro.price_accessory || 0);
-      let total = 0;
-
-      if (pro.selecttype?.toLowerCase() === "as is") {
-        total = (productPrice || originalPrice) * qty;
-      } else {
-        total = (productPrice || originalPrice) * qty + priceAccessory * qty;
+        };
       }
-
-      // 🎟️ Product-level discounts
-      if (pro.couponDiscount?.discount) {
-        if (pro.couponDiscount.discountType === "Percentage") {
-          total -= (total * parseFloat(pro.couponDiscount.discount)) / 100;
-        } else if (pro.couponDiscount.discountType === "Amount") {
-          total -= parseFloat(pro.couponDiscount.discount) * qty;
-        }
-      }
-
-      if (pro.normalDiscount?.discount) {
-        total -= (total * parseFloat(pro.normalDiscount.discount)) / 100;
-      }
-
-      return {
-        ...pro,
-        total: parseFloat(total.toFixed(2)),
-        tl_amt: parseFloat(total.toFixed(2)),
-      };
-    });
-
-    // 🧮 Grand total
-    tempProducts.products.forEach((p) => {
-      grandTotal += p.total || 0;
-    });
-
-    // 💰 Final discount (percentage or rupee)
-    const { type } = tempProducts.discount || {};
-    let discount = parseFloat(tempProducts.discount?.discount) || 0;
-    let finalAmount = grandTotal;
-
-    if (type === "Percentage" && discount > 0) {
-      finalAmount = grandTotal - (grandTotal * discount) / 100;
-    } else if (type === "Rupees" && discount > 0) {
-      if (discount > grandTotal) discount = grandTotal;
-      finalAmount = grandTotal - discount;
-    }
-
-    if (finalAmount < 0) finalAmount = 0;
-
-    tempProducts = {
-      ...tempProducts,
-      grandTotal: parseFloat(grandTotal.toFixed(2)),
-      tl_amt: parseFloat(finalAmount.toFixed(2)),
-    };
-
-    if (returnData) {
-      return tempProducts;
     } else {
-      setTotalData({ ...tempProducts });
+      tempProducts.discount = { type: "Percentage", discount: 0 };
     }
-  } catch (error) {
-    console.error("Error in ProductCalculation:", error);
-  }
-};
+
+    // Force recalculation and set new reference
+    const recalculated = ProductCalculation(tempProducts, true);
+    setTotalData({ ...recalculated });
+  };
+
+
+  //  const ProductCalculation = (Data, returnData = false) => {
+  //   try {
+  //     let tempProducts = { ...Data };
+  //     let grandTotal = 0;
+
+  //     tempProducts.products = tempProducts.products.map((pro) => {
+  //       const qty = parseFloat(pro.qty || 0);
+  //       const productPrice = parseFloat(pro.product_Price || 0);
+  //       const originalPrice = parseFloat(pro.original_price || 0);
+  //       const priceAccessory = parseFloat(pro.price_accessory || 0);
+  //       let total = 0;
+
+  //       if (pro.selecttype?.toLowerCase() === "as is") {
+  //         total = (productPrice || originalPrice) * qty;
+  //       } else {
+  //         total = (productPrice || originalPrice) * qty + priceAccessory * qty;
+  //       }
+
+  //       // Discounts
+  //       if (pro.couponDiscount?.discount) {
+  //         if (pro.couponDiscount.discountType === "Percentage") {
+  //           total -= (total * parseFloat(pro.couponDiscount.discount)) / 100;
+  //         } else if (pro.couponDiscount.discountType === "Amount") {
+  //           total -= parseFloat(pro.couponDiscount.discount) * qty;
+  //         }
+  //       }
+
+  //       if (pro.normalDiscount?.discount) {
+  //         total -= (total * parseFloat(pro.normalDiscount.discount)) / 100;
+  //       }
+
+  //       return {
+  //         ...pro,
+  //         total: parseFloat(total.toFixed(2)),
+  //         tl_amt: parseFloat(total.toFixed(2)),
+  //       };
+  //     });
+
+  //     tempProducts.products.forEach((p) => {
+  //       grandTotal += p.total || 0;
+  //     });
+
+  //     const { type, discount } = tempProducts.discount || {};
+  //     let finalAmount = grandTotal;
+
+  //     if (type === "Percentage" && discount > 0) {
+  //       finalAmount = grandTotal - (grandTotal * discount) / 100;
+  //     } else if (type === "Rupees" && discount > 0) {
+  //       finalAmount = grandTotal - discount;
+  //     }
+
+  //     if (finalAmount < 0) finalAmount = 0;
+
+  //     tempProducts = {
+  //       ...tempProducts,
+  //       grandTotal: parseFloat(grandTotal.toFixed(2)),
+  //       tl_amt: parseFloat(finalAmount.toFixed(2)),
+  //     };
+
+  //     if (returnData) return tempProducts; // ✅ Return for use in UpdatingCoupons
+  //     else setTotalData({ ...tempProducts });
+  //   } catch (error) {
+  //     console.error("Error in ProductCalculation:", error);
+  //   }
+  // };
+  const ProductCalculation = (Data, returnData = false) => {
+    try {
+      let tempProducts = { ...Data };
+      let grandTotal = 0;
+
+      // 🧮 Per-product totals
+      tempProducts.products = tempProducts.products.map((pro) => {
+        const qty = parseFloat(pro.qty || 0);
+        const productPrice = parseFloat(pro.product_Price || 0);
+        const originalPrice = parseFloat(pro.original_price || 0);
+        const priceAccessory = parseFloat(pro.price_accessory || 0);
+        let total = 0;
+
+        if (pro.selecttype?.toLowerCase() === "as is") {
+          total = (productPrice || originalPrice) * qty;
+        } else {
+          total = (productPrice || originalPrice) * qty + priceAccessory * qty;
+        }
+
+        // 🎟️ Product-level discounts
+        if (pro.couponDiscount?.discount) {
+          if (pro.couponDiscount.discountType === "Percentage") {
+            total -= (total * parseFloat(pro.couponDiscount.discount)) / 100;
+          } else if (pro.couponDiscount.discountType === "Amount") {
+            total -= parseFloat(pro.couponDiscount.discount) * qty;
+          }
+        }
+
+        if (pro.normalDiscount?.discount) {
+          total -= (total * parseFloat(pro.normalDiscount.discount)) / 100;
+        }
+
+        return {
+          ...pro,
+          total: parseFloat(total.toFixed(2)),
+          tl_amt: parseFloat(total.toFixed(2)),
+        };
+      });
+
+      // 🧮 Grand total
+      tempProducts.products.forEach((p) => {
+        grandTotal += p.total || 0;
+      });
+
+      // 💰 Final discount (percentage or rupee)
+      const { type } = tempProducts.discount || {};
+      let discount = parseFloat(tempProducts.discount?.discount) || 0;
+      let finalAmount = grandTotal;
+
+      if (type === "Percentage" && discount > 0) {
+        finalAmount = grandTotal - (grandTotal * discount) / 100;
+      } else if (type === "Rupees" && discount > 0) {
+        if (discount > grandTotal) discount = grandTotal;
+        finalAmount = grandTotal - discount;
+      }
+
+      if (finalAmount < 0) finalAmount = 0;
+
+      tempProducts = {
+        ...tempProducts,
+        grandTotal: parseFloat(grandTotal.toFixed(2)),
+        tl_amt: parseFloat(finalAmount.toFixed(2)),
+      };
+
+      if (returnData) {
+        return tempProducts;
+      } else {
+        setTotalData({ ...tempProducts });
+      }
+    } catch (error) {
+      console.error("Error in ProductCalculation:", error);
+    }
+  };
 
 
   // console.log("TotalData>>>>>", TotalData)
@@ -856,9 +867,96 @@ const ProductCalculation = (Data, returnData = false) => {
             </p>
           </div>
           <div style={{ height: "1rem" }}></div>
+
           <div style={{ display: "flex" }}>
             <div id="New_sales_cus_name">
-              <div style={{ display: "flex", alignItems: "baseline" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <p style={{ textAlign: "start", margin: 0 }}>Customer</p>
+
+                {/* Customer Input */}
+                <div ref={custListRef} style={{ width: "250px", position: "relative" }}>
+                  <input
+                    autoComplete="off"
+                    value={TotalData?.user_name || ""}
+                    onClick={() => setcuslistflse(true)}
+                    onChange={customerFilter}
+                    style={{
+                      textAlign: "start",
+                      paddingLeft: "8px",
+                      width: "100%",
+                      height: "28px",
+                    }}
+                    ref={inpcus}
+                    type="text"
+                    name="name"
+                    id="New_sales_inp1"
+                  />
+
+                  {/* Customer Dropdown */}
+                  {cuslistflse && !location.state?.quoted && (
+                    <div
+                      ref={cusflse}
+                      id="Cart_Cntrl_prdct_list2"
+                      style={{
+                        maxHeight: "300px",
+                        overflowY: "auto",
+                        width: "320px",               // 🔥 Increased width
+                        backgroundColor: "#bbbabaff",
+                        border: "1px solid #ccc",
+                        borderRadius: "6px",
+                        position: "absolute",
+                        zIndex: 999,
+                        boxShadow: "0px 2px 8px rgba(0,0,0,0.15)",
+                      }}
+                    >
+                      <p
+                        style={{
+                          backgroundColor: "#b6e1e0",
+                          cursor: "pointer",
+                          padding: "5px",
+                        }}
+                        onClick={() => navigate("/register_new")}
+                      >
+                        ➕ Add new user
+                      </p>
+
+                      {userdata.map((data) => (
+                        <button
+                          key={data.id}
+                          className="so_custname"
+                          onClick={() => {
+                            setTotalData({
+                              ...TotalData,
+                              user_name: data?.user_name,
+                              customer_id: data?.id,
+                              mobile: data?.mobile,
+                              outstanding_amount: data?.outstanding_amount,
+                            });
+                            setcuslistflse(false);
+                            setprdctflse(false);
+                            setrequired(false);
+                          }}
+                          style={{
+                            display: "block",
+                            textAlign: "left",
+                            width: "100%",
+                            padding: "6px 8px",
+                            border: "none",
+                            backgroundColor: "transparent",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {data.user_name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+             
+              </div>
+
+              {/* <div style={{ display: "flex", alignItems: "baseline" }}>
                 <p style={{ textAlign: "start" }}>Customer</p>
                 &nbsp;
                 <div ref={custListRef} style={{ width: "400px" }}>
@@ -930,7 +1028,39 @@ const ProductCalculation = (Data, returnData = false) => {
                     ""
                   )}
                 </div>
-              </div>
+              </div> */}
+            </div>
+            <div>
+   {/* ✅ Show selected customer info inline */}
+               {TotalData?.mobile && (
+  <div
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "20px",
+      fontSize: "0.9rem",
+      color: "#333",
+      borderLeft: "2px solid #ddd",
+      paddingLeft: "12px",
+      lineHeight: "1.2",
+      marginTop: "2px",
+
+      /* 🔥 NEW: prevent overlap without altering structure */
+      position: "relative",
+      zIndex: 1,             // Keeps it below dropdown visually
+      background: "#fff",    // Optional: to mask dropdown shadow if needed
+    }}
+  >
+    <span>
+      <strong>Mobile:</strong>&nbsp;{TotalData.mobile}
+    </span>
+    <span>
+      <strong>Outstanding Amount:</strong>&nbsp;₹
+      {parseFloat(TotalData.outstanding_amount || 0).toFixed(2)}
+    </span>
+  </div>
+)}
+
             </div>
             <div id="New_sales_attach_icn">
               <AttachmentIcon
@@ -1552,32 +1682,32 @@ const ProductCalculation = (Data, returnData = false) => {
           <div style={{ height: "1rem" }}></div>
 
           <div style={{ width: "97%", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-  {/* ✅ Remarks textarea on left */}
-<div style={{ flex: "0 0 300px", marginRight: "20px" }}>
-  <p>Remarks</p>
-  <textarea
-    value={TotalData?.remarks || ""}  // ✅ shows value from TotalData
-    onChange={(e) =>
-      setTotalData({
-        ...TotalData,
-        remarks: e.target.value,       // ✅ updates TotalData dynamically
-      })
-    }
-    placeholder="Enter remarks..."
-    rows="3"
-    style={{
-      width: "100%",
-      padding: "6px",
-      borderRadius: "6px",
-      border: "1px solid #ccc",
-      resize: "vertical",
-      fontSize: "0.85rem",
-    }}
-  />
-</div>
+            {/* ✅ Remarks textarea on left */}
+            <div style={{ flex: "0 0 300px", marginRight: "20px" }}>
+              <p>Remarks</p>
+              <textarea
+                value={TotalData?.remarks || ""}  // ✅ shows value from TotalData
+                onChange={(e) =>
+                  setTotalData({
+                    ...TotalData,
+                    remarks: e.target.value,       // ✅ updates TotalData dynamically
+                  })
+                }
+                placeholder="Enter remarks..."
+                rows="3"
+                style={{
+                  width: "100%",
+                  padding: "6px",
+                  borderRadius: "6px",
+                  border: "1px solid #ccc",
+                  resize: "vertical",
+                  fontSize: "0.85rem",
+                }}
+              />
+            </div>
 
-  {/* ✅ Grand total + discount section on right */}
-  <div style={{ display: "flex" }}>
+            {/* ✅ Grand total + discount section on right */}
+            <div style={{ display: "flex" }}>
 
               <div>
                 <p>Grand Total </p>
@@ -1726,10 +1856,10 @@ const ProductCalculation = (Data, returnData = false) => {
                     </select>
                   ) : (
                     <p>
-  {TotalData?.discount?.type === "Rupees"
-    ? `₹${TotalData?.discount?.discount || 0}`
-    : `${TotalData?.discount?.discount || 0}%`}
-</p>
+                      {TotalData?.discount?.type === "Rupees"
+                        ? `₹${TotalData?.discount?.discount || 0}`
+                        : `${TotalData?.discount?.discount || 0}%`}
+                    </p>
 
                   )}
                 </div>
@@ -1767,13 +1897,13 @@ const ProductCalculation = (Data, returnData = false) => {
                         }
                       }}
 
-                    style={{
-                      width: "100px",
-                      padding: "4px 6px",
-                      borderRadius: "5px",
-                      border: "1px solid #ccc",
-                    }}
-      />
+                      style={{
+                        width: "100px",
+                        padding: "4px 6px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                      }}
+                    />
                   </div>
                 )}
 
@@ -1896,9 +2026,9 @@ const ProductCalculation = (Data, returnData = false) => {
                       Confirm
                     </div>
                   </button>
-                  <div style={{marginLeft:'10px'}}>
+                  <div style={{ marginLeft: '10px' }}>
 
-                  <InvoicePrint TotalData={TotalData} />
+                    <InvoicePrint TotalData={TotalData} />
                   </div>
 
                 </>

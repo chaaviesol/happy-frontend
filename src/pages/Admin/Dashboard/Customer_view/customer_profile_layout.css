@@ -1,0 +1,113 @@
+#cp_tab_container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#cp_tab_inner {
+  width: 100%;
+}
+
+#cp_tab_flex {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+/* Left Column */
+.cp_left_column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Right Column */
+.cp_right_column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Inner Boxes */
+.cp_box {
+  width: 100%;
+  padding: 15px;
+  background-color: rgba(30, 169, 123, 0.1);
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.cp_box_bottom {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.cp_box_address {
+  background-color: rgba(30, 169, 123, 0.1);
+}
+
+/* Form Rows */
+.cp_form_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cp_label {
+  width: 35%;
+  font-weight: 600;
+}
+
+.cp_text {
+  width: 60%;
+}
+
+.cp_input {
+  width: 60%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Checkbox */
+.cp_checkbox_group {
+  display: flex;
+  gap: 10px;
+}
+
+.cp_checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Buttons */
+.cp_button_row {
+  margin-top: 10px;
+  display: flex;
+}
+
+.cp_btn_edit {
+  margin-left: 0;
+  padding: 5px 15px;
+  background-color: #234567;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cp_confirm_row {
+  justify-content: flex-end;
+}
+
+.cp_btn_confirm {
+  padding: 5px 15px;
+  background-color: #1ea97b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

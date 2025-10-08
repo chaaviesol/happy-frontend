@@ -135,10 +135,36 @@ function InvoicePrint({ TotalData }) {
           <h2>ESTIMATE</h2>
         </div>
 
-        <div className="header">
-          <p><b>Customer Name:</b> {TotalData?.user_name || "Customer"}</p>
-          <p><b>Date:</b> {new Date().toLocaleDateString()}</p>
+        <div
+          className="header"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            fontSize: "14px",
+          }}
+        >
+          {/* LEFT SIDE: Customer & Mobile */}
+          <div style={{ textAlign: "left" }}>
+            <p><b>Customer Name:</b> {TotalData?.user_name || "Customer"}</p>
+            {TotalData?.mobile && (
+              <p><b>Mobile:</b> {TotalData.mobile}</p>
+            )}
+          </div>
+
+          {/* RIGHT SIDE: Outstanding & Date */}
+          <div style={{ textAlign: "right" }}>
+            {TotalData?.outstanding_amount && (
+              <p>
+                <b>Outstanding Amount:</b>{" "}
+                ₹{parseFloat(TotalData.outstanding_amount || 0).toFixed(2)}
+              </p>
+            )}
+            <p><b>Date:</b> {new Date().toLocaleDateString()}</p>
+          </div>
         </div>
+
+
 
         <table>
           <thead>

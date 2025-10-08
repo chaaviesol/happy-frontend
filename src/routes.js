@@ -63,6 +63,7 @@ import { CreateCampaign } from "./pages/Admin/Campaign/CreateCampaign";
 import OffersaleMain from "./pages/Customer/Cus_products/OffersaleMain";
 import { SettleWrapper } from "./pages/Admin/Profit/SettleWrapper";
 import { CreateWrapper } from "./pages/Admin/Profit/CreateWrapper";
+import CustomerProfileWrapper from "./pages/Admin/Dashboard/Customer_view/Customer_wrapper";
 
 export const publicRoutes = [
   { path: "/", element: <Home /> },
@@ -95,7 +96,7 @@ export const privateRoutes = [
   { path: "supplierlist", element: <Supplierlist_wrapper /> },
   { path: "supp", element: <Supdetails /> },
   { path: "customerlist", element: <Customerlist /> },
-  { path: "customerdetails", element: <CustomerDetails /> },
+  { path: "customerdetails", element: <CustomerProfileWrapper /> },
   { path: "suppcomponent", element: <Suppcomponent /> },
   { path: "transaction", element: <Transaction /> },
   { path: "service", element: <Service /> },
