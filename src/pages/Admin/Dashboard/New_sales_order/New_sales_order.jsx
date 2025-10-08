@@ -16,6 +16,7 @@ import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import { axiosPrivate } from "../../../../api/axios";
 import useDivBoxCloser from "../../../../hooks/useDivBoxCloser";
 import BarcodeListener from "../../../../components/Suppliercomponent/BarcodeListener";
+import InvoicePrint from "./InvoicePrint";
 export default function New_sales_order() {
   const location = useLocation();
   const [prdctflse, setprdctflse] = useState(false);
@@ -91,6 +92,9 @@ export default function New_sales_order() {
       setproducts(res.data.data);
     });
   }, []);
+
+console.log("aa userdata",userdata);
+
 
   const inponchange = (e, index) => {
     const value = e.target.value;
@@ -1892,6 +1896,11 @@ const ProductCalculation = (Data, returnData = false) => {
                       Confirm
                     </div>
                   </button>
+                  <div style={{marginLeft:'10px'}}>
+
+                  <InvoicePrint TotalData={TotalData} />
+                  </div>
+
                 </>
               ) : (
                 <>

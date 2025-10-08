@@ -612,3 +612,26 @@ tr td {
 .new_sales_fontfamily {
   font-family: 'fangsong';
 }
+
+#Cart_Cntrl_las_btnsX1 {
+  background-color: #600da9;
+  border: none;
+  color: aliceblue;
+  border-radius: 10px;
+  width: 170px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* 🔒 Disabled state */
+#Cart_Cntrl_las_btnsX1:disabled {
+  background-color: #a877e9;  /* lighter purple/grey shade */
+  color: #f08b8b;
+  cursor: not-allowed;       /* 🚫 cursor */
+  opacity: 0.6;              /* visually faded */
+}
