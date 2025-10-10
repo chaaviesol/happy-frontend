@@ -63,6 +63,7 @@ export default function Products({ prodData, productType }) {
     subcategory: "",
     brand: "",
     product_code: "",
+    assign_code: "",
   });
   const supplierInputRef = useRef(null);
   const categoryInputRef = useRef(null);
@@ -1095,6 +1096,20 @@ export default function Products({ prodData, productType }) {
                       <InputComponent
                         handleInputChange={formData}
                         name="product_code"
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group row">
+                    <label
+                      htmlFor="Assign Code"
+                      className="col-sm-5 col-form-label"
+                    >
+                      Assign Code
+                    </label>
+                    <div className="col-sm-5">
+                      <InputComponent
+                        handleInputChange={formData}
+                        name="assign_code"
                       />
                     </div>
                   </div>
