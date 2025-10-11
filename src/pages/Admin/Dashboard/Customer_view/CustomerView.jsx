@@ -30,9 +30,12 @@ export default function CustomerView() {
   const { customerlist, setcustomerlist } = useContext(MyContext);
   const [select, setSelect] = useState("");
   const cellStyle = {
-    fontSize: "13px",
-    textAlign:"left"
-  };
+  fontSize: "13px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+};
   const axiosPrivate=useAxiosPrivate()
   const defaultColDef = useMemo(
     () => ({

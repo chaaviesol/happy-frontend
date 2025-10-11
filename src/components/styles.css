@@ -257,11 +257,11 @@
   margin: 5px 00px;
 }
 /* App.css */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(184,138,68); /* gold color */
+  background-color: rgb(184,138,68); 
   border-radius: 4px;
-}
+} */

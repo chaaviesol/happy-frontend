@@ -5,6 +5,7 @@ import {
   Button,
   IconButton,
   TextField,
+  MenuItem ,
   FormHelperText,
 } from "@mui/material";
 import { React, useEffect, useState } from "react";
@@ -42,6 +43,7 @@ export default function Register() {
     website: false,
     address: false,
     password: false,
+     prod_type: false,
   });
   const navigate = useNavigate();
   const theme = createTheme({
@@ -163,6 +165,9 @@ export default function Register() {
     console.log(data);
     event.preventDefault();
     setentertrue(true);
+   // Check if product type is selected
+const productTypeSelected = data.prod_type && Object.keys(data.prod_type).length > 0;
+setreq_check((prev) => ({ ...prev, prod_type: !productTypeSelected }));
 
     // if (!checkinput_address.current?.value) {
     //   setreq_check((previous) => ({ ...previous, address: true }));
@@ -240,9 +245,10 @@ export default function Register() {
       // !req_check.mob &&
       !req_check.name &&
       // !req_check.pin &&
-      !req_check.state 
+      !req_check.state &&
       // !req_check.trade &&
       // !req_check.website
+      productTypeSelected
     ) {
       try {
         // const EmailValidationResponse = await validateEmail(data.email);
@@ -357,6 +363,67 @@ export default function Register() {
 
   console.log({ req_check });
   console.log({ data });
+
+// State district dropdowns
+const [keralaSelected, setKeralaSelected] = useState(false);
+
+const indianStates = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Lakshadweep",
+  "Puducherry",
+];
+
+const keralaDistricts = [
+  "Thiruvananthapuram",
+  "Kollam",
+  "Pathanamthitta",
+  "Alappuzha",
+  "Kottayam",
+  "Idukki",
+  "Ernakulam",
+  "Thrissur",
+  "Palakkad",
+  "Malappuram",
+  "Kozhikode",
+  "Wayanad",
+  "Kannur",
+  "Kasaragod",
+];
+
+
 
   return (
     <>
@@ -698,7 +765,106 @@ export default function Register() {
                 </FormHelperText> */}
               </div>
               <br />
-              <div className="admn_reg_inputBox">
+              {/* ---------- STATE DROPDOWN ---------- */}
+<div className="admn_reg_inputBox">
+  <ThemeProvider theme={theme}>
+    <TextField
+      select
+      inputRef={checkinput_state}
+      name="state"
+      label="State"
+      variant="outlined"
+      required
+      value={addressObj.state || ""}
+      onChange={(e) => {
+        handleAddress(e);
+        const selectedState = e.target.value;
+        setAddressobj({ ...addressObj, state: selectedState });
+        if (selectedState === "Kerala") {
+          setKeralaSelected(true);
+        } else {
+          setKeralaSelected(false);
+          setAddressobj((prev) => ({ ...prev, district: "" }));
+        }
+      }}
+      sx={{ width: "100%", height: "55px" }}
+      SelectProps={{
+        displayEmpty: true, // 👈 ensures placeholder appears
+      }}
+    >
+      <MenuItem value="" disabled>
+        <em>Select State</em>
+      </MenuItem>
+      {indianStates.map((state) => (
+        <MenuItem key={state} value={state}>
+          {state}
+        </MenuItem>
+      ))}
+    </TextField>
+  </ThemeProvider>
+  <FormHelperText sx={{ position: "absolute", color: "red" }}>
+    {req_check.state && "required * "}
+  </FormHelperText>
+</div>
+
+<br />
+
+{/* ---------- DISTRICT FIELD (conditional) ---------- */}
+{keralaSelected ? (
+  <div className="admn_reg_inputBox">
+    <ThemeProvider theme={theme}>
+      <TextField
+        select
+        inputRef={checkinput_dis}
+        name="district"
+        label="District"
+        variant="outlined"
+        required
+        value={addressObj.district || ""}
+        onChange={handleAddress}
+        sx={{ width: "100%", height: "55px" }}
+        SelectProps={{
+          displayEmpty: true,
+        }}
+      >
+        <MenuItem value="" disabled>
+          <em>Select District</em>
+        </MenuItem>
+        {keralaDistricts.map((dist) => (
+          <MenuItem key={dist} value={dist}>
+            {dist}
+          </MenuItem>
+        ))}
+      </TextField>
+    </ThemeProvider>
+    <FormHelperText sx={{ position: "absolute", color: "red" }}>
+      {req_check.dis && "required"}
+    </FormHelperText>
+  </div>
+) : (
+  <div className="admn_reg_inputBox">
+    <ThemeProvider theme={theme}>
+      <TextField
+        inputRef={checkinput_dis}
+        onChange={handleAddress}
+        name="district"
+        type="text"
+        placeholder=""
+        id="outlined-basghic"
+        label="District"
+        variant="outlined"
+        required
+        sx={{ width: "100%", height: "55px" }}
+      />
+    </ThemeProvider>
+    <FormHelperText sx={{ position: "absolute", color: "red" }}>
+      {req_check.dis && "required"}
+    </FormHelperText>
+  </div>
+)}
+
+
+              {/* <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
                   <TextField
                     inputRef={checkinput_dis}
@@ -747,7 +913,7 @@ export default function Register() {
                 >
                   {req_check.state && "required * "}
                 </FormHelperText>
-              </div>
+              </div> */}
               <br />
               <div className="admn_reg_inputBox">
                 {" "}
@@ -803,11 +969,16 @@ export default function Register() {
               </div>
               <br />
               <div
-                style={{ display: "flex" }}
+                style={{ display: "flex",
+                   flexDirection: "column",
+    alignItems: "flex-start",
+    position: "relative", 
+    marginBottom: "16px",
+                 }}
                 className="form-group row registration-form__checkboxes"
               >
                 <span>
-                  {/* <b style={{ color: "red" }}>*</b> */}
+                  <b style={{ color: "red" }}>*</b>
                   Product Types
                 </span>
                 <br />
@@ -822,7 +993,7 @@ export default function Register() {
                       <Checkbox
                         label="Bikes"
                         name="bikes"
-                        color="success"
+                        // color="success"
                         onChange={handleCheckboxChange}
                       />
                     }
@@ -837,7 +1008,7 @@ export default function Register() {
                     control={
                       <Checkbox
                         name="toys"
-                        color="success"
+                        // color="success"
                         onChange={handleCheckboxChange}
                       />
                     }
@@ -849,7 +1020,7 @@ export default function Register() {
                     control={
                       <Checkbox
                         name="baby"
-                        color="success"
+                        // color="success"
                         // defaultChecked
                         onChange={handleCheckboxChange}
                       />
@@ -857,6 +1028,17 @@ export default function Register() {
                     label="Baby"
                     labelPlacement="start"
                   />
+                          <FormHelperText
+                  sx={{
+                    marginTop:'36px',
+                    
+                    position: "absolute",
+                    color: "red",
+                    left: "10px",
+                  }}
+                >
+                  {req_check.prod_type && "required"}
+                </FormHelperText>
                 </div>
               </div>
               <br />

@@ -6,6 +6,7 @@ import {
   IconButton,
   TextField,
   FormHelperText,
+  MenuItem,
   InputLabel,
 } from "@mui/material";
 import { React, useCallback, useEffect, useState } from "react";
@@ -50,6 +51,8 @@ export default function Supplier_reg() {
     website: false,
     address: false,
     password: false,
+    prod_type: false,
+
   });
   const [validationErrors, setValidationErrors] = useState({ email: false, mob: false })
   const toastConfig = {
@@ -243,17 +246,21 @@ export default function Supplier_reg() {
   };
   const handleFormSubmit = async (event) => {
     validateInputs();
+    // Check if product type is selected
+    const productTypeSelected = data.prod_type && Object.keys(data.prod_type).length > 0;
+    setreq_check((prev) => ({ ...prev, prod_type: !productTypeSelected }));
+
     if (
-    //   Object.values(req_check).every((value) => !value) &&
-    //   Object.values(data).every((value) => value != "")
-    // ) 
+      //   Object.values(req_check).every((value) => !value) &&
+      //   Object.values(data).every((value) => value != "")
+      // ) 
       Object.values(req_check).every((value) => !value) &&
-    data.name !==""&&
-    data.mob !==""&&
-    data.dis !==""&&
-    data.state!==""
-  )
-    {
+      data.name !== "" &&
+      data.mob !== "" &&
+      data.dis !== "" &&
+      data.state !== "" &&
+      productTypeSelected
+    ) {
 
       // const [isMobileValid, isEmailValid] = await Promise.all([
       //   validateMob(data.mob), validateEmail(data.email)
@@ -267,10 +274,10 @@ export default function Supplier_reg() {
       // if (!isMobileValid) {
       //   return;
       // }
-       const isMobileValid = await validateMob(data.mob);
-    setValidationErrors({ mob: !isMobileValid });
+      const isMobileValid = await validateMob(data.mob);
+      setValidationErrors({ mob: !isMobileValid });
 
-    if (!isMobileValid) return;
+      if (!isMobileValid) return;
 
 
       try {
@@ -294,6 +301,67 @@ export default function Supplier_reg() {
   console.log({ req_check });
   console.log({ validationErrors });
   console.log({ data });
+
+  // State district dropdowns
+  const [keralaSelected, setKeralaSelected] = useState(false);
+
+  const indianStates = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Andaman and Nicobar Islands",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi",
+    "Jammu and Kashmir",
+    "Ladakh",
+    "Lakshadweep",
+    "Puducherry",
+  ];
+
+  const keralaDistricts = [
+    "Thiruvananthapuram",
+    "Kollam",
+    "Pathanamthitta",
+    "Alappuzha",
+    "Kottayam",
+    "Idukki",
+    "Ernakulam",
+    "Thrissur",
+    "Palakkad",
+    "Malappuram",
+    "Kozhikode",
+    "Wayanad",
+    "Kannur",
+    "Kasaragod",
+  ];
+
+
 
 
   return (
@@ -442,34 +510,34 @@ export default function Supplier_reg() {
               </div>
               <br />
               <div className="admn_reg_inputBox">
-  <ThemeProvider theme={theme}>
-    <TextField
-      inputRef={checkinput_email}
-      onChange={handleInputChange}
-      name="email"
-      type="email"
-      placeholder=""
-      id="outlined-basic5"
-      label="Email"
-      variant="outlined"
-      // required
-      sx={{ width: "100%", height: "55px" }}
-    />
-  </ThemeProvider>
+                <ThemeProvider theme={theme}>
+                  <TextField
+                    inputRef={checkinput_email}
+                    onChange={handleInputChange}
+                    name="email"
+                    type="email"
+                    placeholder=""
+                    id="outlined-basic5"
+                    label="Email"
+                    variant="outlined"
+                    // required
+                    sx={{ width: "100%", height: "55px" }}
+                  />
+                </ThemeProvider>
 
-  {/* Show only format validation */}
-  {validationErrors.email && (
-    <FormHelperText
-      sx={{
-        position: "absolute",
-        color: "red",
-        left: "10px",
-      }}
-    >
-      format error
-    </FormHelperText>
-  )}
-</div>
+                {/* Show only format validation */}
+                {validationErrors.email && (
+                  <FormHelperText
+                    sx={{
+                      position: "absolute",
+                      color: "red",
+                      left: "10px",
+                    }}
+                  >
+                    format error
+                  </FormHelperText>
+                )}
+              </div>
 
               {/* <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
@@ -610,54 +678,100 @@ export default function Supplier_reg() {
               <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
                   <TextField
-                    inputRef={checkinput_dis}
-                    onChange={(e) => handleAddress(e, "dis")}
-                    name="district"
-                    type="text"
-                    placeholder=""
-                    id="outlined-basic10"
-                    label="District"
-                    variant="outlined"
-                    required={true}
-                    sx={{ width: "100%", height: "55px" }}
-                  />
-                </ThemeProvider>
-                <FormHelperText
-                  sx={{
-                    position: "absolute",
-                    color: "red", left: "10px"
-                  }}
-                >
-                  {req_check.dis && "required"}
-                </FormHelperText>
-              </div>
-              <br />
-
-              <div className="admn_reg_inputBox">
-                <ThemeProvider theme={theme}>
-                  <TextField
+                    select
                     inputRef={checkinput_state}
-                    onChange={(e) => handleAddress(e, "state")}
                     name="state"
-                    type="text"
-                    placeholder=""
-                    id="outlined-basic11"
                     label="State"
                     variant="outlined"
-                    required={true}
+                    required
+                    value={addressObj.state || ""}
+                    onChange={(e) => {
+                      handleAddress(e);
+                      const selectedState = e.target.value;
+                      setAddressobj({ ...addressObj, state: selectedState });
+                      if (selectedState === "Kerala") {
+                        setKeralaSelected(true);
+                      } else {
+                        setKeralaSelected(false);
+                        setAddressobj((prev) => ({ ...prev, district: "" }));
+                      }
+                    }}
                     sx={{ width: "100%", height: "55px" }}
-                  />
+                    SelectProps={{
+                      displayEmpty: true, // 👈 ensures placeholder appears
+                    }}
+                  >
+                    <MenuItem value="" disabled>
+                      <em>Select State</em>
+                    </MenuItem>
+                    {indianStates.map((state) => (
+                      <MenuItem key={state} value={state}>
+                        {state}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </ThemeProvider>
-
-                <FormHelperText
-                  sx={{
-                    position: "absolute",
-                    color: "red", left: "10px"
-                  }}
-                >
-                  {req_check.state && "required"}
+                <FormHelperText sx={{ position: "absolute", color: "red" }}>
+                  {req_check.state && "required * "}
                 </FormHelperText>
               </div>
+
+              <br />
+
+              {/* ---------- DISTRICT FIELD (conditional) ---------- */}
+              {keralaSelected ? (
+                <div className="admn_reg_inputBox">
+                  <ThemeProvider theme={theme}>
+                    <TextField
+                      select
+                      inputRef={checkinput_dis}
+                      name="district"
+                      label="District"
+                      variant="outlined"
+                      required
+                      value={addressObj.district || ""}
+                      onChange={handleAddress}
+                      sx={{ width: "100%", height: "55px" }}
+                      SelectProps={{
+                        displayEmpty: true,
+                      }}
+                    >
+                      <MenuItem value="" disabled>
+                        <em>Select District</em>
+                      </MenuItem>
+                      {keralaDistricts.map((dist) => (
+                        <MenuItem key={dist} value={dist}>
+                          {dist}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </ThemeProvider>
+                  <FormHelperText sx={{ position: "absolute", color: "red" }}>
+                    {req_check.dis && "required"}
+                  </FormHelperText>
+                </div>
+              ) : (
+                <div className="admn_reg_inputBox">
+                  <ThemeProvider theme={theme}>
+                    <TextField
+                      inputRef={checkinput_dis}
+                      onChange={handleAddress}
+                      name="district"
+                      type="text"
+                      placeholder=""
+                      id="outlined-basghic"
+                      label="District"
+                      variant="outlined"
+                      required
+                      sx={{ width: "100%", height: "55px" }}
+                    />
+                  </ThemeProvider>
+                  <FormHelperText sx={{ position: "absolute", color: "red" }}>
+                    {req_check.dis && "required"}
+                  </FormHelperText>
+                </div>
+              )}
+
               <br />
               <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
@@ -710,11 +824,17 @@ export default function Supplier_reg() {
               </div>
               <br />
               <div
-                style={{ display: "flex" }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  position: "relative",
+                  marginBottom: "16px",
+                }}
                 className="form-group row registration-form__checkboxes"
               >
                 <span>
-                  {/* <b style={{ color: "red" }}>*</b> */}
+                  <b style={{ color: "red" }}>*</b>
                   Product Types
                 </span>
                 <br />
@@ -729,7 +849,7 @@ export default function Supplier_reg() {
                       <Checkbox
                         label="Bikes"
                         name="bikes"
-                        color="success"
+                        // color="success"
                         onChange={handleCheckboxChange}
                       />
                     }
@@ -744,7 +864,7 @@ export default function Supplier_reg() {
                     control={
                       <Checkbox
                         name="toys"
-                        color="success"
+                        // color="success"
                         onChange={handleCheckboxChange}
                       />
                     }
@@ -756,7 +876,7 @@ export default function Supplier_reg() {
                     control={
                       <Checkbox
                         name="baby"
-                        color="success"
+                        // color="success"
                         // defaultChecked
                         onChange={handleCheckboxChange}
                       />
@@ -765,6 +885,17 @@ export default function Supplier_reg() {
                     labelPlacement="start"
                   />
                 </div>
+                <FormHelperText
+                  sx={{
+                    marginTop: "90px",
+                    position: "absolute",
+                    color: "red",
+                    left: "10px",
+                  }}
+                >
+                  {req_check.prod_type && "required"}
+                </FormHelperText>
+
               </div>
               <br />
             </div>

@@ -33,43 +33,83 @@ export default function TransactionTab({ userId, userType }) {
     fetchTransactions();
   }, [userId, userType]);
 
-  if (loading) return <div style={{ padding: "2rem" }}>Loading transactions...</div>;
-  if (!transactions.length) return <div style={{ padding: "2rem" }}>No transactions found.</div>;
+  // ✅ format date as dd-mm-yyyy
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  // ✅ format currency with ₹, commas, and 2 decimals
+  const formatCurrency = (amount) => {
+    if (amount == null || isNaN(amount)) return "₹0.00";
+    return (
+      // "₹" +
+      Number(amount).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    );
+  };
+
+  if (loading)
+    return <div style={{ padding: "2rem" }}>Loading transactions...</div>;
+  if (!transactions.length)
+    return <div style={{ padding: "2rem" }}>No transactions found.</div>;
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h4>Transaction History</h4>
-      <table className="table table-bordered">
+      <h4 style={{ marginBottom: "1rem" }}>Transaction History</h4>
+      <table className="table table-bordered" style={{ fontSize: "0.95rem" }}>
         <thead>
           <tr>
             <th>Order Number</th>
             <th>Date</th>
-            <th>Total Amount</th>
-            <th>Paid Amount</th>
-            <th>Outstanding Amount</th>
+            <th>Total Amount (₹)</th>
+            <th>Paid Amount (₹)</th>
+            <th>Outstanding Amount (₹)</th>
             <th>Payment Details</th>
           </tr>
         </thead>
         <tbody>
           {transactions.map((txn, index) => {
-            const paidAmount = txn.payments?.reduce((sum, p) => sum + (p.payment_amount || 0), 0);
+            const paidAmount = txn.payments?.reduce(
+              (sum, p) => sum + (p.payment_amount || 0),
+              0
+            );
             const outstanding = txn.total_amount - paidAmount;
             return (
               <tr key={index}>
                 <td>{txn.order_number}</td>
-                <td>{new Date(txn.order_date).toLocaleDateString()}</td>
-                <td>{txn.total_amount}</td>
-                <td>{paidAmount}</td>
-                <td>{outstanding}</td>
+                <td>{formatDate(txn.order_date)}</td>
+                <td>{formatCurrency(txn.total_amount)}</td>
+                <td>{formatCurrency(paidAmount)}</td>
+
+                {/* ✅ Highlight Outstanding */}
+                <td
+                  style={{
+                    color: outstanding > 0 ? "red" : "green",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {outstanding > 0
+                    ? formatCurrency(outstanding)
+                    : "0"}
+                </td>
+
                 <td>
                   {txn.payments?.length ? (
-                    <ul>
+                    <div style={{ lineHeight: "1.6" }}>
                       {txn.payments.map((p, i) => (
-                        <li key={i}>
-                          {p.payment_date ? new Date(p.payment_date).toLocaleDateString() : "-"} : {p.payment_amount}
-                        </li>
+                        <div key={i}>
+                          {formatDate(p.payment_date)} :{" "}
+                          {formatCurrency(p.payment_amount)}
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   ) : (
                     "No payments"
                   )}
