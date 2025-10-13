@@ -298,7 +298,7 @@ export default function InventoryAg({ onOpenModal }) {
           <img src="${barcodeBase64}" style="max-height:12mm;" />
         </div>
         <div style="font-size:9px;margin-top:2px;">
-          ${barcode_text}
+          ${barcode_text}  ${product_master.assign_code || ""}
         </div>
       `;
 
