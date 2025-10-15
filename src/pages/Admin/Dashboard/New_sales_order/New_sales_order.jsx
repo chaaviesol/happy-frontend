@@ -2644,7 +2644,7 @@ export default function New_sales_order() {
         </div>
       </Modal>
       <BarcodeListener onScan={handleScan} />
-      {/* <input
+      <input
         type="text"
         placeholder="Enter barcode manually"
         onKeyDown={(e) => {
@@ -2653,7 +2653,7 @@ export default function New_sales_order() {
             e.target.value = ""; // clear input after scan
           }
         }}
-      /> */}
+      />
 
     </>
 

@@ -21,6 +21,7 @@ import Newtopbar_ from "../../../../components/admin components/Newtopbar_";
 import useAuth from "../../../../hooks/useAuth";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import { ButtonComp } from "../../../../components/ButtonComponent/ButtonComp";
+import CustomHeaderFilter from "../../../../components/CustomHeaderFilter";
 export default function Prodlist() {
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const [loading, setLoading] = useState(false);
@@ -333,10 +334,16 @@ export default function Prodlist() {
   ]);
 
 
-  const defaultColDef = useMemo(() => ({
+const defaultColDef = useMemo(
+  () => ({
     sortable: true,
-    filter: true,
-  }));
+    filter: "agTextColumnFilter",
+    resizable: true,
+    headerComponent: CustomHeaderFilter,
+  }),
+  []
+);
+
 
 
   const navigate = useNavigate();
@@ -488,6 +495,8 @@ export default function Prodlist() {
                 // textAlign:"left"
               }}
             >
+    
+
               <AgGridReact
                 ref={gridRef} // Ref for accessing Grid's API
                 rowData={rowData} // Row Data for Rows

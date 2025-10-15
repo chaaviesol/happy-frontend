@@ -26,6 +26,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import ButtonComponent from "./ButtonComponent/ButtonComponent";
 import { ButtonComp } from "./ButtonComponent/ButtonComp";
 import Modal from "./modal";
+import CustomHeaderFilter from "./CustomHeaderFilter";
 
 export default function InventoryAg({ onOpenModal }) {
   const [rowData, setRowData] = useState([]);
@@ -40,6 +41,7 @@ export default function InventoryAg({ onOpenModal }) {
   const [columnDefs, setColumnDefs] = useState([
     {
       flex: 2,
+      minWidth: 200,
       field: "product_master.product_name",
       headerName: "Product Name",
       headerClass: "center-align-header",
@@ -56,6 +58,7 @@ export default function InventoryAg({ onOpenModal }) {
     },
     {
       flex: 1,
+      minWidth: 150,
       field: "product_master.color",
       headerName: "Color",
       headerClass: "center-align-header",
@@ -90,6 +93,7 @@ export default function InventoryAg({ onOpenModal }) {
             <div
               style={{
                 display: "flex",
+                
                 justifyContent: "center",
                 alignItems: "center",
                 gap: "0.5rem",
@@ -109,6 +113,7 @@ export default function InventoryAg({ onOpenModal }) {
     },
     {
       flex: 1,
+      minWidth: 150,
       field: "product_master.brand.brand_name",
       headerName: "Brand",
       headerClass: "center-align-header",
@@ -125,6 +130,7 @@ export default function InventoryAg({ onOpenModal }) {
     },
     {
       flex: 1,
+      minWidth: 150,
       field: "product_master.product_type",
       headerName: "Type",
       headerClass: "center-align-header",
@@ -143,6 +149,7 @@ export default function InventoryAg({ onOpenModal }) {
     {
       flex: 1,
       field: "batch_id",
+      minWidth: 150,
       headerName: "Batch",
       cellStyle: (params) => {
         return {
@@ -160,6 +167,7 @@ export default function InventoryAg({ onOpenModal }) {
     {
       flex: 1,
       field: "total_quantity",
+      minWidth: 150,
       headerName: "Total Qty",
       headerClass: "center-align-header",
       cellStyle: (params) => {
@@ -176,6 +184,7 @@ export default function InventoryAg({ onOpenModal }) {
     {
       flex: 1,
       field: "blocked_quantity",
+      minWidth: 150,
       headerName: "Blocked Qty",
       headerClass: "center-align-header",
       cellStyle: (params) => {
@@ -192,6 +201,7 @@ export default function InventoryAg({ onOpenModal }) {
     {
       flex: 1,
       field: "mrp",
+      minWidth: 150,
       headerName: "Selling Price",
       headerClass: "center-align-header",
       cellStyle: (params) => {
@@ -208,6 +218,7 @@ export default function InventoryAg({ onOpenModal }) {
     {
       flex: 1,
       field: "barcode",
+      minWidth: 150,
       headerName: "Barcode",
       autoHeight: true,
       width: 300,      // default width for barcode column
@@ -497,6 +508,7 @@ export default function InventoryAg({ onOpenModal }) {
     {
       flex: 1,
       field: "status",
+      minWidth: 150,
       headerName: "Stock status",
       headerClass: "center-align-header",
       cellStyle,
@@ -553,6 +565,13 @@ export default function InventoryAg({ onOpenModal }) {
   const defaultColDef = useMemo(() => ({
     sortable: true,
     filter: true,
+    headerComponent: CustomHeaderFilter,
+  //     cellStyle: {
+  //   display: "flex",
+  //   justifyContent: "center", // horizontal center
+  //   alignItems: "center",     // vertical center
+  //   textAlign: "center",      // fallback for text
+  // },
   }));
 
   //consuming
@@ -660,6 +679,8 @@ export default function InventoryAg({ onOpenModal }) {
             height: 500,
             border: "1px solid #A6C991",
             fontSize: "13px",
+            overflowX: "auto",
+            
           }}
         >
           <AgGridReact
