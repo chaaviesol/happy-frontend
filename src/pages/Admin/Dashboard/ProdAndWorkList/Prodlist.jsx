@@ -487,10 +487,10 @@ const defaultColDef = useMemo(
               style={{
                 backgroundColor: "green",
                 width: "100%",
-                height: 500,
+                height: 490,
                 border: "1px solid #A6C991",
                 fontSize: "13px",
-                marginTop: "5%",
+                marginTop: "10px",
                 // color:"white",
                 // textAlign:"left"
               }}

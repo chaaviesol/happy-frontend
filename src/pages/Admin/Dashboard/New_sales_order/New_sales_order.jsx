@@ -840,6 +840,34 @@ export default function New_sales_order() {
 
 
 
+  // 🧩 Return discount object instead of updating state directly
+  const applyGradeDiscount = (customer) => {
+    let discountValue = 0;
+    if (customer?.grade === "A") discountValue = 5;
+    else if (customer?.grade === "B") discountValue = 2;
+    else discountValue = 0;
+
+    const discountObject = {
+      type: "Percentage",
+      discount: discountValue,
+      finalDiscount: true,
+    };
+
+    setManualDiscount("");
+    UpdatingCoupons(discountObject);
+
+    if (discountValue > 0) {
+      toast.info(`Grade ${customer.grade} → ${discountValue}% discount applied`, {
+        position: "top-right",
+        autoClose: 2000,
+      });
+    }
+
+    // ✅ return instead of setting inside
+    return discountObject;
+  };
+
+
 
 
 
@@ -925,13 +953,18 @@ export default function New_sales_order() {
                           key={data.id}
                           className="so_custname"
                           onClick={() => {
-                            setTotalData({
-                              ...TotalData,
+                            const discountObject = applyGradeDiscount(data);
+
+                            // 2️⃣ Set all fields (including discount) together
+                            setTotalData((prev) => ({
+                              ...prev,
                               user_name: data?.user_name,
                               customer_id: data?.id,
                               mobile: data?.mobile,
                               outstanding_amount: data?.outstanding_amount,
-                            });
+                              discount: discountObject, // ✅ add discount here
+                            }));
+                            // applyGradeDiscount(data);
                             setcuslistflse(false);
                             setprdctflse(false);
                             setrequired(false);
@@ -953,7 +986,7 @@ export default function New_sales_order() {
                   )}
                 </div>
 
-             
+
               </div>
 
               {/* <div style={{ display: "flex", alignItems: "baseline" }}>
@@ -1031,35 +1064,35 @@ export default function New_sales_order() {
               </div> */}
             </div>
             <div>
-   {/* ✅ Show selected customer info inline */}
-               {TotalData?.mobile && (
-  <div
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: "20px",
-      fontSize: "0.9rem",
-      color: "#333",
-      borderLeft: "2px solid #ddd",
-      paddingLeft: "12px",
-      lineHeight: "1.2",
-      marginTop: "2px",
+              {/* ✅ Show selected customer info inline */}
+              {TotalData?.mobile && (
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "20px",
+                    fontSize: "0.9rem",
+                    color: "#333",
+                    borderLeft: "2px solid #ddd",
+                    paddingLeft: "12px",
+                    lineHeight: "1.2",
+                    marginTop: "2px",
 
-      /* 🔥 NEW: prevent overlap without altering structure */
-      position: "relative",
-      zIndex: 1,             // Keeps it below dropdown visually
-      background: "#fff",    // Optional: to mask dropdown shadow if needed
-    }}
-  >
-    <span>
-      <strong>Mobile:</strong>&nbsp;{TotalData.mobile}
-    </span>
-    <span>
-      <strong>Outstanding Amount:</strong>&nbsp;₹
-      {parseFloat(TotalData.outstanding_amount || 0).toFixed(2)}
-    </span>
-  </div>
-)}
+                    /* 🔥 NEW: prevent overlap without altering structure */
+                    position: "relative",
+                    zIndex: 1,             // Keeps it below dropdown visually
+                    background: "#fff",    // Optional: to mask dropdown shadow if needed
+                  }}
+                >
+                  <span>
+                    <strong>Mobile:</strong>&nbsp;{TotalData.mobile}
+                  </span>
+                  <span>
+                    <strong>Outstanding Amount:</strong>&nbsp;₹
+                    {parseFloat(TotalData.outstanding_amount || 0).toFixed(2)}
+                  </span>
+                </div>
+              )}
 
             </div>
             <div id="New_sales_attach_icn">
@@ -1789,7 +1822,7 @@ export default function New_sales_order() {
             </div> */}
               {/* ===== Discount Section ===== */}
               <div style={{ display: "flex", gap: "20px" }}>
-                {/* Discount Dropdown */}
+
                 <div>
                   <p>Discount</p>
                   {!location?.state?.solist ? (
@@ -1804,9 +1837,10 @@ export default function New_sales_order() {
                           })
                           : JSON.stringify({
                             type: "Percentage",
-                            discount: TotalData?.discount?.type === "Percentage"
-                              ? TotalData?.discount?.discount || 0
-                              : 0,
+                            discount:
+                              TotalData?.discount?.type === "Percentage"
+                                ? TotalData?.discount?.discount || 0
+                                : 0,
                             finalDiscount: true,
                           })
                       }
@@ -1817,42 +1851,19 @@ export default function New_sales_order() {
                         UpdatingCoupons(selected);
                       }}
                     >
-                      <option
-                        value={JSON.stringify({
-                          type: "Percentage",
-                          discount: 0,
-                          finalDiscount: true,
-                        })}
-                      >
-                        0%
-                      </option>
-                      <option
-                        value={JSON.stringify({
-                          type: "Percentage",
-                          discount: 5,
-                          finalDiscount: true,
-                        })}
-                      >
-                        5%
-                      </option>
-                      <option
-                        value={JSON.stringify({
-                          type: "Percentage",
-                          discount: 10,
-                          finalDiscount: true,
-                        })}
-                      >
-                        10%
-                      </option>
-                      <option
-                        value={JSON.stringify({
-                          type: "Percentage",
-                          discount: 15,
-                          finalDiscount: true,
-                        })}
-                      >
-                        15%
-                      </option>
+                      {/* Dynamically generate 0%–10% options */}
+                      {[...Array(11).keys()].map((num) => (
+                        <option
+                          key={num}
+                          value={JSON.stringify({
+                            type: "Percentage",
+                            discount: num,
+                            finalDiscount: true,
+                          })}
+                        >
+                          {num}%
+                        </option>
+                      ))}
                     </select>
                   ) : (
                     <p>
@@ -1860,7 +1871,6 @@ export default function New_sales_order() {
                         ? `₹${TotalData?.discount?.discount || 0}`
                         : `${TotalData?.discount?.discount || 0}%`}
                     </p>
-
                   )}
                 </div>
 
@@ -2644,7 +2654,7 @@ export default function New_sales_order() {
         </div>
       </Modal>
       <BarcodeListener onScan={handleScan} />
-      <input
+      {/* <input
         type="text"
         placeholder="Enter barcode manually"
         onKeyDown={(e) => {
@@ -2653,7 +2663,7 @@ export default function New_sales_order() {
             e.target.value = ""; // clear input after scan
           }
         }}
-      />
+      /> */}
 
     </>
 

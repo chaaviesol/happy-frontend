@@ -121,6 +121,7 @@ export default function SoPayment() {
       const response = await axiosPrivate.post(`/payment/so_payment`, data);
       if (response.status === 200) {
         toast.success("Success", toastOptions);
+        setIsShowModal(false);
       }
       fetchPaymentHistory();
       setFormData({

@@ -138,13 +138,13 @@ const CustomHeaderFilter = ({ displayName, column, api }) => {
           </IconButton>
 
           {/* Clear Button */}
-          <IconButton
+          {/* <IconButton
             size="small"
             onClick={handleClear}
             style={{ color: "#D32F2F", padding: "2px" }}
           >
             <ClearIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
         </div>
       </div>
 

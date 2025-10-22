@@ -77,6 +77,9 @@ export default function GoodsReceipt() {
     handleCheckLr();
   }, []);
 
+
+
+
   const navi = () => {
     navigate("/purchaseorders");
   };
@@ -301,7 +304,31 @@ export default function GoodsReceipt() {
   console.log({ subCosts });
 
   return (
-    <div className="GoodsReceipt-container" style={{ fontFamily: "Poppins" }}>
+    <div className="GoodsReceipt-container" style={{ fontFamily: "Poppins" }}
+    onPointerDown={(e) => {
+    // ✅ Skip clicks inside Toast container or LR input itself
+    if (
+      e.target.closest(".Toastify__toast-container") ||
+      e.target.name === "lr_num"
+    ) {
+      return;
+    }
+
+    // ✅ Show warning only if LR number empty
+    if (!productsData.lr_num || productsData.lr_num.trim().length < 1) {
+      e.preventDefault();
+      toast.warning("LR number is required!", {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+    }
+  }}
+    >
       <Row style={{ width: "100%" }}>
         <Col lg={12}>
           <div>
@@ -628,7 +655,7 @@ export default function GoodsReceipt() {
                           </td>
                           <td style={{ textAlign: "center", width: "4.5rem" }}>
                             <div className="Gr-td">
-                              <input
+                              {/* <input
                                
                                 style={{ width: "5rem", textAlign: "center" }}
                                 className="form-control products-form__form-control"
@@ -653,7 +680,32 @@ export default function GoodsReceipt() {
                                 }
                                 name="received"
                                 type="number"
-                              />
+                              /> */}
+                              <input
+  style={{ width: "5rem", textAlign: "center" }}
+  className="form-control products-form__form-control"
+  onChange={(event) => handleProducts(event, index)}
+  min={0}
+  disabled={
+    !productsData.lr_num ||
+    productsData.lr_num.length < 1 ||
+    value?.balance_qty === 0
+      ? true
+      : false
+  }
+  value={
+    !productsData.lr_num ||
+    productsData.lr_num.length < 1 ||
+    value?.balance_qty === 0
+      ? ""
+      : value?.received_qty === undefined || value?.received_qty === null|| value?.received_qty === 0
+      ? ""
+      : value?.received_qty
+  }
+  name="received"
+  type="number"
+/>
+
 
                               <Edit
                                 style={{ fontSize: "1rem" }}

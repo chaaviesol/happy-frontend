@@ -104,6 +104,7 @@ export default function Ag({ filterSup }) {
           console.log(res.data);
           setData(res.data);
           if (
+            event.data.po_status === "closed" ||
             event.data.po_status === "placed" ||
             event.data.po_status === "receipt_wip" ||
             event.data.po_status === "receipt in progress" 

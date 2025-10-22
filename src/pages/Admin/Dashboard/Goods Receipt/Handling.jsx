@@ -206,7 +206,7 @@ export const Handling = ({ close, openBox, subCosts, setSubCosts }) => {
               <Add />
             </AddNewButton>
           )}
-          <CloseButton onClick={close}>Close</CloseButton>
+          <CloseButton onClick={close}>Confirm</CloseButton>
         </div>
       </div>
     </div>

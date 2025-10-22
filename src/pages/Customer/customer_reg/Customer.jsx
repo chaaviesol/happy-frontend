@@ -489,6 +489,52 @@ const keralaDistricts = [
                 </FormHelperText> */}
               </div>
               <br />
+              {/* ---------- CUSTOMER GRADE ---------- */}
+<div style={{ alignItems: "center", marginTop: "20px" }} className="form-group row">
+  <label htmlFor="gradeOption" className="col-sm-4 col-form-label">
+    Customer Grade
+  </label>
+  <div className="col-sm-8">
+    <div className="row">
+      <div className="col-sm-4">
+        <span>A</span>
+      </div>
+      <div className="col-sm-4">
+        <span>B</span>
+      </div>
+      <div className="col-sm-4">
+        <span>C</span>
+      </div>
+    </div>
+
+    <RadioGroup row name="grade" onChange={handleInputChange}>
+      <div className="row">
+        <div className="col-sm-4">
+          <FormControlLabel
+            value="A"
+            control={<Radio />}
+            name="grade"
+          />
+        </div>
+        <div className="col-sm-4">
+          <FormControlLabel
+            value="B"
+            control={<Radio />}
+            name="grade"
+          />
+        </div>
+        <div className="col-sm-4">
+          <FormControlLabel
+            value="C"
+            control={<Radio />}
+            name="grade"
+          />
+        </div>
+      </div>
+    </RadioGroup>
+  </div>
+</div>
+
               <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
                   <TextField

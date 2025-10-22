@@ -27,10 +27,19 @@ import ButtonComponent from "./ButtonComponent/ButtonComponent";
 import { ButtonComp } from "./ButtonComponent/ButtonComp";
 import Modal from "./modal";
 import CustomHeaderFilter from "./CustomHeaderFilter";
+import useAuth from "../hooks/useAuth";
+
 
 export default function InventoryAg({ onOpenModal }) {
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchKey, setSearchKey] = useState({});
+  const [category, setCategory] = useState({});
+
+  const { auth } = useAuth();
+const division = auth?.division; // e.g. "bikes", "toys", "baby", "accessories"
+
+
   const { isHidden } = useContext(MyContext);
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const cellStyle = {
@@ -93,7 +102,7 @@ export default function InventoryAg({ onOpenModal }) {
             <div
               style={{
                 display: "flex",
-                
+
                 justifyContent: "center",
                 alignItems: "center",
                 gap: "0.5rem",
@@ -251,57 +260,57 @@ export default function InventoryAg({ onOpenModal }) {
                   minHeight: "100px", // <-- makes sure row has enough height
                 }}>
                   <div>
-                   
 
-<ButtonComp
-  type="print"
-  text="Print"
-  onClick={async () => {
-    const { product_master, barcode_text } = params.data;
 
-    // 1️⃣ Validate input
-    if (!barcode_text) {
-      alert("No barcode text available to print.");
-      return;
-    }
-    if (!product_master?.product_name) {
-      alert("No product name available to print.");
-      return;
-    }
+                    <ButtonComp
+                      type="print"
+                      text="Print"
+                      onClick={async () => {
+                        const { product_master, barcode_text } = params.data;
 
-    // 2️⃣ Generate base64 barcode
-    const generateBarcodeBase64 = (text) => {
-      const canvas = document.createElement("canvas");
-      JsBarcode(canvas, text, {
-        format: "CODE128",
-        displayValue: false,
-        height: 50,
-        width: 2,
-        margin: 0,
-      });
-      return canvas.toDataURL("image/png");
-    };
+                        // 1️⃣ Validate input
+                        if (!barcode_text) {
+                          alert("No barcode text available to print.");
+                          return;
+                        }
+                        if (!product_master?.product_name) {
+                          alert("No product name available to print.");
+                          return;
+                        }
 
-    const barcodeBase64 = generateBarcodeBase64(barcode_text);
+                        // 2️⃣ Generate base64 barcode
+                        const generateBarcodeBase64 = (text) => {
+                          const canvas = document.createElement("canvas");
+                          JsBarcode(canvas, text, {
+                            format: "CODE128",
+                            displayValue: false,
+                            height: 50,
+                            width: 2,
+                            margin: 0,
+                          });
+                          return canvas.toDataURL("image/png");
+                        };
 
-    // 3️⃣ Create label HTML with 2 copies
-    const labelDiv = document.createElement("div");
-    labelDiv.style.width = "100mm";
-    labelDiv.style.height = "30mm";
-    labelDiv.style.display = "flex";
-    labelDiv.style.fontFamily = "Arial, sans-serif";
+                        const barcodeBase64 = generateBarcodeBase64(barcode_text);
 
-    for (let i = 0; i < 2; i++) {
-      const label = document.createElement("div");
-      label.style.width = "50mm";
-      label.style.height = "30mm";
-      label.style.display = "flex";
-      label.style.flexDirection = "column";
-      label.style.justifyContent = "center";
-      label.style.alignItems = "center";
-      label.style.textAlign = "center";
+                        // 3️⃣ Create label HTML with 2 copies
+                        const labelDiv = document.createElement("div");
+                        labelDiv.style.width = "100mm";
+                        labelDiv.style.height = "30mm";
+                        labelDiv.style.display = "flex";
+                        labelDiv.style.fontFamily = "Arial, sans-serif";
 
-      label.innerHTML = `
+                        for (let i = 0; i < 2; i++) {
+                          const label = document.createElement("div");
+                          label.style.width = "50mm";
+                          label.style.height = "30mm";
+                          label.style.display = "flex";
+                          label.style.flexDirection = "column";
+                          label.style.justifyContent = "center";
+                          label.style.alignItems = "center";
+                          label.style.textAlign = "center";
+
+                          label.innerHTML = `
         <div style="font-weight:bold;font-size:11px;margin-bottom:2px;">
           ${product_master.product_name}
         </div>
@@ -313,38 +322,38 @@ export default function InventoryAg({ onOpenModal }) {
         </div>
       `;
 
-      labelDiv.appendChild(label);
-    }
+                          labelDiv.appendChild(label);
+                        }
 
-    // 4️⃣ Append to DOM (hidden), snapshot, then remove
-    document.body.appendChild(labelDiv);
-    labelDiv.style.position = "fixed";
-    labelDiv.style.left = "-9999px"; // hide off-screen
+                        // 4️⃣ Append to DOM (hidden), snapshot, then remove
+                        document.body.appendChild(labelDiv);
+                        labelDiv.style.position = "fixed";
+                        labelDiv.style.left = "-9999px"; // hide off-screen
 
-    try {
-      const canvas = await html2canvas(labelDiv, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
+                        try {
+                          const canvas = await html2canvas(labelDiv, { scale: 2 });
+                          const imgData = canvas.toDataURL("image/png");
 
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "mm",
-        format: [100, 30], // 100×30mm roll
-      });
+                          const pdf = new jsPDF({
+                            orientation: "landscape",
+                            unit: "mm",
+                            format: [100, 30], // 100×30mm roll
+                          });
 
-      pdf.addImage(imgData, "PNG", 0, 0, 100, 30);
-      pdf.autoPrint();
-      pdf.output("dataurlnewwindow");
-    } catch (err) {
-      console.error("Error generating PDF:", err);
-    } finally {
-      document.body.removeChild(labelDiv); // cleanup
-    }
-  }}
-/>
+                          pdf.addImage(imgData, "PNG", 0, 0, 100, 30);
+                          pdf.autoPrint();
+                          pdf.output("dataurlnewwindow");
+                        } catch (err) {
+                          console.error("Error generating PDF:", err);
+                        } finally {
+                          document.body.removeChild(labelDiv); // cleanup
+                        }
+                      }}
+                    />
 
 
 
-{/* <ButtonComp
+                    {/* <ButtonComp
   type="print"
   text="Print"
   onClick={() => {
@@ -475,7 +484,7 @@ export default function InventoryAg({ onOpenModal }) {
                     /> */}
 
 
-                    
+
                   </div>
                   <div>
                     {/* Show barcode image below button */}
@@ -566,12 +575,12 @@ export default function InventoryAg({ onOpenModal }) {
     sortable: true,
     filter: true,
     headerComponent: CustomHeaderFilter,
-  //     cellStyle: {
-  //   display: "flex",
-  //   justifyContent: "center", // horizontal center
-  //   alignItems: "center",     // vertical center
-  //   textAlign: "center",      // fallback for text
-  // },
+    //     cellStyle: {
+    //   display: "flex",
+    //   justifyContent: "center", // horizontal center
+    //   alignItems: "center",     // vertical center
+    //   textAlign: "center",      // fallback for text
+    // },
   }));
 
   //consuming
@@ -592,7 +601,14 @@ export default function InventoryAg({ onOpenModal }) {
       setLoading(true);
       const body = {
         isHidden: isHidden ? true : false,
+
+        type: searchKey.type || "",
+        category: searchKey.category || "",
+        subCategory: searchKey.subCategory || "",
+
       };
+      console.log("ff inventory fetch body",body);
+      
       const response = await axiosPrivate.post(`/inventory`, body);
 
       console.log("resss", response);
@@ -607,7 +623,7 @@ export default function InventoryAg({ onOpenModal }) {
   useEffect(() => {
 
     fetchApi();
-  }, []);
+  }, [searchKey.type, searchKey.category, searchKey.subCategory]);
 
   // generate barcode
 
@@ -627,30 +643,30 @@ export default function InventoryAg({ onOpenModal }) {
       console.log("barcode", response);
 
       if (response.data.success) {
-  const { INVENTORY_id, barcode, barcode_text } = response.data.data;
+        const { INVENTORY_id, barcode, barcode_text } = response.data.data;
 
-  const rowNode = gridRef.current.api.getRowNode(INVENTORY_id);
+        const rowNode = gridRef.current.api.getRowNode(INVENTORY_id);
 
-  if (rowNode) {
-    const updatedData = {
-      ...rowNode.data,        // keep existing fields like product_master
-      barcode,
-      barcode_text,
-    };
+        if (rowNode) {
+          const updatedData = {
+            ...rowNode.data,        // keep existing fields like product_master
+            barcode,
+            barcode_text,
+          };
 
-    rowNode.setData(updatedData); // 👈 safe replace (with preserved structure)
+          rowNode.setData(updatedData); // 👈 safe replace (with preserved structure)
 
-    gridRef.current.api.flashCells({
-      rowNodes: [rowNode],
-      columns: ["barcode"],
-    });
+          gridRef.current.api.flashCells({
+            rowNodes: [rowNode],
+            columns: ["barcode"],
+          });
 
-    gridRef.current.api.refreshCells({
-      rowNodes: [rowNode],
-      force: true,
-    });
-  }
-}
+          gridRef.current.api.refreshCells({
+            rowNodes: [rowNode],
+            force: true,
+          });
+        }
+      }
 
 
 
@@ -665,6 +681,64 @@ export default function InventoryAg({ onOpenModal }) {
 
 
 
+
+  const handleSearch = async (event) => {
+    const value = event.target.value;
+    const req = { main: value };
+    try {
+      const response = await axiosPrivate.post(`/category/categorymasterview`, req);
+      setSearchKey({ ...searchKey, type: req.main });
+      setCategory({
+        category: response.data.category,
+        subCategory: response.data.sub_category,
+      });
+    } catch (err) {
+      console.log("error>>>>", err);
+    }
+  };
+
+  const handleSelectChanges = (event, selected) => {
+    const key = selected;
+    const val = event.target.value;
+    if (key === "category") {
+      const specD = {
+        main_type: searchKey.type,
+        category: val,
+      };
+      axiosPrivate.post(`/product/getspec`, specD).then((res) => {
+        setCategory({
+          ...category,
+          subCategory: res.data[0]?.sub_categories || [],
+        });
+      });
+    }
+
+    setSearchKey((prev) => ({
+      ...prev,
+      [key]: val,
+    }));
+  };
+
+  useEffect(() => {
+  if (division) {
+    const fetchCategories = async () => {
+      try {
+        const response = await axiosPrivate.post(`/category/categorymasterview`, { main: division });
+        setSearchKey({ type: division });
+        setCategory({
+          category: response.data.category,
+          subCategory: response.data.sub_category,
+        });
+      } catch (err) {
+        console.error("Error loading division categories:", err);
+      }
+    };
+    fetchCategories();
+  }
+}, [division]);
+
+
+
   return (
     <Container fluid>
       <Row>
@@ -672,6 +746,60 @@ export default function InventoryAg({ onOpenModal }) {
         {/* <button onClick={buttonListener}>Push Me</button> */}
 
         {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
+        <Row className="mb-3">
+  <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+    {/* Type */}
+   {/* 🔹 TYPE DROPDOWN */}
+<select
+  onChange={handleSearch}
+  className="form-control"
+  style={{ width: "150px", borderRadius: "30px", fontSize: "13px" }}
+  disabled={!!division} // 🔒 disables if user is assigned a division
+  value={division || searchKey.type || ""}
+>
+  {division ? (
+    // If user has a division (e.g., "bikes"), show only that
+    <option value={division}>{division}</option>
+  ) : (
+    // If admin, show all options
+    <>
+      <option value="">Select Type</option>
+      <option value="bikes">Bikes</option>
+      <option value="toys">Toys</option>
+      <option value="baby">Baby</option>
+      <option value="accessories">Accessories</option>
+    </>
+  )}
+</select>
+
+
+    {/* Category */}
+    <select
+      onChange={(e) => handleSelectChanges(e, "category")}
+      className="form-control"
+      style={{ width: "150px", borderRadius: "30px", fontSize: "13px" }}
+      disabled={!category.category}
+    >
+      <option value="">Category</option>
+      {category.category?.map((val, i) => (
+        <option key={i} value={val}>{val}</option>
+      ))}
+    </select>
+
+    {/* Subcategory */}
+    <select
+      onChange={(e) => handleSelectChanges(e, "subCategory")}
+      className="form-control"
+      style={{ width: "150px", borderRadius: "30px", fontSize: "13px" }}
+      disabled={!category.subCategory}
+    >
+      <option value="">Subcategory</option>
+      {category.subCategory?.map((val, i) => (
+        <option key={i} value={val}>{val}</option>
+      ))}
+    </select>
+  </div>
+</Row>
         <div
           className="ag-theme-alpine"
           style={{
@@ -680,9 +808,13 @@ export default function InventoryAg({ onOpenModal }) {
             border: "1px solid #A6C991",
             fontSize: "13px",
             overflowX: "auto",
-            
+
           }}
         >
+
+
+
+
           <AgGridReact
             ref={gridRef} // Ref for accessing Grid's API
             rowData={rowData} // Row Data for Rows
