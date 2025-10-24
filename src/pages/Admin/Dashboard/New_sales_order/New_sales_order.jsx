@@ -21,6 +21,7 @@ import useAuth from "../../../../hooks/useAuth";
 export default function New_sales_order() {
   const location = useLocation();
   const [prdctflse, setprdctflse] = useState(false);
+  const [userInfo, setUserInfo] = useState({})
   const [TotalData, setTotalData] = useState({});
   const [products, setproducts] = useState([]);
   const [required, setrequired] = useState(false);
@@ -181,8 +182,17 @@ export default function New_sales_order() {
     setLoading(true);
     try {
       const response = await axiosPrivate.post(`/sales/newsales`, data);
+      console.log("aa new sales",response.data)
       if (response?.data?.success) {
         toast.success(response?.data?.message, toastConfig);
+          const newSalesId = response?.data?.data?.sales_id;
+      if (newSalesId) {
+        setTotalData((prev) => ({
+          ...prev,
+          sales_id: newSalesId,
+        }));
+      
+    }
       }
     } catch (err) {
       toast.info(err.response?.data?.message, toastConfig);
@@ -690,7 +700,7 @@ export default function New_sales_order() {
   const paymentCalculation = (data) => {
     let TempData = data;
     let ispayment_completed = "";
-    console.log(TempData);
+    console.log("pay tempdata",TempData);
     if (TotalData?.sales_id && TempData?.total_amount) {
       const FinalAmount = parseInt(TotalData.tl_amt);
       const PayedAmt = parseInt(TempData?.total_amount);
@@ -711,7 +721,7 @@ export default function New_sales_order() {
     setpaymentData(TempData);
   };
 
-  console.log("TotalData>>>>", TotalData);
+  console.log("pay TotalData>>>>", TotalData);
 
   const confirmPaymentData = async () => {
     console.log("zz Payment data",paymentData);
@@ -869,8 +879,17 @@ export default function New_sales_order() {
     return discountObject;
   };
 
+// New sales payment
+const isSalesOrderCreated = !!TotalData?.sales_id;
 
-
+// autoadd outstanding
+useEffect(() => {
+  if (TotalData?.user_name) {
+    const match = userdata.find(u => u.user_name === TotalData.user_name);
+    if (match) setUserInfo(match);
+  }
+}, [TotalData?.user_name, userdata]);
+console.log("auto add userinfo",userInfo );
 
 
   return (
@@ -966,6 +985,13 @@ export default function New_sales_order() {
                               outstanding_amount: data?.outstanding_amount,
                               discount: discountObject, // ✅ add discount here
                             }));
+                            setUserInfo({
+                                user_name: data?.user_name,
+                              customer_id: data?.id,
+                              mobile: data?.mobile,
+                              outstanding_amount: data?.outstanding_amount,
+                              discount: discountObject,
+                            })
                             // applyGradeDiscount(data);
                             setcuslistflse(false);
                             setprdctflse(false);
@@ -1065,9 +1091,28 @@ export default function New_sales_order() {
                 </div>
               </div> */}
             </div>
-            <div>
+            <div style={{display:"flex",gap: "10px",}}>
+              {
+                TotalData.sales_id&&(
+                  <div style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    fontSize: "0.9rem",
+                    color: "#333",
+                    borderLeft: "2px solid #ddd",
+                    paddingLeft: "12px",
+                    lineHeight: "1.2",
+                    marginTop: "2px",
+                     fontFamily: "'Roboto', sans-serif"
+                  }}>
+                    <span><strong>Sales Id:</strong></span>
+                    <span>{TotalData.sales_id}</span>
+                  </div>
+                )
+              }
               {/* ✅ Show selected customer info inline */}
-              {TotalData?.mobile && (
+              {userInfo?.mobile && (
                 <div
                   style={{
                     display: "inline-flex",
@@ -1079,6 +1124,7 @@ export default function New_sales_order() {
                     paddingLeft: "12px",
                     lineHeight: "1.2",
                     marginTop: "2px",
+                    fontFamily: "'Roboto', sans-serif",
 
                     /* 🔥 NEW: prevent overlap without altering structure */
                     position: "relative",
@@ -1087,11 +1133,11 @@ export default function New_sales_order() {
                   }}
                 >
                   <span>
-                    <strong>Mobile:</strong>&nbsp;{TotalData.mobile}
+                    <strong>Mobile:</strong>&nbsp;{userInfo.mobile}
                   </span>
                   <span>
                     <strong>Outstanding Amount:</strong>&nbsp;₹
-                    {parseFloat(TotalData.outstanding_amount || 0).toFixed(2)}
+                    {parseFloat(userInfo.outstanding_amount || 0).toFixed(2)}
                   </span>
                 </div>
               )}
@@ -1933,7 +1979,7 @@ export default function New_sales_order() {
             </div>
           </div>
 
-          {location?.state?.solist && (
+          {/* {location?.state?.solist && ( */}
             <div className="newsalesAlignFinalAmount">
               <div className="newsalesAlignFinalAmButton">
                 <p>Payment amount</p>
@@ -1944,6 +1990,7 @@ export default function New_sales_order() {
                   onChange={getPaymentsData}
                   name="total_amount"
                   type="number"
+                  disabled={!isSalesOrderCreated}
                 />
               </div>
               <div className="newsalesAlignFinalAmButton">
@@ -1953,6 +2000,7 @@ export default function New_sales_order() {
                   onChange={getPaymentsData}
                   name="mode"
                   id=""
+                  disabled={!isSalesOrderCreated}
                 >
                   <option selected disabled value="">
                     Select mode
@@ -1965,7 +2013,14 @@ export default function New_sales_order() {
               <div className="newsalesAlignFinalAmButton">
                 <div className="newsalesAlignFinalConfirmBtn">
                   <button
-                    onClick={confirmPaymentData}
+                    // onClick={confirmPaymentData}
+                       onClick={() => {
+          if (!isSalesOrderCreated) {
+            toast.info("Please confirm the new Sales Order before proceeding with payment.", toastConfig);
+            return;
+          }
+          confirmPaymentData();
+        }}
                     className="newsalesAlignFinalConfirm"
                   >
                     Confirm
@@ -1973,7 +2028,7 @@ export default function New_sales_order() {
                 </div>
               </div>
             </div>
-          )}
+          {/* )} */}
           <div style={{ height: "3rem" }}></div>
 
           <div id="Cart_Cntrl_last_sec">

@@ -29,12 +29,26 @@ export default function GoodsReceipt() {
   const [form, setForm] = useState({ po_num: data?.po_num });
   const [productsData, setProductsData] = useState({
     received: data?.products,
+    
     po: data?.po_num,
     type: "bikes",
     user: "2",
     isHidden: isHidden ? true : false,
   });
   console.log("xx context data", data);
+  useEffect(() => {
+  if (Array.isArray(data?.products) && data.products.length > 0) {
+    setProductsData((prev) => ({
+      ...prev,
+      received: data.products.map((item) => ({
+        ...item,
+        invoice_amt: item.rate ?? 0,
+      })),
+      po: data?.po_num ?? prev.po,
+    }));
+  }
+}, [data]);
+
 
   const [validateerror, setvalidateerror] = useState(" ");
   const [selecteddate, setselecteddate] = useState(new Date());
@@ -300,6 +314,10 @@ console.log("pp==>products",productsData);
         alert("all fields required");
         return;
       }
+  //      if (hasAtLeastOneCompleteRow(productsData)) {
+  //   alert("Please fill at least one complete product row and enter costs!");
+  //   return;
+  // }
       const clonedProductsData = await prepareProductData(productsData);
       const response = await axiosPrivate.post(
         `/goodsreceipt`,
@@ -328,6 +346,19 @@ console.log("pp==>products",productsData);
       !productsData.lr_num
     );
   };
+
+//   const hasAtLeastOneCompleteRow = (productsData) => {
+//   const hasOneComplete = productsData.received.some((item) => {
+//     return item.received_qty > 0 && item.invoice_amt > 0 && item.mrp > 0;
+//   });
+
+//   const hasMissingRequiredCosts =
+//     !productsData.handling_cost || !productsData.logistics_cost;
+
+//   // true means validation fails (so same behavior in handleFormData)
+//   return !hasOneComplete || hasMissingRequiredCosts;
+// };
+
   //prepare for api
   const prepareProductData = (productsData) => {
     const clonedProductsData = { ...productsData };
@@ -350,6 +381,9 @@ console.log("pp==>products",productsData);
     clonedProductsData.received = updatedRec;
     return clonedProductsData;
   };
+
+
+
 
   //goodsreceipt
   const flexCenter = classNames(

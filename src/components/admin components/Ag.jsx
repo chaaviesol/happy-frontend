@@ -101,7 +101,7 @@ export default function Ag({ filterSup }) {
       axiosPrivate
         .post(`/purchase/polist`, goodsData)
         .then((res) => {
-          console.log(res.data);
+          console.log("pp passing data",res.data);
           setData(res.data);
           if (
             event.data.po_status === "closed" ||
