@@ -163,7 +163,7 @@ export default function Inventory() {
                 </label>
                 <input
                   type="text"
-                  value={selectedRow?.mrp ?? ""}
+                  value={selectedRow?.selling_price ?? ""}
                   readOnly
                   style={{ padding: "8px", borderRadius: "4px", border: "2px solid rgb(184,138,68)" }}
                 />

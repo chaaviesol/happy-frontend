@@ -59,7 +59,7 @@ export default function Prodlist() {
       field: "brand_name",
       headerName: "Brand Name",
       headerClass: "center-align-header",
-      cellStyle: { fontSize: "13px", textAlign: "left" },
+      cellStyle: { fontSize: "13px", textAlign: "center" },
       // width: 250,
       valueGetter: (params) => params.data.brand?.brand_name || "", // Access the nested value
     },
@@ -68,7 +68,7 @@ export default function Prodlist() {
       field: "product_name",
       headerName: "Product Name",
       headerClass: "center-align-header",
-      cellStyle: { textAlign: "left", fontSize: "13px" },
+      cellStyle: { textAlign: "center" , fontSize: "13px" },
       // width: 480,
     },
     {
@@ -76,7 +76,7 @@ export default function Prodlist() {
       field: "color",
       headerName: "Color",
       headerClass: "center-align-header",
-      cellStyle: { fontSize: "13px", textAlign: "left" },
+      cellStyle: { fontSize: "13px", textAlign: "center"  },
       backgroundColor: "green",
       color: "white",
       // width: 340,
@@ -86,7 +86,7 @@ export default function Prodlist() {
       field: "trade_name",
       headerName: "Suppliers",
       headerClass: "center-align-header",
-      cellStyle: { fontSize: "13px", textAlign: "left" },
+      cellStyle: { fontSize: "13px", textAlign: "center"  },
       // width: 285,
       valueGetter: (params) => params.data.users?.trade_name || "", // Access the nested value
     },
@@ -95,38 +95,38 @@ export default function Prodlist() {
       field: "product_code",
       headerName: "Product Code",
       headerClass: "center-align-header",
-      cellStyle: { fontSize: "13px", textAlign: "left" },
+      cellStyle: { fontSize: "13px", textAlign: "center"  },
       // width: 285,
     },
-    {
-      flex: 3,
-      field: "barcode",
-      headerName: "Barcode",
-      headerClass: "center-align-header",
-      cellStyle: { fontSize: "13px", textAlign: "left" },
-      suppressCellClickSelection: true,
-      suppressClickEdit: true,  
-      // width: 285,
-       cellRenderer: (params) => {
-          return (
-             <ButtonComp
-                type="generate"
-                text="Generate"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log("Generate Barcode for:", params.data.brand?.brand_name);
-              alert(
-              `Generate barcode for product: ${
-                params.data.brand?.brand_name || "Unknown"
-              }`
-            );
-                  // 🔥 replace alert with your actual barcode generation logic
-                }}
-              />
-          )
-        },
-    },
+    // {
+    //   flex: 3,
+    //   field: "barcode",
+    //   headerName: "Barcode",
+    //   headerClass: "center-align-header",
+    //   cellStyle: { fontSize: "13px", textAlign: "left" },
+    //   suppressCellClickSelection: true,
+    //   suppressClickEdit: true,  
+    //   // width: 285,
+    //    cellRenderer: (params) => {
+    //       return (
+    //          <ButtonComp
+    //             type="generate"
+    //             text="Generate"
+    //             onClick={(e) => {
+    //               e.preventDefault();
+    //               e.stopPropagation();
+    //               console.log("Generate Barcode for:", params.data.brand?.brand_name);
+    //           alert(
+    //           `Generate barcode for product: ${
+    //             params.data.brand?.brand_name || "Unknown"
+    //           }`
+    //         );
+    //               // 🔥 replace alert with your actual barcode generation logic
+    //             }}
+    //           />
+    //       )
+    //     },
+    // },
   ]);
 
   ////newcode///
@@ -285,29 +285,68 @@ export default function Prodlist() {
     }
   }, [division]);
 
-  const handleSelectChanges = (event, selected) => {
-    const key = selected;
-    const val = event.target.value;
-    if (key === "category") {
+  // const handleSelectChanges = (event, selected) => {
+  //   const key = selected;
+  //   const val = event.target.value;
+  //   if (key === "category") {
+  //     const specD = {
+  //       main_type: searchKey.type,
+  //       category: val,
+  //     };
+  //     axiosPrivate.post(`/product/getspec`, specD).then((res) => {
+  //       setCategory({
+  //         ...category,
+
+  //         subCategory: res.data[0].sub_categories,
+  //       });
+  //     });
+  //   }
+
+  //   // Update the searchKey with the selected key and value
+  //   setSearchKey((prevSearchKey) => ({
+  //     ...prevSearchKey,
+  //     [key]: val,
+  //   }));
+  // };
+const handleSelectChanges = (event, selected) => {
+  const key = selected;
+  const val = event.target.value;
+
+  if (key === "category") {
+    if (val === "all") {
+      // All Category selected: clear subcategories
+      setCategory((prev) => ({
+        ...prev,
+        // subCategory: [],
+      }));
+      // Optionally, you can also clear the searchKey category
+      setSearchKey((prev) => ({
+        ...prev,
+        category: "", // empty value for "All Category"
+      }));
+    } else {
+      // Specific category selected: fetch subcategories
       const specD = {
         main_type: searchKey.type,
         category: val,
       };
       axiosPrivate.post(`/product/getspec`, specD).then((res) => {
-        setCategory({
-          ...category,
-
+        setCategory((prev) => ({
+          ...prev,
           subCategory: res.data[0].sub_categories,
-        });
+        }));
       });
-    }
 
-    // Update the searchKey with the selected key and value
-    setSearchKey((prevSearchKey) => ({
-      ...prevSearchKey,
-      [key]: val,
-    }));
-  };
+      // Update searchKey normally
+      setSearchKey((prev) => ({
+        ...prev,
+        category: val,
+      }));
+    }
+  }
+};
+
+
 
   // ... (previous code)
   useEffect(() => {
@@ -442,6 +481,7 @@ const defaultColDef = useMemo(
                   {/* <h1>Category</h1> */}
                   category
                 </option>
+                 <option value="all">All Category</option>
                 {category &&
                   category.category &&
                   category.category.map((value, index) => (

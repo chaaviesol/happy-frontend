@@ -171,7 +171,7 @@ export default function H_Side({children,type}) {
 
         <List sx={{ margin: "0", padding: "0" }}>
           {[
-            "Hey Chavie",
+            "Hey Happy",
             "Inventory",
             "Product list",
             "Category",

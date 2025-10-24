@@ -138,7 +138,7 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
   const handleRoute = (index, clickedWorkList) => {
     if (open && index !== 6) {
       const routes = {
-        0: "",
+        0: "/adm_navigate",
         1: "/inventory",
         2: "/addproducts",
         3: "/prodlist",
@@ -179,7 +179,10 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open} 
+      onMouseEnter={() => setOpen(true)}   // 👈 opens on hover
+  onMouseLeave={() => setOpen(false)}
+      >
         <DrawerHeader>
           {open === false ? (
             <IconButton
@@ -209,7 +212,7 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
 
         <List sx={{ margin: "0", padding: "0" }}>
           {[
-            "Hey Chavie",
+            "Hey Happy",
             "Inventory",
             "New Products",
             "Product list",

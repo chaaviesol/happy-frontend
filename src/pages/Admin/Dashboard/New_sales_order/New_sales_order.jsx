@@ -714,6 +714,8 @@ export default function New_sales_order() {
   console.log("TotalData>>>>", TotalData);
 
   const confirmPaymentData = async () => {
+    console.log("zz Payment data",paymentData);
+    
     const isBodyValid = paymentData?.total_amount && paymentData?.mode;
     if (!isBodyValid) {
       toast.info("Check payment amount or payment mode", toastConfig);
@@ -1095,12 +1097,12 @@ export default function New_sales_order() {
               )}
 
             </div>
-            <div id="New_sales_attach_icn">
+            {/* <div id="New_sales_attach_icn">
               <AttachmentIcon
                 style={{ fontSize: "30px", margin: "-5px 00px" }}
               />
               <p>Add</p>
-            </div>
+            </div> */}
           </div>
           <div style={{ height: "1rem" }}></div>
           <div id="Cart_Cntrl_main_Bx2">
@@ -2087,7 +2089,7 @@ export default function New_sales_order() {
                     ""
                   )}
                   <div style={{ width: "10px", height: "10px" }}></div>
-                  {location.state?.so_status === "placed" ||
+                  {/* {location.state?.so_status === "placed" ||
                     location.state?.so_status === "forfitting" ||
                     location.state?.so_status === "fitted" ||
                     location.state?.so_status === "forpacking" ||
@@ -2106,7 +2108,7 @@ export default function New_sales_order() {
                     </button>
                   ) : (
                     ""
-                  )}
+                  )} */}
                 </>
               )}
             </div>

@@ -34,6 +34,8 @@ export default function GoodsReceipt() {
     user: "2",
     isHidden: isHidden ? true : false,
   });
+  console.log("xx context data", data);
+
   const [validateerror, setvalidateerror] = useState(" ");
   const [selecteddate, setselecteddate] = useState(new Date());
   const [isHandleOpen, setIsHandleOpen] = useState(false);
@@ -62,7 +64,105 @@ export default function GoodsReceipt() {
     if (!data) {
       navi();
     }
-  }, []);
+    // ✅ Only trigger this when PO is closed
+    if (data?.po_status === "closed") {
+      fetchClosedPurchaseDetails(data?.po_num);
+    }
+  }, [data]);
+  // }, []);
+
+  // ✅ Fetch details for closed Purchase Order (including received goods and LR info)
+  
+  const fetchClosedPurchaseDetails = async (po_number) => {
+    try {
+      setIsLoading(true);
+
+      // 🔹 Call backend API with PO number
+      const response = await axiosPrivate.post(
+        "/goodsreceipt/closed_purchasedetails",
+        { po_number }
+      );
+
+      const res = response.data;
+      console.log("🟢 Closed PO response =>", res);
+
+      // 🔹 Check if response contains valid data
+      if (res?.success && res?.purchase_order) {
+        const purchaseOrder = res.purchase_order;
+
+        // ✅ Safely format product data
+      const formattedProducts = (purchaseOrder.products || []).map((p) => {
+  const details = p.order_details || {};
+const productMaster = details.product_master || p.product_master || {};
+  const orderQty = parseFloat(details.order_qty ?? 0);
+  const receivedQty = parseFloat(details.received_qty ?? 0); // ✅ from order_details directly
+  const unitPrice = parseFloat(details.unit_price ?? p.unit_price ?? 0);
+  const pricingUnit = details.pricing_unit ?? "Bundle";
+ const noOfItems = parseFloat(productMaster.no_of_items ?? p.no_of_items ?? 1);
+  const balanceQty = Math.max(orderQty - receivedQty, 0); // ✅ fixed logic
+
+ 
+
+const ord_Bundleqty =
+  noOfItems > 0 ? parseFloat((orderQty / noOfItems).toFixed(2)) : 0;
+
+
+
+  return {
+    product_id: p.product_id,
+    prod_name:
+      p.product_master?.product_name || p.product_name || "Unnamed Product",
+    ord_pieces: orderQty,
+    balance_qty: balanceQty,
+    pricing_unit: pricingUnit,
+    received_qty: receivedQty, // ✅ actual received from order_details
+    unit_price: unitPrice,
+    ord_Bundleqty,
+    base_price: p.goods_receipts?.[0]?.base_price ?? 0,
+    mrp: p.goods_receipts?.[0]?.mrp || unitPrice || 0,
+    manufacturer_code:
+      p.product_master?.manufacturer_code ||
+      details.product_master?.manufacturer_code ||
+      "",
+    no_of_items: details.product_master.no_of_items ?? p.no_of_items ?? 1,
+  };
+});
+
+        // ✅ Update productsData state
+        setProductsData((prev) => ({
+          ...prev,
+          po: purchaseOrder.po_number,
+          received: formattedProducts,
+          handling_cost: purchaseOrder.total_handling_cost || 0,
+          logistics_cost: purchaseOrder.total_logistics_cost || 0,
+          lr_num: Array.isArray(purchaseOrder.lr_details)
+            ? purchaseOrder.lr_details
+              .map((lr) => lr.lr_num)
+              .filter(Boolean)
+              .join(", ")
+            : "",
+          postatus: purchaseOrder.po_status || "closed",
+        }));
+
+      
+      } else {
+        toast.warn("⚠️ No closed purchase order data found", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("❌ Error fetching closed PO details:", error);
+      toast.error("Failed to fetch closed purchase details", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
 
   const handleCheckLr = () => {
     if (!productsData.lr_num || productsData.lr_num.length < 1) {
@@ -77,6 +177,7 @@ export default function GoodsReceipt() {
     handleCheckLr();
   }, []);
 
+console.log("pp==>products",productsData);
 
 
 
@@ -199,7 +300,7 @@ export default function GoodsReceipt() {
         alert("all fields required");
         return;
       }
-      const clonedProductsData =await prepareProductData(productsData);
+      const clonedProductsData = await prepareProductData(productsData);
       const response = await axiosPrivate.post(
         `/goodsreceipt`,
         clonedProductsData
@@ -232,10 +333,13 @@ export default function GoodsReceipt() {
     const clonedProductsData = { ...productsData };
     const updatedRec = clonedProductsData.received.map((ele) => {
       if (ele.pricing_unit === "Bundle") {
-        const calcQty = ele?.received_qty * ele?.no_of_items;
-        ele.received_qty = calcQty;
+        // const calcQty = ele?.received_qty * ele?.no_of_items;
+        // const calcQty = ele?.received_qty 
+        // ele.received_qty = calcQty;
+        // const no_of_bundle=ele?.received_qty
         return {
           ...ele,
+
         };
       } else {
         return {
@@ -303,31 +407,77 @@ export default function GoodsReceipt() {
 
   console.log({ subCosts });
 
+
+  // //******draft po
+  // const handleSaveDraftPurchase = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const clonedProductsData = await prepareProductData(productsData);
+
+  //     // ✅ Get status from data (purchase order info)
+  //     const currentStatus = data?.po_status || "draft";
+
+  //     const payload = {
+  //       po_number: productsData.po,
+  //       products: clonedProductsData.received.map((item) => ({
+  //         prod_id: item.product_id,
+  //         prod_name: item.product_name,
+  //         qty: item.qty,
+  //         pricing_unit: item.pricing_unit,
+  //         amt: item.invoice_amt || item.mrp || 0,
+  //       })),
+  //       total: clonedProductsData.received.reduce(
+  //         (sum, item) => sum + (parseFloat(item.invoice_amt || 0) || 0),
+  //         0
+  //       ),
+  //       remarks: "Draft saved from Goods Receipt",
+  //       postatus: currentStatus, // ✅ Comes from Purchase Order
+  //       user: "admin1",
+  //     };
+
+  //     const response = await axiosPrivate.post(`/purchase/update_po`, payload);
+
+  //     toast.success(
+  //       `PO ${currentStatus === "draft" ? "saved as draft" : "updated successfully"}!`,
+  //       toastConfig
+  //     );
+  //   } catch (err) {
+  //     console.error("Error saving draft:", err);
+  //     toast.error("Failed to save draft. Please try again.", toastConfig);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+
+
+
   return (
     <div className="GoodsReceipt-container" style={{ fontFamily: "Poppins" }}
-    onPointerDown={(e) => {
-    // ✅ Skip clicks inside Toast container or LR input itself
-    if (
-      e.target.closest(".Toastify__toast-container") ||
-      e.target.name === "lr_num"
-    ) {
-      return;
-    }
+      onPointerDown={(e) => {
+        // ✅ Skip clicks inside Toast container or LR input itself
+        if (
+          e.target.closest(".Toastify__toast-container") ||
+          e.target.name === "lr_num"
+        ) {
+          return;
+        }
 
-    // ✅ Show warning only if LR number empty
-    if (!productsData.lr_num || productsData.lr_num.trim().length < 1) {
-      e.preventDefault();
-      toast.warning("LR number is required!", {
-        position: "top-center",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
-      });
-    }
-  }}
+        // ✅ Show warning only if LR number empty
+        if (!productsData.lr_num || productsData.lr_num.trim().length < 1) {
+          e.preventDefault();
+          toast.warning("LR number is required!", {
+            position: "top-center",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          });
+        }
+      }}
     >
       <Row style={{ width: "100%" }}>
         <Col lg={12}>
@@ -423,6 +573,12 @@ export default function GoodsReceipt() {
                             <div className="Gr-td">
                               <Form.Control
                                 type="number"
+                                value={
+                                  productsData?.logistics_cost === undefined ||
+                                    productsData?.logistics_cost === null
+                                    ? ""
+                                    : productsData.logistics_cost
+                                }
                                 ref={logisticsRef}
                                 min={0}
                                 onChange={handleProducts}
@@ -457,7 +613,7 @@ export default function GoodsReceipt() {
                                 handleProducts(event);
                                 setvalidateerror("");
                               }}
-                              // onBlur={handlevalidation}
+                            // onBlur={handlevalidation}
                             />
                           </Col>
                         </Row>
@@ -585,8 +741,61 @@ export default function GoodsReceipt() {
                       </tr>
                     </thead>
                     {/* {<Checkbox color="success" defaultChecked />} */}
+{data?.po_status === "closed"?(
+<tbody>
+  {productsData?.received?.length > 0 ? (
+    productsData.received.flatMap((p,index) => {
+      // If the product has multiple goods receipts, show one row per receipt
+      if (p.goods_receipts && p.goods_receipts.length > 0) {
+        return p.goods_receipts.map((gr, i) => (
+          <tr key={`${p.product_id}-${i}`}>
 
-                    <tbody
+            <td>{i+1}</td>
+           <td>{p.prod_name || "-"}</td>
+            <td>{p.manufacturer_code || "-"}</td>
+            <td>{p.no_of_items || 0}</td>
+            <td>{p.ord_Bundleqty}</td>
+            <td>{p.ord_pieces || 0}</td>
+            <td>{p.pricing_unit || "-"}</td>
+            <td>{p.received_qty || 0}</td>
+            <td>{p.balance_qty || 0}</td>
+            <td>{p.unit_price || 0}</td>
+            <td>{p.base_price || 0}</td>
+            <td>{p.mrp || 0}</td>
+          </tr>
+        ));
+      } else {
+        // Single or no GR
+        return (
+          <tr key={p.product_id}>
+            <td>{index+1}</td>
+            <td>{p.prod_name || "-"}</td>
+            <td>{p.manufacturer_code || "-"}</td>
+            <td>{p.no_of_items || 0}</td>
+            <td>{p.ord_Bundleqty}</td>
+            <td>{p.ord_pieces || 0}</td>
+            <td>{p.pricing_unit || "-"}</td>
+            <td>{p.received_qty || 0}</td>
+            <td>{p.balance_qty || 0}</td>
+            <td>{p.unit_price || 0}</td>
+            <td>{p.base_price || 0}</td>
+            <td>{p.mrp || 0}</td>
+            
+          </tr>
+        );
+      }
+    })
+  ) : (
+    <tr>
+      <td colSpan="9" className="text-center text-muted">
+        No product details available
+      </td>
+    </tr>
+  )}
+</tbody>
+
+):(
+ <tbody
                       style={{ fontSize: "13px" }}
                       className="poList-tableBody"
                     >
@@ -598,10 +807,10 @@ export default function GoodsReceipt() {
                               value.balance_qty === 0
                                 ? "#bbf7d0"
                                 : index === 0
-                                ? "white"
-                                : index % 2 !== 0
-                                ? "#f5f5f4"
-                                : "white",
+                                  ? "white"
+                                  : index % 2 !== 0
+                                    ? "#f5f5f4"
+                                    : "white",
                           }}
                         >
                           <td>
@@ -621,22 +830,22 @@ export default function GoodsReceipt() {
                           <td>{value?.qty}</td>
                           <td>
                             <select
-                             ref={index===0 ? receivedUnitRef : null}
+                              ref={index === 0 ? receivedUnitRef : null}
                               onChange={(event) => {
                                 handleProducts(event, index);
                               }}
-                              onFocus={()=>{  setIsHandleOpen(false);}}
+                              onFocus={() => { setIsHandleOpen(false); }}
                               disabled={
                                 !productsData.lr_num ||
-                                productsData.lr_num.length < 1 ||
-                                value?.balance_qty === 0
+                                  productsData.lr_num.length < 1 ||
+                                  value?.balance_qty === 0
                                   ? true
                                   : false
                               }
                               value={
                                 !productsData.lr_num ||
-                                productsData.lr_num.length < 1 ||
-                                value?.balance_qty === 0
+                                  productsData.lr_num.length < 1 ||
+                                  value?.balance_qty === 0
                                   ? ""
                                   : value?.pricing_unit
                               }
@@ -682,29 +891,29 @@ export default function GoodsReceipt() {
                                 type="number"
                               /> */}
                               <input
-  style={{ width: "5rem", textAlign: "center" }}
-  className="form-control products-form__form-control"
-  onChange={(event) => handleProducts(event, index)}
-  min={0}
-  disabled={
-    !productsData.lr_num ||
-    productsData.lr_num.length < 1 ||
-    value?.balance_qty === 0
-      ? true
-      : false
-  }
-  value={
-    !productsData.lr_num ||
-    productsData.lr_num.length < 1 ||
-    value?.balance_qty === 0
-      ? ""
-      : value?.received_qty === undefined || value?.received_qty === null|| value?.received_qty === 0
-      ? ""
-      : value?.received_qty
-  }
-  name="received"
-  type="number"
-/>
+                                style={{ width: "5rem", textAlign: "center" }}
+                                className="form-control products-form__form-control"
+                                onChange={(event) => handleProducts(event, index)}
+                                min={0}
+                                disabled={
+                                  !productsData.lr_num ||
+                                    productsData.lr_num.length < 1 ||
+                                    value?.balance_qty === 0
+                                    ? true
+                                    : false
+                                }
+                                value={
+                                  !productsData.lr_num ||
+                                    productsData.lr_num.length < 1 ||
+                                    value?.balance_qty === 0
+                                    ? ""
+                                    : value?.received_qty === undefined || value?.received_qty === null || value?.received_qty === 0
+                                      ? ""
+                                      : value?.received_qty
+                                }
+                                name="received"
+                                type="number"
+                              />
 
 
                               <Edit
@@ -731,8 +940,8 @@ export default function GoodsReceipt() {
                           <td style={{ textAlign: "center" }}>
                             <div className="Gr-td">
                               {!productsData.lr_num ||
-                              productsData.lr_num.length < 1 ||
-                              value?.balance_qty === 0 ? (
+                                productsData.lr_num.length < 1 ||
+                                value?.balance_qty === 0 ? (
                                 <input
                                   style={{ width: "8rem" }}
                                   className="form-control products-form__form-control"
@@ -769,8 +978,8 @@ export default function GoodsReceipt() {
                           <td style={{ textAlign: "center", width: "7rem" }}>
                             <div className="Gr-td">
                               {!productsData.lr_num ||
-                              productsData.lr_num.length < 1 ||
-                              value?.balance_qty === 0 ? (
+                                productsData.lr_num.length < 1 ||
+                                value?.balance_qty === 0 ? (
                                 <input
                                   style={{ width: "8rem" }}
                                   className="form-control products-form__form-control"
@@ -801,6 +1010,10 @@ export default function GoodsReceipt() {
                         </tr>
                       ))}
                     </tbody>
+)
+
+}
+                   
                   </table>
                 </div>
               </Col>
@@ -864,7 +1077,7 @@ export default function GoodsReceipt() {
                             color: "white",
                             fontSize: "15px",
                           }}
-                          // onClick={handleOpen}
+                        // onClick={handleOpen}
                         />{" "}
                         <span style={{ fontSize: "13px" }}>
                           Download Po Pdf
@@ -872,6 +1085,18 @@ export default function GoodsReceipt() {
                       </div>
                     </Row>
                   </Col>
+                  {/* <Col>
+  <button
+    disabled={isLoading}
+    type="button"
+    className="btn btn-warning"
+    style={{ borderRadius: "12px", color: "white" }}
+    onClick={() => handleSaveDraftPurchase()}
+  >
+    Save Draft
+  </button>
+</Col> */}
+
 
                   <Col>
                     <button
@@ -919,7 +1144,7 @@ export default function GoodsReceipt() {
                         background: "#ef4444",
                         color: "white",
                       }}
-                      // onClick={handleFormData}
+                    // onClick={handleFormData}
                     >
                       Cancel
                     </button>

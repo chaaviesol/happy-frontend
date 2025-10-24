@@ -23,7 +23,7 @@ import { useRef } from "react";
 export default function Register() {
   const [entertrue, setentertrue] = useState(false);
   const [showForm1, setShowForm1] = useState(true);
-  const [addressObj, setAddressobj] = useState({});
+  const [addressObj, setAddressobj] = useState({state: "Kerala",});
   const [data, setData] = useState({});
   const [years, setYears] = useState(0);
   const [terms, setTerms] = useState(false);
@@ -495,45 +495,14 @@ const keralaDistricts = [
     Customer Grade
   </label>
   <div className="col-sm-8">
-    <div className="row">
-      <div className="col-sm-4">
-        <span>A</span>
-      </div>
-      <div className="col-sm-4">
-        <span>B</span>
-      </div>
-      <div className="col-sm-4">
-        <span>C</span>
-      </div>
-    </div>
-
     <RadioGroup row name="grade" onChange={handleInputChange}>
-      <div className="row">
-        <div className="col-sm-4">
-          <FormControlLabel
-            value="A"
-            control={<Radio />}
-            name="grade"
-          />
-        </div>
-        <div className="col-sm-4">
-          <FormControlLabel
-            value="B"
-            control={<Radio />}
-            name="grade"
-          />
-        </div>
-        <div className="col-sm-4">
-          <FormControlLabel
-            value="C"
-            control={<Radio />}
-            name="grade"
-          />
-        </div>
-      </div>
+      <FormControlLabel value="A" control={<Radio />} label="A" />
+      <FormControlLabel value="B" control={<Radio />} label="B" />
+      <FormControlLabel value="C" control={<Radio />} label="C" />
     </RadioGroup>
   </div>
 </div>
+
 
               <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>
@@ -561,64 +530,33 @@ const keralaDistricts = [
               </div>
               <br />
               <div style={{ alignItems: "center" }} className="form-group row">
-                <label
-                  htmlFor="tradeOption"
-                  className="col-sm-4 col-form-label"
-                >
-                  {/* <b style={{ color: "red" }}>*</b> */}
-                  Trade Type
-                </label>
-                <div className="col-sm-8">
-                  <div className="row">
-                    <div className="col-sm-4">
-                      <span>Wholesale</span>
-                    </div>
-                    <div className="col-sm-4">
-                      <span>Retail</span>
-                    </div>
-                    <div className="col-sm-4">
-                      <span>Agent</span>
-                    </div>
-                  </div>
+  <label htmlFor="tradeOption" className="col-sm-4 col-form-label">
+    Trade Type
+  </label>
+  <div className="col-sm-8">
+    <RadioGroup row name="Tradeoption" onChange={handleInputChange}>
+      <FormControlLabel
+        name="Tradeoption"
+        value="Wholesale"
+        control={<Radio />}
+        label="Wholesale"
+      />
+      <FormControlLabel
+        name="Tradeoption"
+        value="Retail"
+        control={<Radio />}
+        label="Retail"
+      />
+      <FormControlLabel
+        name="Tradeoption"
+        value="Agent"
+        control={<Radio />}
+        label="Agent"
+      />
+    </RadioGroup>
+  </div>
+</div>
 
-                  <RadioGroup>
-                    <div className="row">
-                      <div className=" col-sm-4 ">
-                        <FormControlLabel
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                          name="Tradeoption"
-                          id="wholesaleOption"
-                          value="Wholesale"
-                          control={<Radio />}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                      <div className="col-sm-4">
-                        <FormControlLabel
-                          name="Tradeoption"
-                          id="retailOption"
-                          value="Retail"
-                          onChange={handleInputChange}
-                          control={<Radio />}
-                        />
-                      </div>
-                      <div className="col-sm-4">
-                        <FormControlLabel
-                          name="Tradeoption"
-                          id="retailOption"
-                          value="Agent"
-                          onChange={handleInputChange}
-                          control={<Radio />}
-                        />
-                      </div>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
 
               <div className="admn_reg_inputBox">
                 <ThemeProvider theme={theme}>

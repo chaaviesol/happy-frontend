@@ -209,7 +209,7 @@ const division = auth?.division; // e.g. "bikes", "toys", "baby", "accessories"
     },
     {
       flex: 1,
-      field: "mrp",
+      field: "selling_price",
       minWidth: 150,
       headerName: "Selling Price",
       headerClass: "center-align-header",
