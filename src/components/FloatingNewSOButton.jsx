@@ -12,7 +12,7 @@ export default function FloatingNewSOButton({ setDraftData }) {
 
   const handleClick = () => {
     if (setDraftData) setDraftData(null);
-    navigate("/new_sales_order");
+    navigate("/new_sales_wrapper");
   };
 
   return (
