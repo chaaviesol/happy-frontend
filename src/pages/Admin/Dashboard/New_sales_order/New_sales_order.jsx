@@ -47,6 +47,7 @@ export default function New_sales_order() {
   const [manualDiscount, setManualDiscount] = useState(0); // store rupee discount
   const [isManualMode, setIsManualMode] = useState(false); // toggle between % and ₹ modes
   // const [remarks, setRemarks] = useState("");
+console.log("locsstatus",location?.state?.so_status||0);
 
   const { auth } = useAuth({});
   const division = auth?.division;
@@ -2085,6 +2086,18 @@ console.log("auto add userinfo",userInfo );
                 ""
               )}
               <div style={{ width: "10px", height: "10px" }}></div>
+               {TotalData.sales_id && (
+  <button
+    id="Cart_Cntrl_las_btns90"
+    onClick={() => {
+      navigate("/sopayment", { state: location.state?.data });
+    }}
+    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "5px",marginRight:"10px" }}
+  >
+    <div style={{ width: "5px" }}></div>
+    Add payment
+  </button>
+)}
               {!location.state?.solist ? (
                 <>
                   <button onClick={godata} id="Cart_Cntrl_las_btns3">
@@ -2121,12 +2134,13 @@ console.log("auto add userinfo",userInfo );
                     ""
                   )}
                   <div style={{ width: "10px", height: "10px" }}></div>
-                  {location.state?.so_status === "placed" ||
+                  {/* {location.state?.so_status === "placed" ||
                     location.state?.so_status === "forfitting" ||
                     location.state?.so_status === "fitted" ||
                     location.state?.so_status === "forpacking" ||
                     location.state?.so_status === "packed" ||
-                    location.state?.so_status === "dispatched" ? (
+                    location.state?.so_status === "dispatched"
+                    ? (
                     <button id="Cart_Cntrl_las_btns90">
                       <div
                         style={{ display: "flex", justifyContent: "center" }}
@@ -2142,7 +2156,9 @@ console.log("auto add userinfo",userInfo );
                     </button>
                   ) : (
                     ""
-                  )}
+                  )} */}
+                 
+
                   <div style={{ width: "10px", height: "10px" }}></div>
                   {/* {location.state?.so_status === "placed" ||
                     location.state?.so_status === "forfitting" ||
