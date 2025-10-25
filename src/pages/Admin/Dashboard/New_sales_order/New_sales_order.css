@@ -277,12 +277,11 @@ input::-webkit-inner-spin-button {
 }
 
 #Cart_Cntrl_sprte_bx66 {
-  width: 6%;
+  width: 8%;
   padding: 5px 0px;
   display: flex;
   justify-content: center;
   flex-direction: column;
-
   align-items: center;
 }
 
