@@ -6,6 +6,27 @@
     background-color: #00342e;
 }
 
+
+    .back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        color: #d2a307c8;
+        background: none;
+        border: none;
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+        color: #ffffffe8;
+        transform: translateX(-2px);
+    }
+
 @media screen and (max-width: 480px) {
     #home_admn_reg_mainset {
         width: 100%;
@@ -46,11 +67,15 @@
     .admn_reg_inputBox1 {
         width: 100%;
     }
-    #sup_rer_btns{
+
+    #sup_rer_btns {
         display: flex;
         justify-content: center;
     }
-    #home_admn_reg_align{
+
+    #home_admn_reg_align {
         width: 100%;
     }
+
+
 }

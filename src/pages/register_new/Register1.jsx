@@ -4,10 +4,13 @@ import Admin_reg from '../admin_reg/Admin_reg'
 import Customer from '../Customer/customer_reg/Customer'
 import Supplier_reg from '../../pages/Supplier_view/supplier_reg/Supplier_reg'
 import "./Register1.css"
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Pre from './Preregisterform'
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 export default function Register1() {
   const location = useLocation();
+  const navigate = useNavigate();
   const toggle = location.state
   const [renderingState, setrenderingState] = useState({
     customer: false,
@@ -17,6 +20,14 @@ export default function Register1() {
   return (
     <>
       <div id='home_admn_reg_mainset' >
+        <button
+          onClick={() => navigate(-1)}
+          className=" beautiful-button back-button"
+        >
+          <ArrowBackIcon style={{ fontSize: "22px", marginRight: "6px" }} />
+          Back
+        </button>
+
         <div id='home_admn_reg_setting1'>
           <img id='home_admn_reg_setting1_img' src="./assets/logo.png" alt="" />
           <p id='home_admn_reg_setting1_ptag1'>Happy Group</p>

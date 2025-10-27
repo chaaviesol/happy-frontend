@@ -14,7 +14,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
-import { Container, Row } from "react-bootstrap";
+import { Container,Col, Row } from "react-bootstrap";
 import { MyContext } from "../Contexts/Contexts";
 import {
   CheckCircle,
@@ -28,6 +28,7 @@ import { ButtonComp } from "./ButtonComponent/ButtonComp";
 import Modal from "./modal";
 import CustomHeaderFilter from "./CustomHeaderFilter";
 import useAuth from "../hooks/useAuth";
+import CustomDropdown from "./CustomDropdown";
 
 
 export default function InventoryAg({ onOpenModal }) {
@@ -38,6 +39,26 @@ export default function InventoryAg({ onOpenModal }) {
 
   const { auth } = useAuth();
 const division = auth?.division; // e.g. "bikes", "toys", "baby", "accessories"
+
+    // Category options
+  const categoryOptions = [
+    { value: "all", label: "All Category" }, // your default option
+    ...(category?.category?.map((v) => ({ value: v, label: v })) || []),
+  ];
+
+  // SubCategory options
+  const subCategoryOptions =
+    category?.subCategory?.map((v) => ({ value: v, label: v })) || [];
+
+  //type options
+  const typeOptions = division
+    ? [{ value: division, label: division }]
+    : [
+      { value: "bikes", label: "Bikes" },
+      { value: "toys", label: "Toys" },
+      { value: "baby", label: "Baby" },
+      { value: "accessories", label: "Accessories" },
+    ];
 
 
   const { isHidden } = useContext(MyContext);
@@ -741,65 +762,55 @@ const division = auth?.division; // e.g. "bikes", "toys", "baby", "accessories"
 
   return (
     <Container fluid>
+      <div style={{margin:'5px'}}>
+  <Row className="mb-0" >
+            <Col lg={2}>
+
+              <CustomDropdown
+                options={typeOptions}
+                placeholder="Type"
+                value={searchKey.type}
+                onChange={(val) => handleSearch({ target: { value: val } })}
+                isDisabled={!!division} // disable if division exists
+                hideDropdownIndicator={true} // remove arrow
+              />
+
+
+            </Col>
+            <Col lg={6}>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <div style={{ flex: 1 }}>
+                  <CustomDropdown
+                    options={categoryOptions}
+                    placeholder="Category"
+                    value={searchKey.category}
+                    onChange={(val) =>
+                      handleSelectChanges({ target: { value: val } }, "category")
+                    }
+                  />
+                </div>
+
+                <div style={{ flex: 1 }}>
+                  <CustomDropdown
+                    options={subCategoryOptions}
+                    placeholder="Sub Category"
+                    value={searchKey.subCategory}
+                    onChange={(val) =>
+                      handleSelectChanges({ target: { value: val } }, "subCategory")
+                    }
+                  />
+                </div>
+              </div>
+            </Col>
+</Row>
+
+</div>
       <Row>
         {/* Example using Grid's API */}
         {/* <button onClick={buttonListener}>Push Me</button> */}
 
         {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-        <Row className="mb-3">
-  <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-    {/* Type */}
-   {/* 🔹 TYPE DROPDOWN */}
-<select
-  onChange={handleSearch}
-  className="form-control"
-  style={{ width: "150px", borderRadius: "30px", fontSize: "13px" }}
-  disabled={!!division} // 🔒 disables if user is assigned a division
-  value={division || searchKey.type || ""}
->
-  {division ? (
-    // If user has a division (e.g., "bikes"), show only that
-    <option value={division}>{division}</option>
-  ) : (
-    // If admin, show all options
-    <>
-      <option value="">Select Type</option>
-      <option value="bikes">Bikes</option>
-      <option value="toys">Toys</option>
-      <option value="baby">Baby</option>
-      <option value="accessories">Accessories</option>
-    </>
-  )}
-</select>
 
-
-    {/* Category */}
-    <select
-      onChange={(e) => handleSelectChanges(e, "category")}
-      className="form-control"
-      style={{ width: "150px", borderRadius: "30px", fontSize: "13px" }}
-      disabled={!category.category}
-    >
-      <option value="">Category</option>
-      {category.category?.map((val, i) => (
-        <option key={i} value={val}>{val}</option>
-      ))}
-    </select>
-
-    {/* Subcategory */}
-    <select
-      onChange={(e) => handleSelectChanges(e, "subCategory")}
-      className="form-control"
-      style={{ width: "150px", borderRadius: "30px", fontSize: "13px" }}
-      disabled={!category.subCategory}
-    >
-      <option value="">Subcategory</option>
-      {category.subCategory?.map((val, i) => (
-        <option key={i} value={val}>{val}</option>
-      ))}
-    </select>
-  </div>
-</Row>
         <div
           className="ag-theme-alpine"
           style={{

@@ -1542,6 +1542,83 @@ export default function Products({ prodData, productType }) {
                   </div>
                 </Modal>
                 <Modal
+  open={brandModal}
+  onClose={handleBrandClose} // still needed for Esc key
+  aria-labelledby="modal-modal-title"
+  aria-describedby="modal-modal-description"
+  BackdropProps={{ onClick: (e) => e.stopPropagation() }} // prevent click outside
+>
+  <div
+    style={{
+       width: "250px",
+      height: "180px",
+      position: "absolute",     // center modal
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)", // center both vertically and horizontally
+      background: "#fff",
+      padding: "20px",
+      borderRadius: "15px",
+      // boxShadow: "0 0 12px rgba(0,123,255,0.4)", // optional blue glow
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+    }}
+    className="productPage-modal container flex-center"
+  >
+    {/* Back / Close button */}
+  <button
+      onClick={handleBrandClose}
+      style={{
+         position: "absolute",
+    top: "-30px",
+    right: "-30px",
+    zIndex: 10,
+    background: "#0785D2",      // blue background
+    border: "2px solid white",  // white border
+    borderRadius: "50%",        // circular button
+    width: "32px",
+    height: "32px",
+    fontSize: "18px",
+    fontWeight: 900,
+    color: "#fff",              // white X
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+      }}
+    >
+      &#x2715; {/* cross (X) symbol for closing */}
+    </button>
+
+    <Row>
+      <Col className="text-center">
+        <input
+          onChange={(event) =>
+            setNewBrand({ ...newBrand, name: event.target.value })
+          }
+          type="text"
+          className="form-control products-specs__form-control col-sm-12 mb-2"
+          placeholder="add new brand"
+        />
+        <input
+          onChange={(event) =>
+            setNewBrand({ ...newBrand, brandcode: event.target.value })
+          }
+          type="text"
+          maxLength={4}
+          className="form-control products-specs__form-control col-sm-12 mb-3"
+          placeholder="brand code"
+        />
+        <button onClick={handleAddBrand} className="products-form-saveBtn">
+          Add
+        </button>
+      </Col>
+    </Row>
+  </div>
+</Modal>
+
+                {/* <Modal
                   open={brandModal}
                   onClose={handleBrandClose}
                   aria-labelledby="modal-modal-title"
@@ -1585,7 +1662,7 @@ export default function Products({ prodData, productType }) {
                       </Col>
                     </Row>
                   </div>
-                </Modal>
+                </Modal> */}
               </Row>
             </Form>
             <ToastContainer>

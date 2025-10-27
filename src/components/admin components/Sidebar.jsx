@@ -101,8 +101,10 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
   const [showWorkList, setShowWorkList] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const { auth} = useAuth();
+  console.log("pp==>usertype",auth.userType);
+  
   const allowedPages = auth.userType==="SU" ?  [
-    "HeyChavie",
+    "Hey Happy",
     "Inventory",
     "NewProducts",
     "Productlist",
@@ -225,14 +227,14 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
             "Customer list",
             "New sales order",
             "SO list",
-            "Quotation worklist",
-            "Service & Return",
-            "Leave list",
-            "Staff claim",
-            "Staff Access",
-            "Create Campaign",
-            "Task worklist",
-            "Update accounts",
+            // "Quotation worklist",
+            // "Service & Return",
+            // "Leave list",
+            // "Staff claim",
+            // "Staff Access",
+            // "Create Campaign",
+            // "Task worklist",
+            // "Update accounts",
             "Account details",
           ].map((text, index) => {
             const normalizedText = text.toLowerCase().replace(/\s/g, "");

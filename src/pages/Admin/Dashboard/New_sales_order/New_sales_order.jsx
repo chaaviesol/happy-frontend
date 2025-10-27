@@ -47,7 +47,7 @@ export default function New_sales_order() {
   const [manualDiscount, setManualDiscount] = useState(0); // store rupee discount
   const [isManualMode, setIsManualMode] = useState(false); // toggle between % and ₹ modes
   // const [remarks, setRemarks] = useState("");
-console.log("locsstatus",location?.state?.so_status||0);
+  console.log("locsstatus", location?.state?.so_status || 0);
 
   const { auth } = useAuth({});
   const division = auth?.division;
@@ -183,17 +183,17 @@ console.log("locsstatus",location?.state?.so_status||0);
     setLoading(true);
     try {
       const response = await axiosPrivate.post(`/sales/newsales`, data);
-      console.log("aa new sales",response.data)
+      console.log("aa new sales", response.data)
       if (response?.data?.success) {
         toast.success(response?.data?.message, toastConfig);
-          const newSalesId = response?.data?.data?.sales_id;
-      if (newSalesId) {
-        setTotalData((prev) => ({
-          ...prev,
-          sales_id: newSalesId,
-        }));
-      
-    }
+        const newSalesId = response?.data?.data?.sales_id;
+        if (newSalesId) {
+          setTotalData((prev) => ({
+            ...prev,
+            sales_id: newSalesId,
+          }));
+
+        }
       }
     } catch (err) {
       toast.info(err.response?.data?.message, toastConfig);
@@ -701,7 +701,7 @@ console.log("locsstatus",location?.state?.so_status||0);
   const paymentCalculation = (data) => {
     let TempData = data;
     let ispayment_completed = "";
-    console.log("pay tempdata",TempData);
+    console.log("pay tempdata", TempData);
     if (TotalData?.sales_id && TempData?.total_amount) {
       const FinalAmount = parseInt(TotalData.tl_amt);
       const PayedAmt = parseInt(TempData?.total_amount);
@@ -725,8 +725,8 @@ console.log("locsstatus",location?.state?.so_status||0);
   console.log("pay TotalData>>>>", TotalData);
 
   const confirmPaymentData = async () => {
-    console.log("zz Payment data",paymentData);
-    
+    console.log("zz Payment data", paymentData);
+
     const isBodyValid = paymentData?.total_amount && paymentData?.mode;
     if (!isBodyValid) {
       toast.info("Check payment amount or payment mode", toastConfig);
@@ -880,17 +880,17 @@ console.log("locsstatus",location?.state?.so_status||0);
     return discountObject;
   };
 
-// New sales payment
-const isSalesOrderCreated = !!TotalData?.sales_id;
+  // New sales payment
+  const isSalesOrderCreated = !!TotalData?.sales_id;
 
-// autoadd outstanding
-useEffect(() => {
-  if (TotalData?.user_name) {
-    const match = userdata.find(u => u.user_name === TotalData.user_name);
-    if (match) setUserInfo(match);
-  }
-}, [TotalData?.user_name, userdata]);
-console.log("auto add userinfo",userInfo );
+  // autoadd outstanding
+  useEffect(() => {
+    if (TotalData?.user_name) {
+      const match = userdata.find(u => u.user_name === TotalData.user_name);
+      if (match) setUserInfo(match);
+    }
+  }, [TotalData?.user_name, userdata]);
+  console.log("auto add userinfo", userInfo);
 
 
   return (
@@ -987,7 +987,7 @@ console.log("auto add userinfo",userInfo );
                               discount: discountObject, // ✅ add discount here
                             }));
                             setUserInfo({
-                                user_name: data?.user_name,
+                              user_name: data?.user_name,
                               customer_id: data?.id,
                               mobile: data?.mobile,
                               outstanding_amount: data?.outstanding_amount,
@@ -1092,9 +1092,9 @@ console.log("auto add userinfo",userInfo );
                 </div>
               </div> */}
             </div>
-            <div style={{display:"flex",gap: "10px",}}>
+            <div style={{ display: "flex", gap: "10px", }}>
               {
-                TotalData.sales_id&&(
+                TotalData.sales_id && (
                   <div style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -1105,7 +1105,7 @@ console.log("auto add userinfo",userInfo );
                     paddingLeft: "12px",
                     lineHeight: "1.2",
                     marginTop: "2px",
-                     fontFamily: "'Roboto', sans-serif"
+                    fontFamily: "'Roboto', sans-serif"
                   }}>
                     <span><strong>Sales Id:</strong></span>
                     <span>{TotalData.sales_id}</span>
@@ -1137,8 +1137,11 @@ console.log("auto add userinfo",userInfo );
                     <strong>Mobile:</strong>&nbsp;{userInfo.mobile}
                   </span>
                   <span>
-                    <strong>Outstanding Amount:</strong>&nbsp;₹
-                    {parseFloat(userInfo.outstanding_amount || 0).toFixed(2)}
+                    <strong>
+                      Outstanding Amount:
+                      <span style={{ color: "red" }}> ₹ {parseFloat(userInfo.outstanding_amount || 0).toFixed(2)}</span>
+
+                    </strong>&nbsp;
                   </span>
                 </div>
               )}
@@ -1981,54 +1984,54 @@ console.log("auto add userinfo",userInfo );
           </div>
 
           {/* {location?.state?.solist && ( */}
-            <div className="newsalesAlignFinalAmount">
-              <div className="newsalesAlignFinalAmButton">
-                <p>Payment amount</p>
-                <input
-                  value={
-                    paymentData?.total_amount ? paymentData?.total_amount : ""
-                  }
-                  onChange={getPaymentsData}
-                  name="total_amount"
-                  type="number"
-                  disabled={!isSalesOrderCreated}
-                />
-              </div>
-              <div className="newsalesAlignFinalAmButton">
-                <p>Payment mode</p>
-                <select
-                  value={paymentData?.mode}
-                  onChange={getPaymentsData}
-                  name="mode"
-                  id=""
-                  disabled={!isSalesOrderCreated}
+          <div className="newsalesAlignFinalAmount">
+            <div className="newsalesAlignFinalAmButton">
+              <p>Payment amount</p>
+              <input
+                value={
+                  paymentData?.total_amount ? paymentData?.total_amount : ""
+                }
+                onChange={getPaymentsData}
+                name="total_amount"
+                type="number"
+                disabled={!isSalesOrderCreated}
+              />
+            </div>
+            <div className="newsalesAlignFinalAmButton">
+              <p>Payment mode</p>
+              <select
+                value={paymentData?.mode}
+                onChange={getPaymentsData}
+                name="mode"
+                id=""
+                disabled={!isSalesOrderCreated}
+              >
+                <option selected disabled value="">
+                  Select mode
+                </option>
+                <option value="BANK">Bank</option>
+                <option value="CASH">Cash</option>
+                <option value="UPI">Upi</option>
+              </select>
+            </div>
+            <div className="newsalesAlignFinalAmButton">
+              <div className="newsalesAlignFinalConfirmBtn">
+                <button
+                  // onClick={confirmPaymentData}
+                  onClick={() => {
+                    if (!isSalesOrderCreated) {
+                      toast.info("Please confirm the new Sales Order before proceeding with payment.", toastConfig);
+                      return;
+                    }
+                    confirmPaymentData();
+                  }}
+                  className="newsalesAlignFinalConfirm"
                 >
-                  <option selected disabled value="">
-                    Select mode
-                  </option>
-                  <option value="BANK">Bank</option>
-                  <option value="CASH">Cash</option>
-                  <option value="UPI">Upi</option>
-                </select>
-              </div>
-              <div className="newsalesAlignFinalAmButton">
-                <div className="newsalesAlignFinalConfirmBtn">
-                  <button
-                    // onClick={confirmPaymentData}
-                       onClick={() => {
-          if (!isSalesOrderCreated) {
-            toast.info("Please confirm the new Sales Order before proceeding with payment.", toastConfig);
-            return;
-          }
-          confirmPaymentData();
-        }}
-                    className="newsalesAlignFinalConfirm"
-                  >
-                    Confirm
-                  </button>
-                </div>
+                  Confirm
+                </button>
               </div>
             </div>
+          </div>
           {/* )} */}
           <div style={{ height: "3rem" }}></div>
 
@@ -2086,18 +2089,18 @@ console.log("auto add userinfo",userInfo );
                 ""
               )}
               <div style={{ width: "10px", height: "10px" }}></div>
-               {TotalData.sales_id && (
-  <button
-    id="Cart_Cntrl_las_btns90"
-    onClick={() => {
-      navigate("/sopayment", { state: location.state?.data });
-    }}
-    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "5px",marginRight:"10px" }}
-  >
-    <div style={{ width: "5px" }}></div>
-    Add payment
-  </button>
-)}
+              {TotalData.sales_id && (
+                <button
+                  id="Cart_Cntrl_las_btns90"
+                  onClick={() => {
+                    navigate("/sopayment", { state: location.state?.data });
+                  }}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "5px", marginRight: "10px" }}
+                >
+                  <div style={{ width: "5px" }}></div>
+                  Add payment
+                </button>
+              )}
               {!location.state?.solist ? (
                 <>
                   <button onClick={godata} id="Cart_Cntrl_las_btns3">
@@ -2157,7 +2160,7 @@ console.log("auto add userinfo",userInfo );
                   ) : (
                     ""
                   )} */}
-                 
+
 
                   <div style={{ width: "10px", height: "10px" }}></div>
                   {/* {location.state?.so_status === "placed" ||

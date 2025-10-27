@@ -9,19 +9,29 @@ import React, {
 import { AgGridReact } from "ag-grid-react"; // the AG Grid React Component
 import { Col, Row } from "react-bootstrap";
 import "./Prodlist.css";
+import classNames from "classnames";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 
 import { MyContext } from "../../../../Contexts/Contexts";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Newtopbar_ from "../../../../components/admin components/Newtopbar_";
 import useAuth from "../../../../hooks/useAuth";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import { ButtonComp } from "../../../../components/ButtonComponent/ButtonComp";
 import CustomHeaderFilter from "../../../../components/CustomHeaderFilter";
+import ButtonComponent from "../../../../components/ButtonComponent/ButtonComponent";
+import { Addchart } from "@mui/icons-material";
+import CustomDropdown from "../../../../components/CustomDropdown";
+const flexCenter = classNames(
+  "d-flex",
+  "align-items-center",
+  "justify-content-center"
+);
+
 export default function Prodlist() {
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const [loading, setLoading] = useState(false);
@@ -30,11 +40,36 @@ export default function Prodlist() {
   const [searchKey, setSearchKey] = useState({});
   const [originalProdlistData, setOriginalProdlistData] = useState([]); //
 
+
+
   const { prodlistData, setprodlistData, } =
     useContext(MyContext);
   const { auth } = useAuth({});
   const division = auth?.division;
   const axiosPrivate = useAxiosPrivate();
+
+  console.log("pp division",division);
+  
+    // Category options
+  const categoryOptions = [
+    { value: "all", label: "All Category" }, // your default option
+    ...(category?.category?.map((v) => ({ value: v, label: v })) || []),
+  ];
+
+  // SubCategory options
+  const subCategoryOptions =
+    category?.subCategory?.map((v) => ({ value: v, label: v })) || [];
+
+  //type options
+  const typeOptions = division
+    ? [{ value: division, label: division }]
+    : [
+      { value: "bikes", label: "Bikes" },
+      { value: "toys", label: "Toys" },
+      { value: "baby", label: "Baby" },
+      { value: "accessories", label: "Accessories" },
+    ];
+
 
   console.log("rowData", rowData);
   console.log("category", category);
@@ -68,7 +103,7 @@ export default function Prodlist() {
       field: "product_name",
       headerName: "Product Name",
       headerClass: "center-align-header",
-      cellStyle: { textAlign: "center" , fontSize: "13px" },
+      cellStyle: { textAlign: "center", fontSize: "13px" },
       // width: 480,
     },
     {
@@ -76,7 +111,7 @@ export default function Prodlist() {
       field: "color",
       headerName: "Color",
       headerClass: "center-align-header",
-      cellStyle: { fontSize: "13px", textAlign: "center"  },
+      cellStyle: { fontSize: "13px", textAlign: "center" },
       backgroundColor: "green",
       color: "white",
       // width: 340,
@@ -86,7 +121,7 @@ export default function Prodlist() {
       field: "trade_name",
       headerName: "Suppliers",
       headerClass: "center-align-header",
-      cellStyle: { fontSize: "13px", textAlign: "center"  },
+      cellStyle: { fontSize: "13px", textAlign: "center" },
       // width: 285,
       valueGetter: (params) => params.data.users?.trade_name || "", // Access the nested value
     },
@@ -95,7 +130,7 @@ export default function Prodlist() {
       field: "product_code",
       headerName: "Product Code",
       headerClass: "center-align-header",
-      cellStyle: { fontSize: "13px", textAlign: "center"  },
+      cellStyle: { fontSize: "13px", textAlign: "center" },
       // width: 285,
     },
     // {
@@ -308,43 +343,43 @@ export default function Prodlist() {
   //     [key]: val,
   //   }));
   // };
-const handleSelectChanges = (event, selected) => {
-  const key = selected;
-  const val = event.target.value;
+  const handleSelectChanges = (event, selected) => {
+    const key = selected;
+    const val = event.target.value;
 
-  if (key === "category") {
-    if (val === "all") {
-      // All Category selected: clear subcategories
-      setCategory((prev) => ({
-        ...prev,
-        // subCategory: [],
-      }));
-      // Optionally, you can also clear the searchKey category
-      setSearchKey((prev) => ({
-        ...prev,
-        category: "", // empty value for "All Category"
-      }));
-    } else {
-      // Specific category selected: fetch subcategories
-      const specD = {
-        main_type: searchKey.type,
-        category: val,
-      };
-      axiosPrivate.post(`/product/getspec`, specD).then((res) => {
+    if (key === "category") {
+      if (val === "all") {
+        // All Category selected: clear subcategories
         setCategory((prev) => ({
           ...prev,
-          subCategory: res.data[0].sub_categories,
+          // subCategory: [],
         }));
-      });
+        // Optionally, you can also clear the searchKey category
+        setSearchKey((prev) => ({
+          ...prev,
+          category: "", // empty value for "All Category"
+        }));
+      } else {
+        // Specific category selected: fetch subcategories
+        const specD = {
+          main_type: searchKey.type,
+          category: val,
+        };
+        axiosPrivate.post(`/product/getspec`, specD).then((res) => {
+          setCategory((prev) => ({
+            ...prev,
+            subCategory: res.data[0].sub_categories,
+          }));
+        });
 
-      // Update searchKey normally
-      setSearchKey((prev) => ({
-        ...prev,
-        category: val,
-      }));
+        // Update searchKey normally
+        setSearchKey((prev) => ({
+          ...prev,
+          category: val,
+        }));
+      }
     }
-  }
-};
+  };
 
 
 
@@ -373,21 +408,21 @@ const handleSelectChanges = (event, selected) => {
   ]);
 
 
-const defaultColDef = useMemo(
-  () => ({
-    sortable: true,
-    filter: "agTextColumnFilter",
-    resizable: true,
-    headerComponent: CustomHeaderFilter,
-  }),
-  []
-);
+  const defaultColDef = useMemo(
+    () => ({
+      sortable: true,
+      filter: "agTextColumnFilter",
+      resizable: true,
+      headerComponent: CustomHeaderFilter,
+    }),
+    []
+  );
 
 
 
   const navigate = useNavigate();
   const cellClickedListener = useCallback((event) => {
-     if (event.colDef.field === "barcode") return;
+    if (event.colDef.field === "barcode") return;
     const data = { type: "detail", product_id: event.data.product_id };
     console.log("data", data);
     axiosPrivate.post(`/product/proddetails`, data).then((res) => {
@@ -436,78 +471,60 @@ const defaultColDef = useMemo(
               </span>
             </Col>
           </Row>
-          <Row className="mb-0">
+          <Row className="mb-0" style={{ justifyContent: 'space-between' }}>
             <Col lg={2}>
-              <select
-                required
-                onChange={handleSearch}
-                name="sup_name"
-                id="tradeNumber"
-                className="form-control products-form__form-control"
-                style={{ borderRadius: "30px", fontSize: "13px" }}
-              // value=""
-              >
-                {division ? (
-                  <>
-                    <option>{division}</option>
-                  </>
-                ) : (
-                  <>
-                    <option
-                      value=""
 
-                      style={{ fontSize: "0px" }}
-                    >
-                      type
-                    </option>
-                    <option value="bikes">Bikes</option>
-                    <option value="toys">Toys</option>
-                    <option value="baby">Baby</option>
-                    <option value="accessories">Accessories</option>
-                  </>
-                )}
-              </select>
+              <CustomDropdown
+                options={typeOptions}
+                placeholder="Type"
+                value={searchKey.type}
+                onChange={(val) => handleSearch({ target: { value: val } })}
+                isDisabled={!!division} // disable if division exists
+                hideDropdownIndicator={true} // remove arrow
+              />
+
+
             </Col>
-            <Col lg={2}>
-              <select
-                required
-                onChange={(event) => handleSelectChanges(event, "category")}
-                name="sup_name"
-                id="tradeNumber"
-                className="form-control products-form__form-control"
-                style={{ borderRadius: "30px", fontSize: "13px" }}
-              >
-                <option value="" disabled selected style={{ fontSize: "0px" }}>
-                  {/* <h1>Category</h1> */}
-                  category
-                </option>
-                 <option value="all">All Category</option>
-                {category &&
-                  category.category &&
-                  category.category.map((value, index) => (
-                    <option key={index}> {value}</option>
-                  ))}
-              </select>
+            <Col lg={6}>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <div style={{ flex: 1 }}>
+                  <CustomDropdown
+                    options={categoryOptions}
+                    placeholder="Category"
+                    value={searchKey.category}
+                    onChange={(val) =>
+                      handleSelectChanges({ target: { value: val } }, "category")
+                    }
+                  />
+                </div>
+
+                <div style={{ flex: 1 }}>
+                  <CustomDropdown
+                    options={subCategoryOptions}
+                    placeholder="Sub Category"
+                    value={searchKey.subCategory}
+                    onChange={(val) =>
+                      handleSelectChanges({ target: { value: val } }, "subCategory")
+                    }
+                  />
+                </div>
+              </div>
             </Col>
-            <Col lg={3}>
-              <select
-                required
-                onChange={(event) => handleSelectChanges(event, "subCategory")}
-                name="sup_name"
-                id="tradeNumber"
-                className="form-control products-form__form-control"
-                style={{ borderRadius: "30px", fontSize: "13px" }}
-              >
-                <option value="" disabled selected style={{ fontSize: "0px" }}>
-                  sub category
-                </option>
-                {category &&
-                  category.subCategory &&
-                  category.subCategory.map((value, index) => (
-                    <option key={index}> {value}</option>
-                  ))}
-              </select>
+            <Col lg={4} sm={3} md={3} style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Link style={{ textDecoration: "none" }} to="/addproducts">
+                <ButtonComponent
+                  border="1px solid #0785D2"
+                  color="#0785D2"
+                  background="white"
+                >
+                  <Col style={{ gap: "5px" }} className={flexCenter} >
+                    <span >Create New Product</span>
+                    <Addchart />
+                  </Col>
+                </ButtonComponent>
+              </Link>
             </Col>
+
             <Col
               style={{
                 display: "flex",
@@ -521,6 +538,7 @@ const defaultColDef = useMemo(
               {/* <InputComponent /> */}
             </Col>
           </Row>
+
           <div className="flex-center">
             <div
               className="ag-theme-alpine"
@@ -535,7 +553,7 @@ const defaultColDef = useMemo(
                 // textAlign:"left"
               }}
             >
-    
+
 
               <AgGridReact
                 ref={gridRef} // Ref for accessing Grid's API
