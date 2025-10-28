@@ -186,22 +186,7 @@ export default function Supplierlist() {
         <Row style={{ width: "100%" }}>
           <Col lg={12}>
             <Topbar /> */}
-            <Row className="p-1.5 mb-3">
-              <Col>
-                <span
-                  style={{
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#00342E",
-                    borderRadius: "4px",
-                  }}
-                >
-                  Supplierlist
-                </span>
-              </Col>
-            </Row>
+            
             {/* <Row>
               <Col lg={5}>
                 <select

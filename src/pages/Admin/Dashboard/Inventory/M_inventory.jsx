@@ -21,9 +21,41 @@ export default function M_inventory() {
         >
           <Row style={{ width: "100%" }}>
             <Col sm={12} md={12} lg={12} xs={12}>
-              <Newtopbar_ />
-
-              <Inventory />
+              {/* New sticky container for both Topbar and Inventory headline */}
+              <div
+                style={{
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1, /* Ensure it stays above scrolling content */
+                  backgroundColor: "white", /* White background for full width */
+                  paddingBottom: "10px", /* Add some space below the headline */
+                }}
+              >
+                <Newtopbar_ />
+                <Row className="mb-1">
+                  <Col md={12} xs={12}>
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "#00342E",
+                        borderRadius: "4px",
+                        color: "white",
+                        padding: "5px 0", /* Add padding to the headline itself */
+                      }}
+                    >
+                      Inventory
+                    </span>
+                  </Col>
+                </Row>
+              </div>
+              <div
+                className="inventory-ag-grid-container"
+                style={{ height: "calc(100vh - 180px)", overflow: "auto" }} /* Adjusted height */
+              >
+                <Inventory />
+              </div>
             </Col>
           </Row>
         </div>

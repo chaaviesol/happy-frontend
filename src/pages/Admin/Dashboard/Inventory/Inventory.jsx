@@ -16,32 +16,6 @@ export default function Inventory() {
 
   return (
     <div>
-      {/* <Sidebar type="inventory"> */}
-      {/* // <div className="GoodsReceipt-container" style={{ fontFamily: "Poppins" }}> */}
-      {/* //   <Row style={{ width: "100%" }}> */}
-      {/* //     <Col sm={12} md={12} lg={12} xs={12}> */}
-      {/* // </Col> */}
-      {/* // </Row> */}
-      {/* // </Sidebar> */}
-
-      {/* <Topbar /> */}
-
-      <Row className=" mb-1">
-        <Col md={12} xs={12}>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#00342E",
-              borderRadius: "4px",
-              color: "white",
-            }}
-          >
-            Inventory
-          </span>
-        </Col>
-      </Row>
       <Row className="p-4">
         <InventoryAg
           onOpenModal={(row) => {

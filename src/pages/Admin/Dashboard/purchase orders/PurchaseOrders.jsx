@@ -6,9 +6,8 @@ import classNames from "classnames";
 import ButtonComponent from "../../../../components/ButtonComponent/ButtonComponent";
 import Ag from "../../../../components/admin components/Ag";
 import InputComponent from "../../../../components/FormComponents/InputBox/InputComponent";
-import { MyContext } from "../../../../Contexts/Contexts";
-import { Link } from "react-router-dom";
-import Newtopbar_ from "../../../../components/admin components/Newtopbar_";
+import { MyContext } from "../../../../Contexts/Contexts"; 
+import { Link } from "react-router-dom"; 
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import { useDispatch, useSelector } from "react-redux";
 import * as PoSlice from "../../../../Redux/slices/PoSlices";
@@ -89,25 +88,7 @@ export default function PoSo() {
       <div className="poso-container">
         <Row style={{ width: "100%" }}>
           <Col lg={12} md={12}>
-            <div onClick={handleCloseBox}>
-              <Newtopbar_ isActive={false} />
-
-              <Row className="p-1 mb-3">
-                <Col>
-                  <span
-                    style={{
-                      color: "white",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "#00342E",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    Purchase Orders
-                  </span>
-                </Col>
-              </Row>
+            <div onClick={handleCloseBox}>              
               <Row className="mb-1">
                 <Col lg={8} md={9} sm={9}>
                   <Row className="p-1.5 mb-5 mt-2 align-items-center">

@@ -90,7 +90,10 @@
   background: white;
   /* margin-left: 21vw; */
   /* border: 1px solid rgb(183, 176, 176); */
-  /* position: absolute; */
+  /* Make the topbar sticky */
+  position: sticky;
+  top: 0;
+  z-index: 1020; /* High z-index to stay on top of other content */
   display: flex;
   justify-content: space-between;
   /* width: 79vw; */

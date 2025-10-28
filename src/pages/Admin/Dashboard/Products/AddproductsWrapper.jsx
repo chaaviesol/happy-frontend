@@ -97,34 +97,35 @@ export default function AddproductsWrapper() {
   return (
     <>
       <Sidebar type="product">
-        <_newtopbar_ />
-        
-        <Row style={{ width: "100%" }}>
-          {/* ------------------------------------------------------------------ */}
-          {/* Right Side */}
-          <Col
-            lg={12}
-            sm={12}
-            md={12}
-            className="products-addproducts-rightContainer"
-          >
+        <div style={{ display: "flex", width: "100%" }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            {/* Sticky header for Newtopbar and Add New Product headline */}
             <div
-              className="products-addproducts"
-              // style={{ paddingleft: "5rem" }}
+              style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1, // Ensure it stays above scrolling content
+                backgroundColor: "white", // White background for full width
+                paddingBottom: "10px", // Add some space below the headline
+              }}
             >
-              {/* {auth.userType === "SU" ? (
-                <Topbar
-                  handleApi={handleApiData}
-                  productType={setProductType}
-                  isActive={true}
-                />
-              ) : (
-                <Categorytopbar />
-              )} */}
-              <Products prodData={auth.userType==="ADM" ?state: prodDatas} productType={productType} />
+              <_newtopbar_ />
+              <Row className="mb-4">
+                <Col sm={12}>
+                  <span className="products-headline">Add New Product</span>
+                </Col>
+              </Row>
             </div>
-          </Col>
-        </Row>
+
+            <div
+              className="products-form-container"
+              style={{ height: "calc(100vh - 120px)", overflow: "auto" }} // Adjusted height for scrolling content
+            >
+              {/* The Products component content will now scroll within this container */}
+              <Products prodData={auth.userType === "ADM" ? state : prodDatas} productType={productType} />
+            </div>
+          </div>
+        </div>
       </Sidebar>
     </>
   );

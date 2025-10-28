@@ -100,7 +100,7 @@ export default function Newtopbar_() {
   }, []);
   return (
     <>
-      <div style={{ height: "60px", marginBottom: "20px" }} className="topbar p-3 ">
+      <div style={{ height: "60px" }} className="topbar p-3 ">
         {/* <div className="left topbar_aligh3">
           <div style={{ height: "10px" }}></div>
           <p>

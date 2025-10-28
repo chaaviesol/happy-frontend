@@ -7,6 +7,7 @@ import Supplierlist from "./Supplierlist";
 import { MyContext } from "../../../../Contexts/Contexts";
 import H_Side from "../../../hidden/components/H_Side";
 import Newtopbar_ from "../../../../components/admin components/Newtopbar_";
+import Headline from "../../../../components/admin components/Headline";
 export default function Supplierlist_wrapper() {
   const {isHidden}=useContext(MyContext)
   const SidebarToRender = isHidden ? H_Side : Sidebar;
@@ -16,6 +17,7 @@ export default function Supplierlist_wrapper() {
         <Row style={{ width: "100%" }}>
           <Col lg={12}>
             <Newtopbar_ />
+            <Headline title="Supplierlist" />
             <Supplierlist />
           </Col>
         </Row>

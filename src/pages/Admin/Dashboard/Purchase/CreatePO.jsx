@@ -1,10 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import {
-  AttachFile,
-  CheckCircleOutline,
-  HighlightOff,
-} from "@mui/icons-material";
-import Newtopbar_ from "../../../../components/admin components/Newtopbar_";
+import { AttachFile, CheckCircleOutline, HighlightOff } from "@mui/icons-material";
 import "./Purchase.css";
 import { Add } from "@mui/icons-material";
 import { Divider, IconButton, Modal } from "@mui/material";
@@ -602,820 +597,802 @@ export default function CreatePO() {
     <div className="purchase-container">
       <div className="row">
         <div style={{ padding: 0 }} className="col-xl-12 col-md-12">
-          <div>
-            <Newtopbar_ isActive={false} />
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#00342E",
-                color: "white",
-                borderRadius: "4px",
-                padding: "0",
-                margin: "0",
-              }}
-              className=" row"
-            >
-              <span>New Purchase Order</span>
-            </div>
-            <div style={{ paddingBottom: "1rem" }} className="row"></div>
-            <div className="row purchase-row-sec p-2 m-2">
-              <div className="col-sm-7">
-                <div
-                  className="mb-1 mt-1 row"
-                  style={{ display: "flex", justifyContent: "space-around" }}
-                >
-                  <div className="slct-supplier">
-                    <label
-                      htmlFor="tradeNumber"
-                      className=" col-form-label"
-                      style={{ fontSize: "12px" }}
-                    >
-                      <b> Supplier</b>
-                    </label>
-                    <div>
-                      <input
-                        autoComplete="off"
-                        type="text"
-                        name="trade_name"
-                        className="form-control purchase-form__form-control"
-                        id="purchase-form__form-control"
-                        placeholder="Enter a value"
-                        style={{width:"200px"}}
-                        value={state?.formData?.trade_name ?? ""}
-                        onChange={handleSupLogFilter}
-                        onClick={() => {
+          <div style={{ paddingBottom: "1rem" }} className="row"></div>
+          <div className="row purchase-row-sec p-2 m-2">
+            <div className="col-sm-7">
+              <div
+                className="mb-1 mt-1 row"
+                style={{ display: "flex", justifyContent: "space-around" }}
+              >
+                <div className="slct-supplier">
+                  <label
+                    htmlFor="tradeNumber"
+                    className=" col-form-label"
+                    style={{ fontSize: "12px" }}
+                  >
+                    <b> Supplier</b>
+                  </label>
+                  <div>
+                    <input
+                      autoComplete="off"
+                      type="text"
+                      name="trade_name"
+                      className="form-control purchase-form__form-control"
+                      id="purchase-form__form-control"
+                      placeholder="Enter a value"
+                      style={{width:"200px"}}
+                      value={state?.formData?.trade_name ?? ""}
+                      onChange={handleSupLogFilter}
+                      onClick={() => {
+                        dispatch(PoSlice.SHOW_SUPPLIER_NAMES());
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
                           dispatch(PoSlice.SHOW_SUPPLIER_NAMES());
-                        }}
-                        onKeyDown={(event) => {
-                          if (event.key === 'Enter') {
-                            dispatch(PoSlice.SHOW_SUPPLIER_NAMES());
-                          }
-                        }}
-                        
-                      />
+                        }
+                      }}
+                      
+                    />
 
-                      {state?.showSupplierNames && (
-                        <div
-                          className="log-supp-dropdown-scrollbar2"
-                          // id="style-2"
-                          ref={open_sup_list_ref}
-                          tabIndex={-1} 
-                        >
-                          {(state?.filteredSupplier.length > 0
-                            ? state?.filteredSupplier
-                            : state?.supplierNames
-                          ).map((value, index) =>
-                            value !== null || "" ? (
-                              <div
-                              tabIndex={0} 
-                                key={index}
-                                className="dropdown_map"
-                                style={{ fontSize: "12px",textAlign:"left" }}
-                                onClick={() =>
-
-                                  handleSelectSupNlog("trade_name", value)
-                                }
-                                onKeyDown={(event) => {
-                                  if (event.key === 'Enter') {
-                                    handleSelectSupNlog("trade_name", value);
-                                  }
-                                }}
-                                >
-                                {value}
-                              </div>
-                            ) : null
-                          )}
-                          <div
-                            className="dropdown_map"
-                            style={{ fontSize: "14px" ,color:"blue"}}
-                            onClick={() =>
-                              navigate("/register_new", { state: "sup" })
-                            }
-                          >
-                            New Supplier
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className=" slct-supplier">
-                    <label
-                      htmlFor="tradeNumber"
-                      className=" col-form-label"
-                      style={{ fontSize: "12px" }}
-                    >
-                      <b>Logistics</b>
-                    </label>
-                    <div style={{ marginLeft: "10%" }}>
-                      <input
-                        autoComplete="off"
-                        type="text"
-                        name="logistics_name"
-                        className="form-control purchase-form__form-control"
-                        id="purchase-form__form-control"
-                        placeholder="Enter a value"
-                        style={{width:"200px"}}
-                        value={state?.formData?.logistics_name ?? ""}
-                        onChange={handleSupLogFilter}
-                        onClick={() => {
-                          dispatch(PoSlice.SHOW_LOGISTICS_NAMES());
-                        }}
-                        onFocus={() => {
-                          dispatch(PoSlice.SHOW_LOGISTICS_NAMES());
-                        }}
-                        onKeyDown={(event) => {
-                          if (event.key === 'Enter') {
-                            dispatch(PoSlice.SHOW_LOGISTICS_NAMES());
-                          }
-                        }}
-                      />
-                      {state.showLogisticsNames && (
-                        <div
-                        tabIndex={-1}
-                          ref={open_logistics_list_ref}
-                          className="log-supp-dropdown-scrollbar2"
-                          // id="style-2"
-                        >
-                          {(state?.filteredLogistics.length > 0
-                            ? state?.filteredLogistics
-                            : state?.logisticsNames
-                          ).map((value, index) => (
+                    {state?.showSupplierNames && (
+                      <div
+                        className="log-supp-dropdown-scrollbar2"
+                        // id="style-2"
+                        ref={open_sup_list_ref}
+                        tabIndex={-1} 
+                      >
+                        {(state?.filteredSupplier.length > 0
+                          ? state?.filteredSupplier
+                          : state?.supplierNames
+                        ).map((value, index) =>
+                          value !== null || "" ? (
                             <div
-                            tabIndex={0}
+                            tabIndex={0} 
                               key={index}
                               className="dropdown_map"
                               style={{ fontSize: "12px",textAlign:"left" }}
                               onClick={() =>
-                                handleSelectSupNlog("logistics_name", value)
+
+                                handleSelectSupNlog("trade_name", value)
                               }
                               onKeyDown={(event) => {
                                 if (event.key === 'Enter') {
-                                  handleSelectSupNlog("logistics_name", value)
+                                  handleSelectSupNlog("trade_name", value);
                                 }
                               }}
-                            >
+                              >
                               {value}
                             </div>
-                          ))}
-                          <div
-                            className="dropdown_map"
-                            onClick={handleShowNewLogistics}
-                            style={{ fontSize: "14px" ,color:"blue"}}
-                          >
-                            New logistics
-                          </div>
+                          ) : null
+                        )}
+                        <div
+                          className="dropdown_map"
+                          style={{ fontSize: "14px" ,color:"blue"}}
+                          onClick={() =>
+                            navigate("/register_new", { state: "sup" })
+                          }
+                        >
+                          New Supplier
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-
-              <div
-                style={{ display: "flex", flexDirection: "row" }}
-                className=" col-sm-5"
-              >
-                <div
-                  className=""
-                  style={{
-                    flex: 2,
-                    flexDirection: "row",
-                    display: "flex",
-                    gap: "1.5rem",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      borderRadius: "5px",
-                      width: "250px",
-                      overflowX: "hidden",
-                    }}
-                    className="purchase-scrollbar"
-                    id="style-2"
+                <div className=" slct-supplier">
+                  <label
+                    htmlFor="tradeNumber"
+                    className=" col-form-label"
+                    style={{ fontSize: "12px" }}
                   >
-                    <div
-                      className="force-overflow text-left"
-                      style={{ flex: 2 }}
-                    >
-                      {selectedFile?.map((file, index) => (
-                        <>
-                          <div className="row">
-                            <span
-                              style={{
-                                fontSize: "12px",
-                                paddingLeft: "1.5rem",
-                              }}
-                            >
-                              {index + 1} -: {file?.name}
-                            </span>
-                          </div>
-                        </>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="">
-                    <label
-                      htmlFor="file-input"
-                      style={{
-                        // marginRight: "200px",
-                        cursor: "pointer",
-                        border: "1px solid gray",
-                        borderRadius: "5px",
-                        fontSize: "12px",
-                      }}
-                    >
-                      <AttachFile />
-                      Add{" "}
-                    </label>
+                    <b>Logistics</b>
+                  </label>
+                  <div style={{ marginLeft: "10%" }}>
                     <input
-                      type="file"
-                      id="file-input"
-                      onChange={handleFileChange}
-                      multiple
-                      style={{ display: "none" }}
+                      autoComplete="off"
+                      type="text"
+                      name="logistics_name"
+                      className="form-control purchase-form__form-control"
+                      id="purchase-form__form-control"
+                      placeholder="Enter a value"
+                      style={{width:"200px"}}
+                      value={state?.formData?.logistics_name ?? ""}
+                      onChange={handleSupLogFilter}
+                      onClick={() => {
+                        dispatch(PoSlice.SHOW_LOGISTICS_NAMES());
+                      }}
+                      onFocus={() => {
+                        dispatch(PoSlice.SHOW_LOGISTICS_NAMES());
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          dispatch(PoSlice.SHOW_LOGISTICS_NAMES());
+                        }
+                      }}
                     />
+                    {state.showLogisticsNames && (
+                      <div
+                      tabIndex={-1}
+                        ref={open_logistics_list_ref}
+                        className="log-supp-dropdown-scrollbar2"
+                        // id="style-2"
+                      >
+                        {(state?.filteredLogistics.length > 0
+                          ? state?.filteredLogistics
+                          : state?.logisticsNames
+                        ).map((value, index) => (
+                          <div
+                          tabIndex={0}
+                            key={index}
+                            className="dropdown_map"
+                            style={{ fontSize: "12px",textAlign:"left" }}
+                            onClick={() =>
+                              handleSelectSupNlog("logistics_name", value)
+                            }
+                            onKeyDown={(event) => {
+                              if (event.key === 'Enter') {
+                                handleSelectSupNlog("logistics_name", value)
+                              }
+                            }}
+                          >
+                            {value}
+                          </div>
+                        ))}
+                        <div
+                          className="dropdown_map"
+                          onClick={handleShowNewLogistics}
+                          style={{ fontSize: "14px" ,color:"blue"}}
+                        >
+                          New logistics
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div style={{ flex: 1 }}></div>
               </div>
             </div>
 
             <div
-              className="mt-2"
-              style={{ border: "2px solid #E0E9FF", borderRadius: "10px" }}
+              style={{ display: "flex", flexDirection: "row" }}
+              className=" col-sm-5"
             >
-              <div className="scroll" id="style-2" style={{ height: "400px" }}>
-                {/* <table className="table  table-borderless purchase-table ">
-                <thead className="purchase-table-thead table-head 
-                "> */}
-                <table className="table table-container table-borderless landscape">
-                  <thead className="table-head purchase-table-the">
-                    <tr>
-                      <th style={{ padding: "1px", fontSize: "12px" }}>
-                        Sl No
-                      </th>
-                      <th style={{ width: "18%", fontSize: "12px" }}>
-                        Product
+              <div
+                className=""
+                style={{
+                  flex: 2,
+                  flexDirection: "row",
+                  display: "flex",
+                  gap: "1.5rem",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: "5px",
+                    width: "250px",
+                    overflowX: "hidden",
+                  }}
+                  className="purchase-scrollbar"
+                  id="style-2"
+                >
+                  <div
+                    className="force-overflow text-left"
+                    style={{ flex: 2 }}
+                  >
+                    {selectedFile?.map((file, index) => (
+                      <>
+                        <div className="row">
+                          <span
+                            style={{
+                              fontSize: "12px",
+                              paddingLeft: "1.5rem",
+                            }}
+                          >
+                            {index + 1} -: {file?.name}
+                          </span>
+                        </div>
+                      </>
+                    ))}
+                  </div>
+                </div>
+                <div className="">
+                  <label
+                    htmlFor="file-input"
+                    style={{
+                      // marginRight: "200px",
+                      cursor: "pointer",
+                      border: "1px solid gray",
+                      borderRadius: "5px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <AttachFile />
+                    Add{" "}
+                  </label>
+                  <input
+                    type="file"
+                    id="file-input"
+                    onChange={handleFileChange}
+                    multiple
+                    style={{ display: "none" }}
+                  />
+                </div>
+              </div>
+              <div style={{ flex: 1 }}></div>
+            </div>
+          </div>
+
+          <div
+            className="mt-2"
+            style={{ border: "2px solid #E0E9FF", borderRadius: "10px" }}
+          >
+            <div className="scroll" id="style-2" style={{ height: "400px" }}>
+              {/* <table className="table  table-borderless purchase-table ">
+              <thead className="purchase-table-thead table-head 
+              "> */}
+              <table className="table table-container table-borderless landscape">
+                <thead className="table-head purchase-table-the">
+                  <tr>
+                    <th style={{ padding: "1px", fontSize: "12px" }}>
+                      Sl No
+                    </th>
+                    <th style={{ width: "18%", fontSize: "12px" }}>
+                      Product
+                    </th>
+
+                    <th style={{ width: "8%", fontSize: "12px" }}>Color</th>
+                    <th style={{ fontSize: "12px" }}>Manf.code</th>
+                    <th style={{ fontSize: "12px" }}>Instock</th>
+                    <th style={{ width: "8%", fontSize: "12px" }}>packing</th>
+                    <th style={{ width: "8%", fontSize: "12px" }}>Pieces</th>
+                    <th style={{ width: "15%", fontSize: "12px" }}>Qty</th>
+                    <th style={{ width: "15%", fontSize: "12px" }}>Rate</th>
+                    <th style={{ padding: "1px", fontSize: "12px" }}>
+                      Pricing unit
+                    </th>
+                    <th style={{ padding: "1px", fontSize: "12px" }}>
+                      Net Amt
+                    </th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr style={{ border: "1px solid grey" }}></tr>
+                  {state?.productTableArr?.map((value, index) => (
+                    <tr key={index}>
+                      <th scope="row" style={{ fontSize: "12px" }}>
+                        {index + 1}
                       </th>
 
-                      <th style={{ width: "8%", fontSize: "12px" }}>Color</th>
-                      <th style={{ fontSize: "12px" }}>Manf.code</th>
-                      <th style={{ fontSize: "12px" }}>Instock</th>
-                      <th style={{ width: "8%", fontSize: "12px" }}>packing</th>
-                      <th style={{ width: "8%", fontSize: "12px" }}>Pieces</th>
-                      <th style={{ width: "15%", fontSize: "12px" }}>Qty</th>
-                      <th style={{ width: "15%", fontSize: "12px" }}>Rate</th>
-                      <th style={{ padding: "1px", fontSize: "12px" }}>
-                        Pricing unit
-                      </th>
-                      <th style={{ padding: "1px", fontSize: "12px" }}>
-                        Net Amt
-                      </th>
-                      <th></th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr style={{ border: "1px solid grey" }}></tr>
-                    {state?.productTableArr?.map((value, index) => (
-                      <tr key={index}>
-                        <th scope="row" style={{ fontSize: "12px" }}>
-                          {index + 1}
-                        </th>
-
-                        <td>
-                          <div style={{ height: "2vh" }}>
-                            <div>
-                              {state?.formData.trade_name ? (
-                                <input
-                                  autoComplete="off"
-                                  type="text"
-                                  className="form-control purchase-form__form-control "
-                                  id="purchase-form__form-control"
-                                  placeholder="Enter Product"
-                                  onKeyDown={(event) => {
-                                    if (event.key === 'Enter') {
-                                      handleDisplayProducts(index)
-                                    }
-                                  }}
-                                  onFocus={()=>handleDisplayProducts(index)}
-                                  onClick={() => handleDisplayProducts(index)}
-                                  onChange={(event) => {
-                                    handleChangeProdName(event, index);
-                                  }}
-                                  value={value?.prod_name ?? ""}
-                                />
-                              ) : (
-                                <input
-                                  className="form-control purchase-form__form-control "
-                                  id="purchase-form__form-control"
-                                  placeholder="Enter Product"
-                                  onClick={() =>
-                                    alert("select a supplier to continue")
+                      <td>
+                        <div style={{ height: "2vh" }}>
+                          <div>
+                            {state?.formData.trade_name ? (
+                              <input
+                                autoComplete="off"
+                                type="text"
+                                className="form-control purchase-form__form-control "
+                                id="purchase-form__form-control"
+                                placeholder="Enter Product"
+                                onKeyDown={(event) => {
+                                  if (event.key === 'Enter') {
+                                    handleDisplayProducts(index)
                                   }
-                                  readOnly
-                                  style={{ background: "#e0e9ff" }}
-                                />
-                              )}
+                                }}
+                                onFocus={()=>handleDisplayProducts(index)}
+                                onClick={() => handleDisplayProducts(index)}
+                                onChange={(event) => {
+                                  handleChangeProdName(event, index);
+                                }}
+                                value={value?.prod_name ?? ""}
+                              />
+                            ) : (
+                              <input
+                                className="form-control purchase-form__form-control "
+                                id="purchase-form__form-control"
+                                placeholder="Enter Product"
+                                onClick={() =>
+                                  alert("select a supplier to continue")
+                                }
+                                readOnly
+                                style={{ background: "#e0e9ff" }}
+                              />
+                            )}
 
-                              {state.productsForSelectedSupplierArr.length >
-                                0 && index === state?.showProductNamesBox ? (
-                                <div
-                                tabIndex={-1}
-                                  ref={open_prod_lists}
-                                  className="purchase-dropdown-scrollbar"
-                                >
-                                  <div id="create_po_table_align2">
-                                    <div
-                                      style={{
-                                        borderBottom: "1px solid black",
-                                        zIndex: "100",
-                                        paddingTop:"5px"
-                                      }}
-                                      className="create_po_table_align"
-                                    >
-                                      <div className="create_po_column1">
-                                        <p
-                                          style={{
-                                            fontSize: "0.7rem",
-                                            textAlign: "center",
-                                          }}
-                                        >
-                                          Name
-                                        </p>
-                                      </div>
-                                      <div className="create_po_column_code">
-                                        <p
-                                          style={{
-                                            fontSize: "0.7rem",
-                                            textAlign: "center",
-                                          }}
-                                        >
-                                         Product Code
-                                        </p>
-                                      </div>
-                                      <div className="create_po_column2">
-                                        <p
-                                          style={{
-                                            fontSize: "0.7rem",
-                                            textAlign: "center",
-                                          }}
-                                        >
-                                          Color
-                                        </p>
-                                      </div>
-                                      <div className="create_po_column3">
-                                        <p
-                                          style={{
-                                            fontSize: "0.7rem",
-                                            textAlign: "center",
-                                          }}
-                                        >
-                                          Qty
-                                        </p>
-                                      </div>
-                                      <div className="create_po_column3">
-                                        <p
-                                          style={{
-                                            fontSize: "0.7rem",
-                                            textAlign: "center",
-                                          }}
-                                        >
-                                          Stock status
-                                        </p>
-                                      </div>
+                            {state.productsForSelectedSupplierArr.length >
+                              0 && index === state?.showProductNamesBox ? (
+                              <div
+                              tabIndex={-1}
+                                ref={open_prod_lists}
+                                className="purchase-dropdown-scrollbar"
+                              >
+                                <div id="create_po_table_align2">
+                                  <div
+                                    style={{
+                                      borderBottom: "1px solid black",
+                                      zIndex: "100",
+                                      paddingTop:"5px"
+                                    }}
+                                    className="create_po_table_align"
+                                  >
+                                    <div className="create_po_column1">
+                                      <p
+                                        style={{
+                                          fontSize: "0.7rem",
+                                          textAlign: "center",
+                                        }}
+                                      >
+                                        Name
+                                      </p>
+                                    </div>
+                                    <div className="create_po_column_code">
+                                      <p
+                                        style={{
+                                          fontSize: "0.7rem",
+                                          textAlign: "center",
+                                        }}
+                                      >
+                                       Product Code
+                                      </p>
+                                    </div>
+                                    <div className="create_po_column2">
+                                      <p
+                                        style={{
+                                          fontSize: "0.7rem",
+                                          textAlign: "center",
+                                        }}
+                                      >
+                                        Color
+                                      </p>
+                                    </div>
+                                    <div className="create_po_column3">
+                                      <p
+                                        style={{
+                                          fontSize: "0.7rem",
+                                          textAlign: "center",
+                                        }}
+                                      >
+                                        Qty
+                                      </p>
+                                    </div>
+                                    <div className="create_po_column3">
+                                      <p
+                                        style={{
+                                          fontSize: "0.7rem",
+                                          textAlign: "center",
+                                        }}
+                                      >
+                                        Stock status
+                                      </p>
                                     </div>
                                   </div>
-                                  <br />
-                                  {state.productsForSelectedSupplierArr
-                                    .filter((value) => {
-                                      const isMatch =
-                                        state.productTableArr.some(
-                                          (item) =>
-                                            value.prod_id === item.product_id
-                                        );
-                                      return !isMatch;
-                                    })
-                                    .map((value) => (
-                                      <>
-                                        <div
-                                        tabIndex={0}
-                                          className="cpo_prod_row"
-                                          onKeyDown={(event) => {
-                                            if (event.key === 'Enter') {
-                                              handleSelectProduct(
-                                                value.prod_id,
-                                                index,
-                                                value.product_name
-                                              );
-                                            }
-                                          }}
-                                          onClick={() => {
+                                </div>
+                                <br />
+                                {state.productsForSelectedSupplierArr
+                                  .filter((value) => {
+                                    const isMatch =
+                                      state.productTableArr.some(
+                                        (item) =>
+                                          value.prod_id === item.product_id
+                                      );
+                                    return !isMatch;
+                                  })
+                                  .map((value) => (
+                                    <>
+                                      <div
+                                      tabIndex={0}
+                                        className="cpo_prod_row"
+                                        onKeyDown={(event) => {
+                                          if (event.key === 'Enter') {
                                             handleSelectProduct(
                                               value.prod_id,
                                               index,
                                               value.product_name
                                             );
-                                          }}
-                                        >
-                                          <div className="cpo_prod_col1">
-                                            <p
-                                              style={{
-                                                fontSize: "0.7rem",
-                                                textAlign: "start",
-                                              }}
-                                            >
-                                              {value.product_name}
-                                            </p>
-                                          </div>
-                                          <div className="cpo_prod_col2">
-                                            <p
-                                              style={{
-                                                fontSize: "0.7rem",
-                                                textAlign: "start",
-                                              }}
-                                            >
-                                              {value?.product_code}
-                                            </p>
-                                          </div>
-                                          <div className="cpo_prod_col3">
-                                            <div
-                                              style={{
-                                                width: "20px",
-                                                height: "20px",
-                                                backgroundColor: `${value.color_family}`,
-                                                borderRadius: "15px",
-                                              }}
-                                            ></div>
-                                          </div>
-                                          <div className="cpo_prod_col4">
-                                            <span
-                                              style={{
-                                                fontSize: "0.7rem",
-                                        
-                                              }}
-                                            >
-                                              {value?.total_quantity}
-                                            </span>
-                                          </div>
-                                          <div className="cpo_prod_col5">
-                                            <span
-                                              style={{
-                                                fontSize: "0.7rem",
-                                          
-                                              }}
-                                            >
-                                              {value?.stock_status ===
-                                                "instock" ? (
-                                                <CheckCircleOutline
-                                                  style={{
-                                                    color: "#22c55e",
-                                                    cursor: "pointer",
-                                                  }}
-                                                  titleAccess="Instock"
-                                                />
-                                              ) : (
-                                                <HighlightOff
-                                                  style={{
-                                                    color: "#ef4444",
-                                                    cursor: "pointer",
-                                                  }}
-                                                  titleAccess="Out of stock"
-                                                />
-                                              )}
-                                            </span>
-                                          </div>
+                                          }
+                                        }}
+                                        onClick={() => {
+                                          handleSelectProduct(
+                                            value.prod_id,
+                                            index,
+                                            value.product_name
+                                          );
+                                        }}
+                                      >
+                                        <div className="cpo_prod_col1">
+                                          <p
+                                            style={{
+                                              fontSize: "0.7rem",
+                                              textAlign: "start",
+                                            }}
+                                          >
+                                            {value.product_name}
+                                          </p>
                                         </div>
-                                        <Divider/>
-                                      </>
-                                    ))}
+                                        <div className="cpo_prod_col2">
+                                          <p
+                                            style={{
+                                              fontSize: "0.7rem",
+                                              textAlign: "start",
+                                            }}
+                                          >
+                                            {value?.product_code}
+                                          </p>
+                                        </div>
+                                        <div className="cpo_prod_col3">
+                                          <div
+                                            style={{
+                                              width: "20px",
+                                              height: "20px",
+                                              backgroundColor: `${value.color_family}`,
+                                              borderRadius: "15px",
+                                            }}
+                                          ></div>
+                                        </div>
+                                        <div className="cpo_prod_col4">
+                                          <span
+                                            style={{
+                                              fontSize: "0.7rem",
+                                      
+                                            }}
+                                          >
+                                            {value?.total_quantity}
+                                          </span>
+                                        </div>
+                                        <div className="cpo_prod_col5">
+                                          <span
+                                            style={{
+                                              fontSize: "0.7rem",
+                                        
+                                            }}
+                                          >
+                                            {value?.stock_status ===
+                                              "instock" ? (
+                                              <CheckCircleOutline
+                                                style={{
+                                                  color: "#22c55e",
+                                                  cursor: "pointer",
+                                                }}
+                                                titleAccess="Instock"
+                                              />
+                                            ) : (
+                                              <HighlightOff
+                                                style={{
+                                                  color: "#ef4444",
+                                                  cursor: "pointer",
+                                                }}
+                                                titleAccess="Out of stock"
+                                              />
+                                            )}
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <Divider/>
+                                    </>
+                                  ))}
 
-                                  <div
-                                    style={{ fontSize: "12px" }}
-                                    className="dropdown_map"
-                                    onClick={() => handleAddProductWindow(true)}
-                                  >
-                                    New Product
-                                  </div>
+                                <div
+                                  style={{ fontSize: "12px" }}
+                                  className="dropdown_map"
+                                  onClick={() => handleAddProductWindow(true)}
+                                >
+                                  New Product
                                 </div>
-                              ) : null}
-                            </div>
+                              </div>
+                            ) : null}
                           </div>
-                        </td>
+                        </div>
+                      </td>
 
-                        <td
+                      <td
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <div
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            borderRadius: "5px",
+                            backgroundColor: value?.color_family,
+                            height: "25px",
+                            width: "25px",
+                            border: "1px solid gray",
                           }}
-                        >
-                          <div
-                            style={{
-                              borderRadius: "5px",
-                              backgroundColor: value?.color_family,
-                              height: "25px",
-                              width: "25px",
-                              border: "1px solid gray",
-                            }}
-                          ></div>
-                        </td>
+                        ></div>
+                      </td>
 
-                        <td style={{ fontSize: "12px" }}>
-                          {value?.manufacturer_code || value?.mfgcode}
-                        </td>
-                        <td style={{ fontSize: "12px" }}>{value?.instoke}</td>
-                        <td style={{ fontSize: "12px" }}>{value?.p_package}</td>
-                        <td style={{ fontSize: "12px" }}>
-                          {value?.no_of_items}
-                        </td>
-                        <td>
-                          {state?.productTableArr[index]?.prod_name ? (
-                            <input
-                              className="form-control purchase-form__form-control"
-                              id="purchase-form__form-control"
-                              type="number"
-                              name="qty"
-                              min={0}
-                              value={value?.enter_qty ?? ""} //changed to pieces so not displaying
-                              onChange={(event) => {
-                                handleChangeQtyOrAmt(event, index);
-                              }}
-                              style={{ textAlign: "center" }}
-                            />
-                          ) : (
-                            <input
-                              min={0}
-                              className="form-control purchase-form__form-control"
-                              id="purchase-form__form-control"
-                              disabled
-                              value=""
-                              style={{ background: "#e0e9ff" }}
-                            />
-                          )}
-                        </td>
-                        <td>
-                          {state?.productTableArr[index]?.prod_name ? (
-                            <input
-                              className="form-control purchase-form__form-control"
-                              id="purchase-form__form-control"
-                              type="number"
-                              name="amt"
-                              min={0}
-                              value={value?.amt ?? value?.rate}
-                              onChange={(event) =>
-                                handleChangeQtyOrAmt(event, index)
-                              }
-                              style={{ textAlign: "center" }}
-                            />
-                          ) : (
-                            <input
-                              className="form-control purchase-form__form-control"
-                              id="purchase-form__form-control"
-                              disabled
-                              value=""
-                              style={{ background: "#e0e9ff" }}
-                            />
-                          )}
-                        </td>
-                        <td>
-                          <select
-                            onChange={(event) =>
-                              handleProdPricingUnit(event, index)
-                            }
-                            value={value.pricing_unit ?? ""}
+                      <td style={{ fontSize: "12px" }}>
+                        {value?.manufacturer_code || value?.mfgcode}
+                      </td>
+                      <td style={{ fontSize: "12px" }}>{value?.instoke}</td>
+                      <td style={{ fontSize: "12px" }}>{value?.p_package}</td>
+                      <td style={{ fontSize: "12px" }}>
+                        {value?.no_of_items}
+                      </td>
+                      <td>
+                        {state?.productTableArr[index]?.prod_name ? (
+                          <input
                             className="form-control purchase-form__form-control"
                             id="purchase-form__form-control"
                             type="number"
-                            name="pricing_unit"
-                            style={{ height: "29px" }}
-                          >
-                            <option disabled></option>
-                            <option>Bundle</option>
-                            <option>Pieces</option>
-                          </select>
-                        </td>
-
-                        <td style={{ fontSize: "12px" }}>
-                          {value.pricing_unit === "Bundle"
-                            ? value.enter_qty && value.amt
-                              ? value.enter_qty * value.amt
-                              : 0
-                            : value.enter_qty && value.amt
-                              ? value.no_of_items * value.enter_qty * value.amt
-                              : 0}
-                        </td>
-                        <td>
-                          <Delete
-                            onClick={() => deleteProdConfirmation(index)}
-                            // onClick={() => handleDeleteProductRowData(index)}
-                            style={{ cursor: "pointer" }}
-                            id="delete"
-                          ></Delete>
-                        </td>
-                      </tr>
-                    ))}
-                    {state?.productTableArr?.length < 100 && (
-                      <tr>
-                        <td onClick={handleAddExtraProductRow}>
-                          <IconButton>
-                            <Add style={{ cursor: "pointer" }} />
-                          </IconButton>
-                        </td>
-                      </tr>
-                    )}
-
-                    {/* <tr style={{ border: "1px solid grey" }}></tr> */}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div>
-              <span className="purchase-grand-total">
-                Grand total :{state.totalAmount}
-              </span>
-              <span style={{ fontSize: "12px" }}></span>
-            </div>
-            <div className="row">
-              <div className="col-sm-1" style={{ fontSize: "12px" }}>
-                Note
-              </div>
-
-              <div className="col-sm-10">
-                {state?.notesArray?.map((value, index) => (
-                  <div key={index} className="row mt-3">
-                    <div className=" col-sm-1">
-                      <label className="label" style={{ fontSize: "12px" }}>
-                        {index + 1}
-                      </label>
-                    </div>
-                    <div className=" col-sm-5">
-                      <input
-                        type="text"
-                        className=" form-control purchase-form__form-control"
-                        name={`note${index + 1}`}
-                        onChange={(event) => handleAddNotes(event, index)}
-                        value={value[`note${index + 1}`] ?? ""}
-                      />
-                    </div>
-                    {index === state.notesArray.length - 1 &&
-                      state.notesArray.length < 3 && (
-                        <div style={{ marginTop: "-7px" }}>
-                          <IconButton
-                            onClick={() => {
-                              dispatch(PoSlice.EXTRA_NOTE());
+                            name="qty"
+                            min={0}
+                            value={value?.enter_qty ?? ""} //changed to pieces so not displaying
+                            onChange={(event) => {
+                              handleChangeQtyOrAmt(event, index);
                             }}
-                          >
-                            <Add style={{ cursor: "pointer" }} />
-                          </IconButton>
-                        </div>
-                      )}
-                  </div>
-                ))}
-              </div>
+                            style={{ textAlign: "center" }}
+                          />
+                        ) : (
+                          <input
+                            min={0}
+                            className="form-control purchase-form__form-control"
+                            id="purchase-form__form-control"
+                            disabled
+                            value=""
+                            style={{ background: "#e0e9ff" }}
+                          />
+                        )}
+                      </td>
+                      <td>
+                        {state?.productTableArr[index]?.prod_name ? (
+                          <input
+                            className="form-control purchase-form__form-control"
+                            id="purchase-form__form-control"
+                            type="number"
+                            name="amt"
+                            min={0}
+                            value={value?.amt ?? value?.rate}
+                            onChange={(event) =>
+                              handleChangeQtyOrAmt(event, index)
+                            }
+                            style={{ textAlign: "center" }}
+                          />
+                        ) : (
+                          <input
+                            className="form-control purchase-form__form-control"
+                            id="purchase-form__form-control"
+                            disabled
+                            value=""
+                            style={{ background: "#e0e9ff" }}
+                          />
+                        )}
+                      </td>
+                      <td>
+                        <select
+                          onChange={(event) =>
+                            handleProdPricingUnit(event, index)
+                          }
+                          value={value.pricing_unit ?? ""}
+                          className="form-control purchase-form__form-control"
+                          id="purchase-form__form-control"
+                          type="number"
+                          name="pricing_unit"
+                          style={{ height: "29px" }}
+                        >
+                          <option disabled></option>
+                          <option>Bundle</option>
+                          <option>Pieces</option>
+                        </select>
+                      </td>
+
+                      <td style={{ fontSize: "12px" }}>
+                        {value.pricing_unit === "Bundle"
+                          ? value.enter_qty && value.amt
+                            ? value.enter_qty * value.amt
+                            : 0
+                          : value.enter_qty && value.amt
+                            ? value.no_of_items * value.enter_qty * value.amt
+                            : 0}
+                      </td>
+                      <td>
+                        <Delete
+                          onClick={() => deleteProdConfirmation(index)}
+                          // onClick={() => handleDeleteProductRowData(index)}
+                          style={{ cursor: "pointer" }}
+                          id="delete"
+                        ></Delete>
+                      </td>
+                    </tr>
+                  ))}
+                  {state?.productTableArr?.length < 100 && (
+                    <tr>
+                      <td onClick={handleAddExtraProductRow}>
+                        <IconButton>
+                          <Add style={{ cursor: "pointer" }} />
+                        </IconButton>
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* <tr style={{ border: "1px solid grey" }}></tr> */}
+                </tbody>
+              </table>
             </div>
-            <div className="container">
-              <div className="row purchase-btnns container mt-3">
-                <button
-                  className="purchase-btnns-close"
-                  id="purchase-btnns"
-                  style={{ fontSize: "12px" }}
-                  onClick={() => navigate("/purchaseorders")}
-                >
-                  Close
-                </button>
-                {/* {conform === false ? ( */}
-
-                <button
-                  className="purchase-btnns-draft"
-                  id="purchase-btnns"
-                  style={{ fontSize: "12px" }}
-                  onClick={() => handleSendFormData("draft")}
-                >
-                  Save as draft
-                </button>
-
-                {/* )} */}
-                <button
-                   disabled={open}
-                  style={{ fontSize: "12px" }}
-                  className="purchase-btnns-confirm "
-                  id="purchase-btn"
-                  onClick={() => handleSendFormData("placed")}
-                >
-                  Confirm
-                  <Backdrop
-                    sx={{
-                      color: "#fff",
-                      zIndex: (theme) => theme.zIndex.drawer + 1,
-                    }}
-                    open={open}
-                    // onClick={handleClose}
-                  >
-                    <CircularProgress color="inherit" />
-                  </Backdrop>
-                </button>
-              </div>
-            </div>
-
-            <Newproduct
-              show={showNewProdWindow}
-              handleClose={setShowNewProdWindow}
-              supplier={state.formData.trade_name}
-              closeWindow={closeNewProdWindow}
-            />
-            <ToastContainer>
-              position="top-right" autoClose={500}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick rtl={false}, pauseOnFocusLoss draggable pauseOnHover
-            </ToastContainer>
-
-            <Modal
-              open={state.showNewLogistics}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <div
-                style={{
-                  backgroundColor: "#E1FFCF",
-                  width: "30%",
-                  padding: "16px",
-                  marginLeft: "37%",
-                  marginTop: "15%",
-                  borderRadius: "2%",
-                }}
-              >
-                <p style={{ fontSize: "18px", fontWeight: "600" }}>
-                  New Transporter{" "}
-                  <KeyboardBackspace
-                    onClick={handleShowNewLogistics}
-                    style={{
-                      marginLeft: "80%",
-                      fontSize: "30px",
-                      backgroundColor: "#DB8300",
-                      color: "#E1FFCF",
-                      borderRadius: "50px",
-                      marginTop: "-15%",
-                      cursor: "pointer",
-                    }}
-                  />
-                </p>
-                <table>
-                  <tr>
-                    <td>
-                      <label htmlFor="">Trade name <h6 style={{ color: "red", display: "inline" }}>*</h6> : </label>
-                    </td>
-                    <td>
-                      <input
-                        onChange={handleNewLogisticsChange}
-                        type="text"
-                        name="name"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <label htmlFor="">Address <h6 style={{ color: "red", display: "inline" }}>*</h6> :</label>
-                    </td>
-                    <td>
-                      <textarea
-                        id="address"
-                        name="address"
-                        rows="4"
-                        onChange={handleNewLogisticsChange}
-                      ></textarea>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>
-                      <label htmlFor="">Contact number : </label>
-                    </td>
-                    <td>
-                      <input
-                        onChange={handleNewLogisticsChange}
-                        type="number"
-                        name="contact_no"
-                        min={0}
-                      />
-                    </td>
-                  </tr>
-                </table>
-                <button
-                  type="button"
-                  onClick={handleAddNewLogistics}
-                  className="btn btn-success"
-                >
-                  Submit
-                </button>
-              </div>
-            </Modal>
           </div>
+
+          <div>
+            <span className="purchase-grand-total">
+              Grand total :{state.totalAmount}
+            </span>
+            <span style={{ fontSize: "12px" }}></span>
+          </div>
+          <div className="row">
+            <div className="col-sm-1" style={{ fontSize: "12px" }}>
+              Note
+            </div>
+
+            <div className="col-sm-10">
+              {state?.notesArray?.map((value, index) => (
+                <div key={index} className="row mt-3">
+                  <div className=" col-sm-1">
+                    <label className="label" style={{ fontSize: "12px" }}>
+                      {index + 1}
+                    </label>
+                  </div>
+                  <div className=" col-sm-5">
+                    <input
+                      type="text"
+                      className=" form-control purchase-form__form-control"
+                      name={`note${index + 1}`}
+                      onChange={(event) => handleAddNotes(event, index)}
+                      value={value[`note${index + 1}`] ?? ""}
+                    />
+                  </div>
+                  {index === state.notesArray.length - 1 &&
+                    state.notesArray.length < 3 && (
+                      <div style={{ marginTop: "-7px" }}>
+                        <IconButton
+                          onClick={() => {
+                            dispatch(PoSlice.EXTRA_NOTE());
+                          }}
+                        >
+                          <Add style={{ cursor: "pointer" }} />
+                        </IconButton>
+                      </div>
+                    )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="container">
+            <div className="row purchase-btnns container mt-3">
+              <button
+                className="purchase-btnns-close"
+                id="purchase-btnns"
+                style={{ fontSize: "12px" }}
+                onClick={() => navigate("/purchaseorders")}
+              >
+                Close
+              </button>
+              {/* {conform === false ? ( */}
+
+              <button
+                className="purchase-btnns-draft"
+                id="purchase-btnns"
+                style={{ fontSize: "12px" }}
+                onClick={() => handleSendFormData("draft")}
+              >
+                Save as draft
+              </button>
+
+              {/* )} */}
+              <button
+                 disabled={open}
+                style={{ fontSize: "12px" }}
+                className="purchase-btnns-confirm "
+                id="purchase-btn"
+                onClick={() => handleSendFormData("placed")}
+              >
+                Confirm
+                <Backdrop
+                  sx={{
+                    color: "#fff",
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                  }}
+                  open={open}
+                  // onClick={handleClose}
+                >
+                  <CircularProgress color="inherit" />
+                </Backdrop>
+              </button>
+            </div>
+          </div>
+
+          <Newproduct
+            show={showNewProdWindow}
+            handleClose={setShowNewProdWindow}
+            supplier={state.formData.trade_name}
+            closeWindow={closeNewProdWindow}
+          />
+          <ToastContainer>
+            position="top-right" autoClose={500}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick rtl={false}, pauseOnFocusLoss draggable pauseOnHover
+          </ToastContainer>
+
+          <Modal
+            open={state.showNewLogistics}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <div
+              style={{
+                backgroundColor: "#E1FFCF",
+                width: "30%",
+                padding: "16px",
+                marginLeft: "37%",
+                marginTop: "15%",
+                borderRadius: "2%",
+              }}
+            >
+              <p style={{ fontSize: "18px", fontWeight: "600" }}>
+                New Transporter{" "}
+                <KeyboardBackspace
+                  onClick={handleShowNewLogistics}
+                  style={{
+                    marginLeft: "80%",
+                    fontSize: "30px",
+                    backgroundColor: "#DB8300",
+                    color: "#E1FFCF",
+                    borderRadius: "50px",
+                    marginTop: "-15%",
+                    cursor: "pointer",
+                  }}
+                />
+              </p>
+              <table>
+                <tr>
+                  <td>
+                    <label htmlFor="">Trade name <h6 style={{ color: "red", display: "inline" }}>*</h6> : </label>
+                  </td>
+                  <td>
+                    <input
+                      onChange={handleNewLogisticsChange}
+                      type="text"
+                      name="name"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label htmlFor="">Address <h6 style={{ color: "red", display: "inline" }}>*</h6> :</label>
+                  </td>
+                  <td>
+                    <textarea
+                      id="address"
+                      name="address"
+                      rows="4"
+                      onChange={handleNewLogisticsChange}
+                    ></textarea>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <label htmlFor="">Contact number : </label>
+                  </td>
+                  <td>
+                    <input
+                      onChange={handleNewLogisticsChange}
+                      type="number"
+                      name="contact_no"
+                      min={0}
+                    />
+                  </td>
+                </tr>
+              </table>
+              <button
+                type="button"
+                onClick={handleAddNewLogistics}
+                className="btn btn-success"
+              >
+                Submit
+              </button>
+            </div>
+          </Modal>
         </div>
       </div>
       <Modal

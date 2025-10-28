@@ -117,7 +117,7 @@ export const privateRoutes = [
   { path: "productworklist", element: <ProdWorklist_wrapper /> },
  
 
-  { path: "new_sales_order", element: <New_sales_order /> },
+  { path: "new_sales_order", element: <New_sales_wrapper /> },
   { path: "view_sr", element: <View_service_request /> },
   { path: "quotation", element: <Quotation_wrapper /> },
   { path: "approveuser", element: <ApproveUsers /> },

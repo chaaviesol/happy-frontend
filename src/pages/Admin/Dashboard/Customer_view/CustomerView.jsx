@@ -20,6 +20,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { prismaBaseApi } from "../../../../config";
 import Newtopbar_ from "../../../../components/admin components/Newtopbar_";
 import Sidebar from "../../../../components/admin components/Sidebar";
+import Headline from "../../../../components/admin components/Headline";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 
 export default function CustomerView() {
@@ -175,59 +176,52 @@ console.log("List id type",id,user_type);
   );
 
   return (
-    <div>
-        <>
+    <>
       <SidebarToRender type="customer list">
-        <Row style={{ width: "100%" }}>
-          <Col lg={12}>
+        <div
+          style={{
+            height: "calc(100vh - 60px)",
+            overflowY: "auto",
+          }}
+        >
+          <div
+            style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+              backgroundColor: "white",
+            }}
+          >
             <Newtopbar_ />
-            <Row className="p-1.5 mb-3">
-              <Col>
-                <span
-                  style={{
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#00342E",
-                    borderRadius: "4px",
-                  }}
-                >
-                  Customer list
-                </span>
-              </Col>
+            <Headline title="Customer list" />
+          </div>
+          <Container fluid>
+            <Row className="mt-3">
+              <div
+                className="ag-theme-alpine"
+                style={{
+                  width: "98%",
+                  height: "calc(100vh - 180px)",
+                  border: "1px solid #A6C991",
+                  fontSize: "13px",
+                  margin: "auto",
+                }}
+              >
+                <AgGridReact
+                  ref={gridRef} // Ref for accessing Grid's API
+                  rowData={rowData} // Row Data for Rows
+                  columnDefs={columnDefs} // Column Defs for Columns
+                  defaultColDef={defaultColDef} // Default Column Properties
+                  animateRows={true} // Optional - set to 'true' to have rows animate when sorted
+                  rowSelection="multiple" // Options - allows click selection of rows
+                  onCellClicked={cellClickedListener} // Optional - registering for Grid Event
+                  columnHoverHighlight={true}
+                />
+              </div>
             </Row>
-
-            <Container fluid>
-              <Row className="mt-5">
-                <div
-                  className="ag-theme-alpine"
-                  style={{
-                    width: "98%",
-                    height: 500,
-                    border: "1px solid #A6C991",
-                    fontSize: "13px",
-                  }}
-                >
-                  <AgGridReact
-                    ref={gridRef} // Ref for accessing Grid's API
-                    rowData={rowData} // Row Data for Rows
-                    columnDefs={columnDefs} // Column Defs for Columns
-                    defaultColDef={defaultColDef} // Default Column Properties
-                    animateRows={true} // Optional - set to 'true' to have rows animate when sorted
-                    rowSelection="multiple" // Options - allows click selection of rows
-                    onCellClicked={cellClickedListener} // Optional - registering for Grid Event
-                    columnHoverHighlight={true}
-                    // suppressRowHoverHighlight= {false}
-                  />
-                </div>
-              </Row>
-            </Container>
-          </Col>
-        </Row>
+          </Container>
+        </div>
       </SidebarToRender>
     </>
-      
-    </div>
-  )
+  );
 }

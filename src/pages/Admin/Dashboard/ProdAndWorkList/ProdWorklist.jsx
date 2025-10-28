@@ -157,7 +157,15 @@ export default function ProdWorklist() {
   console.log("setproductlist", productlist);
   return (
     <>
-      <Row className="p-2">
+      <Row
+        className="p-2"
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
+          backgroundColor: "white",
+        }}
+      >
         <Col>
           <span
             style={{
@@ -167,7 +175,6 @@ export default function ProdWorklist() {
               justifyContent: "center",
               backgroundColor: "#00342E",
               borderRadius: "4px",
-              padding: ".1rem",
             }}
           >
             Product-Worklist
@@ -176,21 +183,15 @@ export default function ProdWorklist() {
       </Row>
 
       <Container fluid>
-        <Row
-          className="mt-5"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <Row className="mt-3">
           <div
             className="ag-theme-alpine"
             style={{
               width: "100%",
-              height: 500,
+              height: "calc(100vh - 120px)", // Adjusted height for scrolling
               border: "1px solid #A6C991",
               fontSize: "13px",
+              overflow: "auto",
             }}
           >
             <AgGridReact

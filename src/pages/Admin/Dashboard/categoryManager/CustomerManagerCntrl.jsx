@@ -564,11 +564,6 @@ export default function CustomerManagerCntrl() {
       <ToastContainer />
       <div id="cstmr_cntrl_alighn">
         <div id="cstmr_cntrl_alig_cntr">
-          <div id="cstmr_cntrl_alig_ctgr_t">
-            <div>
-              <p id="cstmr_cntrl_alig_ctgr_p1">Category Manager</p>
-            </div>
-          </div>
           <div style={{ height: "2rem" }}></div>
           <div id="cstmr_cntrl_alig_ctgr_flx">
             <p id="cstmr_cntrl_alig_ctgr_p3">Division</p>
@@ -842,220 +837,207 @@ export default function CustomerManagerCntrl() {
                 </form>
               </div>
               <div style={{ width: "20px" }}></div>
-              <div className="form-containers">
-                <div id="cstmr_cntrl_frm_ctrl">
-                  <div id="cstmr_cntrl_frm__set1">
-                    <form className="form">
-                      <p id="cstmr_cntrl_Ctgry_P">Specs</p>
+              {/* Separate cards for Specs and Values (previously grouped together) */}
+              <div className="form-container">
+                <form className="form">
+                  <p id="cstmr_cntrl_Ctgry_P">Specs</p>
 
-                      <div style={{ height: "5px" }}></div>
-                      {subcatTRUEFLSE.subCat == true ? (
-                        <>
-                          <div className="form-group">
-                            {specsValues.map((datas, index) => (
-                              <>
-                                <div
-                                  id="cstmr_cntrl_BX"
-                                  onClick={() => {
-                                    setvaluesdts({
-                                      type: divisionstate.type,
-                                      category: SubCatDt.category,
+                  <div style={{ height: "5px" }}></div>
+                  {subcatTRUEFLSE.subCat == true ? (
+                    <>
+                      <div className="form-group">
+                        {specsValues.map((datas, index) => (
+                          <React.Fragment key={`spec-${index}`}>
+                            <div
+                              id="cstmr_cntrl_BX"
+                              onClick={() => {
+                                setvaluesdts({
+                                  type: divisionstate.type,
+                                  category: SubCatDt.category,
+                                  spec: datas,
+                                });
+                                setuseefcttempstate({ spec: true });
+                              }}
+                              style={{
+                                boxShadow:
+                                  valuesdts.spec == datas
+                                    ? " rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px"
+                                    : "",
+                                backgroundColor:
+                                  valuesdts.spec == datas ? "rgb(5, 77, 69)" : "",
+                                color: SubCatDt.category == datas ? "white" : "",
+                              }}
+                            >
+                              <div style={{ width: "20px" }}></div>
+                              <p
+                                style={{
+                                  fontSize: "16px",
+                                  margin: "3px 00px 00px 00px",
+                                  cursor: "pointer",
+                                  color: valuesdts.spec == datas ? "white" : "",
+                                }}
+                              >
+                                {datas}
+                              </p>
+                              <div
+                                onClick={() => {
+                                  setDltbxTR_FLSE({ dlticn_Spec: true });
+                                  setdltdetail_state([
+                                    ...dltdetail_state,
+                                    {
+                                      indexnum: index,
+                                      type: valuesdts.type,
+                                      category: valuesdts.category,
                                       spec: datas,
-                                    });
-                                    setuseefcttempstate({ spec: true });
-                                  }}
-                                  style={{
-                                    boxShadow:
-                                      valuesdts.spec == datas
-                                        ? " rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px"
-                                        : "",
-                                    backgroundColor:
-                                      valuesdts.spec == datas
-                                        ? "rgb(5, 77, 69)"
-                                        : "",
-                                    color:
-                                      SubCatDt.category == datas ? "white" : "",
-                                  }}
-                                >
-                                  <div style={{ width: "20px" }}></div>
-                                  <p
-                                    style={{
-                                      fontSize: "16px",
-                                      margin: "3px 00px 00px 00px",
-                                      cursor: "pointer",
-                                      color:
-                                        valuesdts.spec == datas ? "white" : "",
-                                    }}
+                                    },
+                                  ]);
+                                }}
+                                className="buttons"
+                              >
+                                <div>
+                                  <svg
+                                    style={{ color: "red" }}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    className="bi bi-x-lg"
+                                    viewBox="0 0 16 16"
                                   >
-                                    {datas}
-                                  </p>
-                                  <div
-                                    onClick={() => {
-                                      setDltbxTR_FLSE({ dlticn_Spec: true });
-                                      // setConfirm_box(false);
-                                      setdltdetail_state([
-                                        ...dltdetail_state,
-                                        {
-                                          indexnum: index,
-                                          type: valuesdts.type,
-                                          category: valuesdts.category,
-                                          spec: datas,
-                                        },
-                                      ]);
-                                    }}
-                                    className="buttons"
-                                  >
-                                    <div>
-                                      <svg
-                                        style={{ color: "red" }}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        fill="currentColor"
-                                        className="bi bi-x-lg"
-                                        viewBox="0 0 16 16"
-                                      >
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                                      </svg>
-                                    </div>
-                                  </div>
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                  </svg>
                                 </div>
-                                <div style={{ height: "0.3rem" }}></div>
-                              </>
-                            ))}
-                          </div>
-                          <div id="cstmr_cntrl_bnAL">
-                            <div
-                              href="#"
-                              onClick={() => {
-                                setxtrabx_TR_fls({ smlBx2: true });
-                              }}
-                              className="Btn"
-                            >
-                              <div className="sign">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="25"
-                                  height="25"
-                                  fill="currentColor"
-                                  className="bi bi-plus-lg"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
-                                  />
-                                </svg>
                               </div>
-
-                              <div className="text">Add</div>
                             </div>
+                            <div style={{ height: "0.3rem" }}></div>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                      <div id="cstmr_cntrl_bnAL">
+                        <div
+                          href="#"
+                          onClick={() => {
+                            setxtrabx_TR_fls({ smlBx2: true });
+                          }}
+                          className="Btn"
+                        >
+                          <div className="sign">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="25"
+                              height="25"
+                              fill="currentColor"
+                              className="bi bi-plus-lg"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
+                              />
+                            </svg>
                           </div>
-                        </>
-                      ) : (
-                        <>
-                          <p style={{ color: "black" }}>Select A Category</p>
-                        </>
-                      )}
-                    </form>
-                  </div>
-                  <div style={{ width: "20px" }}></div>
-                  <div id="cstmr_cntrl_frm__set2">
-                    <form className="form">
-                      <p id="cstmr_cntrl_Ctgry_P">Values</p>
 
-                      <div style={{ height: "5px" }}></div>
-                      {subcatTRUEFLSE.specs == true ? (
-                        <>
-                          <div className="form-group">
-                            {getspecValues.map((datas, index) => (
-                              <>
-                                <div
-                                  id="cstmr_cntrl_BX"
-                                  style={{ backgroundColor: "rgb(5, 77, 69)" }}
-                                >
-                                  <div style={{ width: "20px" }}></div>
-                                  <p
-                                    style={{
-                                      color: "white",
-                                      fontSize: "16px",
-                                      margin: "3px 00px 00px 00px",
-                                    }}
+                          <div className="text">Add</div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p style={{ color: "black" }}>Select A Category</p>
+                    </>
+                  )}
+                </form>
+              </div>
+              <div style={{ width: "20px" }}></div>
+              <div className="form-container">
+                <form className="form">
+                  <p id="cstmr_cntrl_Ctgry_P">Values</p>
+
+                  <div style={{ height: "5px" }}></div>
+                  {subcatTRUEFLSE.specs == true ? (
+                    <>
+                      <div className="form-group">
+                        {getspecValues.map((datas, index) => (
+                          <React.Fragment key={`val-${index}`}>
+                            <div id="cstmr_cntrl_BX" style={{ backgroundColor: "rgb(5, 77, 69)" }}>
+                              <div style={{ width: "20px" }}></div>
+                              <p
+                                style={{
+                                  color: "white",
+                                  fontSize: "16px",
+                                  margin: "3px 00px 00px 00px",
+                                }}
+                              >
+                                {datas}
+                              </p>
+                              <div
+                                onClick={() => {
+                                  setDltbxTR_FLSE({ dlticn_Value: true });
+                                  setdltdetail_state([
+                                    ...dltdetail_state,
+                                    {
+                                      indexnum: index,
+                                      type: valuesdts.type,
+                                      category: valuesdts.category,
+                                      spec: valuesdts.spec,
+                                      specvalues: datas,
+                                    },
+                                  ]);
+                                }}
+                                className="buttons"
+                              >
+                                <div>
+                                  <svg
+                                    style={{ color: "red" }}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    className="bi bi-x-lg"
+                                    viewBox="0 0 16 16"
                                   >
-                                    {datas}
-                                  </p>
-                                  <div
-                                    onClick={() => {
-                                      setDltbxTR_FLSE({ dlticn_Value: true });
-                                      // setConfirm_box(false);
-                                      setdltdetail_state([
-                                        ...dltdetail_state,
-                                        {
-                                          indexnum: index,
-                                          type: valuesdts.type,
-                                          category: valuesdts.category,
-                                          spec: valuesdts.spec,
-                                          specvalues: datas,
-                                        },
-                                      ]);
-                                    }}
-                                    className="buttons"
-                                  >
-                                    <div>
-                                      <svg
-                                        style={{ color: "red" }}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        fill="currentColor"
-                                        className="bi bi-x-lg"
-                                        viewBox="0 0 16 16"
-                                      >
-                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                                      </svg>
-                                    </div>
-                                  </div>
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                  </svg>
                                 </div>
-                                <div style={{ height: "0.3rem" }}></div>
-                              </>
-                            ))}
-                          </div>
-                          <div id="cstmr_cntrl_bnAL">
-                            <div style={{ width: "10px" }}></div>
-                            <div
-                              onClick={() => {
-                                setxtrabx_TR_fls({ smlBx3: true });
-                              }}
-                              className="Btn"
-                            >
-                              <div className="sign">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="25"
-                                  height="25"
-                                  fill="currentColor"
-                                  className="bi bi-plus-lg"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
-                                  />
-                                </svg>
                               </div>
-                              <div className="text">Add</div>
                             </div>
+                            <div style={{ height: "0.3rem" }}></div>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                      <div id="cstmr_cntrl_bnAL">
+                        <div style={{ width: "10px" }}></div>
+                        <div
+                          onClick={() => {
+                            setxtrabx_TR_fls({ smlBx3: true });
+                          }}
+                          className="Btn"
+                        >
+                          <div className="sign">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="25"
+                              height="25"
+                              fill="currentColor"
+                              className="bi bi-plus-lg"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
+                              />
+                            </svg>
                           </div>
-                        </>
-                      ) : (
-                        <>
-                          <p style={{ color: "black" }}>Select A Spec</p>
-                        </>
-                      )}
-                      <br />
-                    </form>
-                  </div>
-                </div>
+                          <div className="text">Add</div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p style={{ color: "black" }}>Select A Spec</p>
+                    </>
+                  )}
+                </form>
               </div>
             </div>
           </div>
