@@ -2089,7 +2089,7 @@ export default function New_sales_order() {
                 ""
               )}
               <div style={{ width: "10px", height: "10px" }}></div>
-              {TotalData.sales_id && (
+              {/* {TotalData.sales_id && (
                 <button
                   id="Cart_Cntrl_las_btns90"
                   onClick={() => {
@@ -2100,7 +2100,7 @@ export default function New_sales_order() {
                   <div style={{ width: "5px" }}></div>
                   Add payment
                 </button>
-              )}
+              )} */}
               {!location.state?.solist ? (
                 <>
                   <button onClick={godata} id="Cart_Cntrl_las_btns3">
@@ -2137,7 +2137,7 @@ export default function New_sales_order() {
                     ""
                   )}
                   <div style={{ width: "10px", height: "10px" }}></div>
-                  {/* {location.state?.so_status === "placed" ||
+                  {location.state?.so_status === "placed" ||
                     location.state?.so_status === "forfitting" ||
                     location.state?.so_status === "fitted" ||
                     location.state?.so_status === "forpacking" ||
@@ -2159,7 +2159,7 @@ export default function New_sales_order() {
                     </button>
                   ) : (
                     ""
-                  )} */}
+                  )}
 
 
                   <div style={{ width: "10px", height: "10px" }}></div>

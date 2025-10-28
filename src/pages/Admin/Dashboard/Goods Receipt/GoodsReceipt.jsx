@@ -187,9 +187,9 @@ const ord_Bundleqty =
   };
 
   useEffect(() => {
-    logisticsRef.current.focus();
+    // logisticsRef.current.focus();
     handleCheckLr();
-  }, []);
+  }, [productsData]);
 
 console.log("pp==>products",productsData);
 
