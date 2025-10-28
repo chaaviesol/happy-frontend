@@ -5,6 +5,7 @@ import {
   Close,
   Delete,
 } from "@mui/icons-material";
+import Select from "react-select";
 import { Row, Col, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "@mui/material";
@@ -56,6 +57,8 @@ export default function Products({ prodData, productType }) {
   const [loading, setLoading] = useState(false);
   const [isTagProdClicked, setIsTagProdClicked] = useState(false);
   const [selectedFile, setSelectedFile] = useState([]);
+  const [aaProductList, setAaProductList] = useState([]);
+
   const [form, setForm] = useState({
     sup_name: "",
     category: "",
@@ -173,7 +176,7 @@ export default function Products({ prodData, productType }) {
   const handleBrandClose = () => setBrandModal(false);
 
   //   Api calling for ProductData
-  console.log(prodData);
+  console.log("proddata---",prodData);
   useEffect(() => {
     console.log(prodData);
     if (prodData) {
@@ -639,6 +642,92 @@ export default function Products({ prodData, productType }) {
     return () => document.body.removeEventListener("click", closeBoxes);
   }, []);
   console.log({ state });
+
+
+const productlistfetchapi = async () => {
+  try {
+    const response = await axiosPrivate.post(`/product/productlist`);
+    console.log("aa product list", response.data);
+    setAaProductList(response.data); // ✅ store product list
+  } catch (error) {
+    console.error("Error fetching products", error);
+  }
+};
+
+useEffect(() => {
+productlistfetchapi()
+}, [])
+
+// 🔹 Fetch and apply parent product details when a parent is selected
+const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) => {
+  try {
+    // 1️⃣ Fetch full parent product details
+    const response = await axiosPrivate.post(`/product/proddetails`, {
+      type: "detail",
+      prod_name: selectedProductName,
+      product_id: selectedProductId,
+    });
+
+    const parentProd = response.data;
+    console.log("Parent Product Details:", parentProd);
+
+    if (!parentProd) return;
+
+    // 2️⃣ Prepare mapped form fields (fill everything possible)
+    const updatedForm = {
+      ...form,
+      parent_id: parentProd.product_id || "",
+      name: parentProd.product_name || "",
+      category: parentProd.product_sub_type || "",
+      subcategory: parentProd.prod_subtype2 || "",
+      brand: parentProd.brand?.brand_name || "",
+      product_code: parentProd.product_code || "",
+      assign_code: form.assign_code || "", // keep existing assign_code
+      hsn: parentProd.hsn || "",
+      gst_perc: parentProd.gst_perc || "",
+      manufacturer_code: parentProd.manufacturer_code || "",
+      package: parentProd.package || "",
+      color: parentProd.color || "",
+      color_family: parentProd.color_family || "",
+      measure: parentProd.unit_of_measure || "",
+      min_stk: parentProd.min_stk ? parentProd.min_stk : "",
+      no_of_items: parentProd.no_of_items ? parentProd.no_of_items : "",
+      desc: parentProd.product_desc || "",
+      sup_name: parentProd.users?.trade_name || form.sup_name || "",
+      type: parentProd.product_type || prodData.type || "",
+      user: "admin1",
+    };
+
+    setForm(updatedForm);
+
+    // 3️⃣ Fetch specs for this category (if available)
+    if (parentProd.product_sub_type) {
+      const payload = {
+        main_type: prodData.type,
+        category: parentProd.product_sub_type,
+      };
+
+      try {
+        const res = await axiosPrivate.post(`/product/getspec`, payload);
+        const specsArr = res.data[0]?.spec || [];
+        setProductSpecs([specsArr]);
+      } catch (err) {
+        console.error("Error loading specs:", err);
+        setProductSpecs([]);
+      }
+    }
+
+    // 4️⃣ Optional — preload product_spec (if your UI supports it)
+    if (parentProd.product_spec && Object.keys(parentProd.product_spec).length > 0) {
+      setSpecsData({ spec: parentProd.product_spec });
+    }
+  } catch (error) {
+    console.error("Error fetching parent product details:", error);
+  }
+};
+
+
+
   return (
     // <Sidebar type="product">
     <div className="Products">
@@ -652,11 +741,11 @@ export default function Products({ prodData, productType }) {
           className="products-addproducts-rightContainer"
         >
           <div className="products-addproducts">
-            <Row className="mb-4">
+            {/* <Row className="mb-4">
               <Col sm={12}>
                 <span className="products-headline">Add New Product</span>
               </Col>
-            </Row>
+            </Row> */}
 
             {/* Form */}
             <Form>
@@ -794,56 +883,89 @@ export default function Products({ prodData, productType }) {
                       />
                     </div>
                   </div>
-                  <div className="form-group row">
-                    <label
-                      htmlFor="tag Parent product"
-                      className="col-sm-5 col-form-label"
-                    >
-                      tag Parent product
-                    </label>
-                    <div className="col-sm-7" ref={parendIdInputRef}>
-                      <input
-                        autoComplete="off"
-                        onBlur={handleInputBlur}
-                        onChange={formData}
-                        name="parent_id"
-                        type="text"
-                        value={form.parent_id}
-                        className="form-control purchase-form__form-control "
-                        id="purchase-form__form-control"
-                      />
-                      {filterParentId?.length > 0 && (
-                        <div
-                          tabIndex={0}
-                          id="style-2"
-                          className="col-lg-11 col-md-10 col-sm-10 product-parentId-dropdown  p-2"
-                        >
-                          {filterParentId?.map((value, index) => (
-                            <div
-                              tabIndex={0}
-                              // tabIndex="0"
-                              key={index}
-                              onKeyDown={(e) => {
-                                handleParent_id(e, index);
-                              }}
-                              onClick={(e) => {
-                                handleParent_id(e, index);
-                              }}
-                              className="product-parentId-dropdownMenu text-left"
-                              style={{
-                                width: "100%",
-                                borderBottom: "1px solid black",
-                                padding: ".4rem",
-                                fontSize: "14px",
-                              }}
-                            >
-                              {value}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+
+
+ <div className="form-group row">
+  <label
+    htmlFor="tagParentProduct"
+    className="col-sm-5 col-form-label"
+  >
+    Tag Parent Product
+  </label>
+
+  <div className="col-sm-7" ref={parendIdInputRef}>
+    <div className="react-select-wrapper">
+      <Select
+        id="tagParentProduct"
+        name="parent_id"
+        placeholder="Select parent product"
+        isSearchable
+        isClearable
+        value={
+    form.parent_id
+      ? (() => {
+          const matched = aaProductList?.find(
+            (p) => p.product_id === form.parent_id
+          );
+          return matched
+            ? { value: matched.product_id, label: matched.product_name }
+            : null;
+        })()
+      : null
+  }
+        options={
+          aaProductList
+            ?.filter(
+              (p) =>
+                p?.users?.trade_name === form.sup_name &&
+                p?.product_type === prodData?.type
+            )
+            ?.map((p) => ({
+              value: p.product_name,
+              label: p.product_name,
+              product_id: p.product_id,
+            })) || []
+        }
+        onChange={(selected) => {
+          if (selected) {
+            fetchAndSetParentProduct(selected.value, selected.product_id);
+          } else {
+            setForm({ ...form, parent_id: "" });
+          }
+        }}
+        classNamePrefix="custom-select"
+        styles={{
+          control: (base, state) => ({
+            ...base,
+            borderRadius: "12px",
+            border: state.isFocused ? "1.5px solid #00342E" : "1px solid #ced4da",
+            boxShadow: "none",
+            fontSize: "13px",
+            minHeight: "35px",
+            backgroundColor: "white",
+            textAlign: "left",
+          }),
+          menu: (base) => ({
+            ...base,
+            marginTop: "0px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            zIndex: 9999,
+          }),
+          option: (base, state) => ({
+            ...base,
+            backgroundColor: state.isFocused ? "#00342E" : "#fff",
+            color: state.isFocused ? "#fff" : "#000",
+            fontSize: "14px",
+            textAlign: "left",
+            borderBottom: "1px solid #eee",
+            cursor: "pointer",
+          }),
+        }}
+      />
+    </div>
+  </div>
+</div>
 
                   <div className="form-group row">
                     <label
@@ -1161,6 +1283,7 @@ export default function Products({ prodData, productType }) {
                         handleInputChange={formData}
                         name="no_of_items"
                         type="number"
+                        value={form.no_of_items}
                       />
                     </div>
                   </div>
@@ -1177,6 +1300,7 @@ export default function Products({ prodData, productType }) {
                         name="min_stk"
                         min={1}
                         type="number"
+                        value={form.min_stk}
                       />
                     </div>
                   </div>
@@ -1189,6 +1313,7 @@ export default function Products({ prodData, productType }) {
                         handleInputChange={formData}
                         name="gst_perc"
                         type="number"
+                        value={form.gst_perc}
                       />
                     </div>
                   </div>
@@ -1203,6 +1328,7 @@ export default function Products({ prodData, productType }) {
                       <InputComponent
                         handleInputChange={formData}
                         name="measure"
+                        value={form.measure}
                       />
                     </div>
                   </div>
@@ -1218,6 +1344,7 @@ export default function Products({ prodData, productType }) {
                       <InputComponent
                         handleInputChange={formData}
                         name="color"
+                        value={form.color}
                       />
                     </div>
                   </div>
@@ -1230,7 +1357,7 @@ export default function Products({ prodData, productType }) {
                       Color
                     </label>
                     <div className="col-sm-5">
-                      <ColorBoxComponent setColor={handleSetColor} />
+                      <ColorBoxComponent  setColor={handleSetColor} />
                     </div>
                   </div>
                 </Col>
