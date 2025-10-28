@@ -240,6 +240,7 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
             const normalizedText = text.toLowerCase().replace(/\s/g, "");
 
             if (
+              index === 0 ||
               !allowedPages?.length ||
               allowedPages.some(
                 (allowedPage) =>
