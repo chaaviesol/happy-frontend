@@ -42,7 +42,7 @@ const division = auth?.division; // e.g. "bikes", "toys", "baby", "accessories"
 
     // Category options
   const categoryOptions = [
-    { value: "all", label: "All Category" }, // your default option
+    { value: "", label: "All Category" }, // your default option
     ...(category?.category?.map((v) => ({ value: v, label: v })) || []),
   ];
 
