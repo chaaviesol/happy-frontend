@@ -677,7 +677,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
     const updatedForm = {
       ...form,
       parent_id: parentProd.product_id || "",
-      name: form.product_name || "",
+      name: form.name || "",
       category: parentProd.product_sub_type || "",
       subcategory: parentProd.prod_subtype2 || "",
       brand: parentProd.brand?.brand_name || "",
