@@ -45,6 +45,12 @@ export default function Register() {
     password: false,
      prod_type: false,
   });
+
+
+  useEffect(() => {
+    setKeralaSelected(true);
+  }, [addressObj])
+  
   const navigate = useNavigate();
   const theme = createTheme({
     components: {
