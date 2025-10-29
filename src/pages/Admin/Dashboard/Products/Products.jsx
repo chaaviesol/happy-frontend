@@ -677,11 +677,11 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
     const updatedForm = {
       ...form,
       parent_id: parentProd.product_id || "",
-      name: parentProd.product_name || "",
+      name: form.product_name || "",
       category: parentProd.product_sub_type || "",
       subcategory: parentProd.prod_subtype2 || "",
       brand: parentProd.brand?.brand_name || "",
-      product_code: parentProd.product_code || "",
+      product_code: form.product_code || "",
       assign_code: form.assign_code || "", // keep existing assign_code
       hsn: parentProd.hsn || "",
       gst_perc: parentProd.gst_perc || "",
@@ -689,7 +689,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
       package: parentProd.package || "",
       color: parentProd.color || "",
       color_family: parentProd.color_family || "",
-      measure: parentProd.unit_of_measure || "",
+      unit_of_measure: parentProd.unit_of_measure || "",
       min_stk: parentProd.min_stk ? parentProd.min_stk : "",
       no_of_items: parentProd.no_of_items ? parentProd.no_of_items : "",
       desc: parentProd.product_desc || "",
@@ -1319,7 +1319,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                   </div>
                   <div className="form-group row">
                     <label
-                      htmlFor="measure"
+                      htmlFor="unit_of_measure"
                       className="col-sm-5 col-form-label"
                     >
                       Measure
@@ -1327,8 +1327,8 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                     <div className="col-sm-5">
                       <InputComponent
                         handleInputChange={formData}
-                        name="measure"
-                        value={form.measure}
+                        name="unit_of_measure"
+                        value={form.unit_of_measure}
                       />
                     </div>
                   </div>
