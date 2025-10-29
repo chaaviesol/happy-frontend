@@ -7,7 +7,7 @@ export default function FloatingNewSOButton({ setDraftData }) {
   const location = useLocation();
 
   // Hide button on login or specific pages
-  const hideOnRoutes = ["/login", "/forgot-password", "/reset-password", "/new_sales_wrapper"];
+  const hideOnRoutes = ["/","/login", "/forgot-password", "/reset-password", "/new_sales_wrapper"];
   if (hideOnRoutes.includes(location.pathname)) return null;
 
   const handleClick = () => {
