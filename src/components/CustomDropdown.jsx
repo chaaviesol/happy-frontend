@@ -1,5 +1,6 @@
 import React from "react";
-import Select from "react-select";
+import Select, { components } from "react-select";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa"; // FontAwesome icons
 
 const CustomDropdown = ({
   options = [],
@@ -7,9 +8,37 @@ const CustomDropdown = ({
   onChange,
   value,
   maxHeight = 200,
-  isDisabled = false,              // new prop
-  hideDropdownIndicator = false,   // new prop
+  isDisabled = false,
+  hideDropdownIndicator = false,
 }) => {
+  // Capitalize first letter
+  const capitalize = (str) => (str ? str.charAt(0).toUpperCase() + str.slice(1) : "");
+
+  // Custom SingleValue
+  const SingleValue = (props) => (
+    <components.SingleValue {...props}>
+      {capitalize(props.data.label)}
+    </components.SingleValue>
+  );
+
+  // Custom DropdownIndicator
+  const DropdownIndicator = (props) => {
+    if (hideDropdownIndicator) return null;
+
+    const { selectProps } = props;
+    const menuIsOpen = selectProps.menuIsOpen; // react-select prop
+
+    return (
+      <components.DropdownIndicator {...props}>
+        {menuIsOpen ? (
+          <FaChevronUp style={{ marginRight: 5, color: "#0785D2" }} />
+        ) : (
+          <FaChevronDown style={{ marginRight: 5, color: "#0785D2" }} />
+        )}
+      </components.DropdownIndicator>
+    );
+  };
+
   return (
     <Select
       options={options}
@@ -17,9 +46,7 @@ const CustomDropdown = ({
       isDisabled={isDisabled}
       value={options.find((opt) => opt.value === value) || null}
       onChange={(selected) => onChange(selected?.value)}
-      components={{
-        DropdownIndicator: hideDropdownIndicator ? () => null : undefined,
-      }}
+      components={{ DropdownIndicator, SingleValue }}
       styles={{
         control: (provided, state) => ({
           ...provided,
@@ -33,12 +60,12 @@ const CustomDropdown = ({
           cursor: isDisabled ? "not-allowed" : "pointer",
           backgroundColor: isDisabled ? "#f5f5f5" : "#fff",
         }),
-        menu: (provided) => ({ 
-            ...provided,
-             borderRadius: 15,
-            boxShadow: "0 4px 12px rgba(0, 123, 255, 0.4)",
-          overflow: "hidden",   
-          }),
+        menu: (provided) => ({
+          ...provided,
+          borderRadius: 15,
+          boxShadow: "0 4px 12px rgba(0, 123, 255, 0.4)",
+          overflow: "hidden",
+        }),
         menuList: (provided) => ({
           ...provided,
           maxHeight: maxHeight,
@@ -61,6 +88,5 @@ const CustomDropdown = ({
     />
   );
 };
-
 
 export default CustomDropdown;

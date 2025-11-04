@@ -96,16 +96,27 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
     auth.userType === "SU"
       ? [
           "Hey Happy",
-          "Inventory",
-          "Productlist",
-          "Category",
-          "NewUser",
-          "Worklist",
-          "Users",
-          "POlist",
-          "SOlist",
-          "Accountdetails",
-          "Expenses",
+    "Inventory",
+    // "NewProducts",
+    "Productlist",
+    "Category",
+    "NewUser",
+    "Worklist",
+    // "CreatePO",
+    "POlist",
+    "Supplierlist",
+    // "Newsalesorder",
+    "SOlist",
+    "Customerlist",
+    // "Quotationworklist",
+    // "Service&Return",
+    // "Leavelist",
+    // "Staffclaim",
+    // "Staffaccess",
+    // "Createcampaign",
+    "Accountdetails",
+    "Updateaccounts",
+    "Expenses"
         ]
       : auth.allowedPages;
 
@@ -117,17 +128,28 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
     const routes = {
       0: "/adm_navigate",
       1: "/inventory",
+      // 2: "/addproducts",
       2: "/prodlist",
       3: "/category_manager",
       4: "/register_new",
       5: "/worklist",
       5.1: "/worklist",
       5.2: "/productworklist",
-      6: "/users", // label placeholder
+      6: "/users", 
       6.1: "/supplierlist",
       6.2: "/customerlist",
+      // 7: "/purchase",
       7: "/purchaseorders",
+      // 11: "/new_sales_order",
       8: "/so_list",
+      // 13: "/admin_quotation",
+        // 14: "/adm_service_view",
+        // 15: "/leave_list",
+        // 16: "/staff_claim",
+        // 17: "/user_access",
+        // 18: "/createcampaign",
+        // 19:"/taskworklist",
+        // 20:"/createshare",
       9: "/viewdistribution",
       10: "/OpExpenses",
     };
@@ -187,10 +209,11 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
               {theme.direction === "rtl" ? (
                 <ChevronRight />
               ) : (
-                <ChevronLeft
-                  onClick={handleDrawerClose}
-                  sx={{ color: "#b88a44" }}
-                />
+                <></>
+                // <ChevronLeft
+                //   onClick={handleDrawerClose}
+                //   sx={{ color: "#b88a44" }}
+                // />
               )}
             </IconButton>
           )}
@@ -200,13 +223,24 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
           {[
             "Hey Happy",
             "Inventory",
+             // "New Products",
             "Product list",
             "Category",
             "New User",
             "Worklist",
-            "Users", // 👈 New dropdown
-            "PO list",
-            "SO list",
+            "Users", 
+            // "Create PO",
+            "Purchase Order",
+            "Sales Order",
+             // "New sales order",
+            // "Quotation worklist",
+            // "Service & Return",
+            // "Leave list",
+            // "Staff claim",
+            // "Staff Access",
+            // "Create Campaign",
+            // "Task worklist",
+            // "Update accounts",
             "Account details",
             "Expenses",
           ].map((text, index) => {
