@@ -484,6 +484,35 @@ console.log("pp==>products",productsData);
   // };
 
 
+  // 🧮 Calculate Grand Total dynamically
+console.log("bb prod dat", productsData);
+
+const grandTotal = (() => {
+  // Calculate received items total
+  const receivedTotal = Array.isArray(productsData?.received)
+    ? productsData.received.reduce((sum, item) => {
+        const unit = item?.pricing_unit;
+        const basePrice = parseFloat(item?.base_price || item?.invoice_amt || 0);
+        const qty = parseFloat(item?.received_qty || 0);
+        const itemsPerBundle = parseFloat(item?.no_of_items || 1);
+
+        if (unit === "Pieces") return sum + qty * basePrice;
+        if (unit === "Bundle") return sum + qty * basePrice * itemsPerBundle;
+        return sum;
+      }, 0)
+    : 0;
+
+  // Add handling and logistics costs
+  const handlingCost = parseFloat(productsData?.handling_cost || 0);
+  const logisticsCost = parseFloat(productsData?.logistics_cost || 0);
+
+  return receivedTotal + handlingCost + logisticsCost;
+})();
+
+console.log("Grand Total =", grandTotal);
+
+
+
 
 
 
@@ -770,6 +799,7 @@ console.log("pp==>products",productsData);
                         <th>Pending</th>
                         <th>Po rate</th>
                         <th>Invoice rate</th>
+                        <th>Total rate</th>
                         <th>MRP</th>
                         <th></th>
                       </tr>
@@ -795,6 +825,14 @@ console.log("pp==>products",productsData);
             <td>{p.balance_qty || 0}</td>
             <td>{p.unit_price || 0}</td>
             <td>{p.base_price || 0}</td>
+            <td>
+{p.pricing_unit === "pieces"
+      ? (p.received_qty || 0) * (p.base_price || 0)
+      : p.pricing_unit === "bundle"
+      ? (p.received_qty || 0) * (p.base_price || 0) * (p.no_of_items || 0)
+      : (p.received_qty || 0) * (p.base_price || 0)}
+
+            </td>
             <td>{p.mrp || 0}</td>
           </tr>
         ));
@@ -813,6 +851,14 @@ console.log("pp==>products",productsData);
             <td>{p.balance_qty || 0}</td>
             <td>{p.unit_price || 0}</td>
             <td>{p.base_price || 0}</td>
+            <td>
+{p.pricing_unit === "pieces"
+      ? (p.received_qty || 0) * (p.base_price || 0)
+      : p.pricing_unit === "bundle"
+      ? (p.received_qty || 0) * (p.base_price || 0) * (p.no_of_items || 0)
+      : (p.received_qty || 0) * (p.base_price || 0)}
+
+            </td>
             <td>{p.mrp || 0}</td>
             
           </tr>
@@ -1008,6 +1054,27 @@ console.log("pp==>products",productsData);
                               />
                             </div>
                           </td>
+<td style={{ textAlign: "center" }}>
+  <div className="Gr-td d-flex align-items-center justify-content-center" style={{ gap: "3px" }}>
+    <CurrencyRupeeSharp style={{ fontSize: "1rem" }} />
+    <span>
+      {(() => {
+        const unit = value?.pricing_unit;
+        const basePrice = parseFloat(value?.base_price || value?.invoice_amt || 0);
+        const qty = parseFloat(value?.received_qty || 0);
+        const itemsPerBundle = parseFloat(value?.no_of_items || 1);
+
+        if (unit === "Pieces") return (qty * basePrice);
+        if (unit === "Bundle") return (qty * basePrice * itemsPerBundle);
+        return 0;
+      })()}
+    </span>
+  </div>
+</td>
+
+
+
+
 
                           <td style={{ textAlign: "center", width: "7rem" }}>
                             <div className="Gr-td">
@@ -1075,6 +1142,33 @@ console.log("pp==>products",productsData);
 
               <Col md={8}></Col>
             </Row>
+            {/* 🧾 Grand Total Section */}
+<div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginRight: "2rem",
+    marginTop: "1.5rem",
+    fontSize: "15px",
+    fontWeight: "600",
+    color: "#064e3b",
+    background: "#f0fdf4",
+    border: "1px solid #bbf7d0",
+    borderRadius: "8px",
+    padding: "0.6rem 1.5rem",
+  }}
+>
+  <span>Grand Total:&nbsp;</span>
+  <CurrencyRupeeSharp style={{ fontSize: "1rem", marginRight: "2px" }} />
+  <span>
+    {grandTotal.toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}
+  </span>
+</div>
+
             <Row className="p-3 mb-3 ">
               <Col md={4}>
                 <Row>

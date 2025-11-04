@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import "./customer_profile_layout.css";
+import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
+
 
 export default function CustomerProfileTab({
   profileData,
@@ -29,10 +31,16 @@ export default function CustomerProfileTab({
       product_type: newProdTypeObj,
     };
 
+console.log("vv cus edit pass",data);
+
+
     axiosPrivate
-      .post(`/customer/customerprofileedit`, data)
+      .post(`/user/userupdate`, data)
       .then((respp) => {
-        if (respp.data.success) {
+        console.log("userup res",respp);
+        
+        if (respp.status==200) {
+
           toast.success(respp.data.message, { position: "top-right" });
           setProfileEdit(false);
         }
@@ -95,7 +103,7 @@ export default function CustomerProfileTab({
                     type="text"
                     className="cp_input"
                     name="user_name"
-                    value={profileData?.user_name}
+                    value={profileData?.user_name || ""}
                     onChange={handleEditChanges}
                     disabled={!profileEdit}
                   />
@@ -107,7 +115,7 @@ export default function CustomerProfileTab({
                     type="number"
                     className="cp_input"
                     name="mobile"
-                    value={profileData?.mobile}
+                    value={profileData?.mobile || ""}
                     onChange={handleEditChanges}
                     disabled={!profileEdit}
                   />
@@ -129,6 +137,28 @@ export default function CustomerProfileTab({
                     ))}
                   </div>
                 </div>
+                <div className="cp_form_row">
+  <label className="cp_label">Customer Grade :</label>
+  <div className="cp_checkbox_group">
+    <RadioGroup
+      row
+      name="grade"
+      value={profileData?.grade || ""} // ✅ controlled value
+      onChange={(e) => {
+        if (!profileEdit) return;
+        setProfileData((prev) => ({
+          ...prev,
+          grade: e.target.value,
+        }));
+      }}
+    >
+      <FormControlLabel value="A" control={<Radio disabled={!profileEdit} />} label="A" />
+      <FormControlLabel value="B" control={<Radio disabled={!profileEdit} />} label="B" />
+      <FormControlLabel value="C" control={<Radio disabled={!profileEdit} />} label="C" />
+    </RadioGroup>
+  </div>
+</div>
+
 
                 <div className="cp_form_row">
                   <label className="cp_label">Website :</label>
@@ -136,7 +166,7 @@ export default function CustomerProfileTab({
                     type="text"
                     className="cp_input"
                     name="website"
-                    value={profileData?.website}
+                    value={profileData?.website || ""}
                     onChange={handleEditChanges}
                     disabled={!profileEdit}
                   />
@@ -148,7 +178,7 @@ export default function CustomerProfileTab({
                     type="number"
                     className="cp_input"
                     name="landline"
-                    value={profileData?.landline}
+                    value={profileData?.landline || ""}
                     onChange={handleEditChanges}
                     disabled={!profileEdit}
                   />

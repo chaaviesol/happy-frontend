@@ -3,6 +3,7 @@ import { privateRoutes, customerRoutes, publicRoutes, supplierRoutes } from "./r
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RequireAuth from "./components/RequireAuth";
 import Layout from "./components/Layout";
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (

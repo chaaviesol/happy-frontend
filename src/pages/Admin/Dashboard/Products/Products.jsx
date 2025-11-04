@@ -34,6 +34,8 @@ import {
 import useHiddenPages from "../../../../hooks/useHiddenPages";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
 import CloseBtnComp from "../../../../components/CloseBtnComp";
+import CustomerManagerCntrl from "../categoryManager/CustomerManagerCntrl";
+import CustomModal from "../../../../components/CustomModal";
 
 export default function Products({ prodData, productType }) {
   const [state, dispatch] = useReducer(
@@ -45,6 +47,7 @@ export default function Products({ prodData, productType }) {
   const [product, setProduct] = useState({});
   const [productSpecs, setProductSpecs] = useState([]);
   const [open, setOpen] = useState(false);
+  const [categoryopen, setcategoryOpen] = useState(false);
   const [success, setSuccess] = useState(null);
   const [specs, setSpecs] = useState([]);
   const [specsData, setSpecsData] = useState({});
@@ -58,6 +61,7 @@ export default function Products({ prodData, productType }) {
   const [isTagProdClicked, setIsTagProdClicked] = useState(false);
   const [selectedFile, setSelectedFile] = useState([]);
   const [aaProductList, setAaProductList] = useState([]);
+  const [openSource, setOpenSource] = useState(null);
 
   const [form, setForm] = useState({
     sup_name: "",
@@ -87,6 +91,9 @@ export default function Products({ prodData, productType }) {
   // console.log("Product state Derived from topbar prop >>>>>>>>>", product);
   // console.log("STATE from Reducer>>>>>>>>>", state);
   console.log(">>>>UPDATING Form state", form);
+
+
+
   //  Adding Brand Function
   const handleAddBrand = async (event) => {
     event.preventDefault();
@@ -107,12 +114,15 @@ export default function Products({ prodData, productType }) {
       setRunAddBrand(true);
     }
   };
+
+
   useEffect(() => {
     if (newBrand?.prod_type && runAddBrand) {
       const fetchData = async () => {
-        console.log({ newBrand });
+        console.log("new brand", newBrand);
         try {
           const response = await axiosPrivate.post(`/product/brand`, newBrand);
+          console.log(">>brand", response);
 
           if (response.status === 201) {
             toast.success(response.data, {
@@ -176,7 +186,7 @@ export default function Products({ prodData, productType }) {
   const handleBrandClose = () => setBrandModal(false);
 
   //   Api calling for ProductData
-  console.log("proddata---",prodData);
+  console.log("proddata---", prodData);
   useEffect(() => {
     console.log(prodData);
     if (prodData) {
@@ -375,7 +385,7 @@ export default function Products({ prodData, productType }) {
 
       switch (type) {
         case "supplier":
-          formClone = { ...form, sup_name: name };
+          formClone = { ...form, sup_name: name, };
           dispatchType = "CLICK_SUPPLIER";
           break;
 
@@ -532,6 +542,13 @@ export default function Products({ prodData, productType }) {
       setForm(updatedFormData);
     }
   };
+
+
+
+
+
+
+
   // Final State for the Api-------------------------------------------------
   const handleFinalForm = async (event) => {
     event.preventDefault();
@@ -546,7 +563,7 @@ export default function Products({ prodData, productType }) {
       !form.no_of_items ||
       form.no_of_items === ""
     ) {
-     
+
       alert("Please fill in all  required fields");
       return;
     }
@@ -644,87 +661,166 @@ export default function Products({ prodData, productType }) {
   console.log({ state });
 
 
-const productlistfetchapi = async () => {
-  try {
-    const response = await axiosPrivate.post(`/product/productlist`);
-    console.log("aa product list", response.data);
-    setAaProductList(response.data); // ✅ store product list
-  } catch (error) {
-    console.error("Error fetching products", error);
-  }
-};
+  const productlistfetchapi = async () => {
+    try {
+      const response = await axiosPrivate.post(`/product/productlist`);
+      console.log("aa product list", response.data);
+      setAaProductList(response.data); // ✅ store product list
+    } catch (error) {
+      console.error("Error fetching products", error);
+    }
+  };
 
-useEffect(() => {
-productlistfetchapi()
-}, [])
+  useEffect(() => {
+    productlistfetchapi()
+  }, [])
 
-// 🔹 Fetch and apply parent product details when a parent is selected
-const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) => {
-  try {
-    // 1️⃣ Fetch full parent product details
-    const response = await axiosPrivate.post(`/product/proddetails`, {
-      type: "detail",
-      prod_name: selectedProductName,
-      product_id: selectedProductId,
-    });
+  // 🔹 Fetch and apply parent product details when a parent is selected
+  const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) => {
+    try {
+      // 1️⃣ Fetch full parent product details
+      const response = await axiosPrivate.post(`/product/proddetails`, {
+        type: "detail",
+        prod_name: selectedProductName,
+        product_id: selectedProductId,
+      });
 
-    const parentProd = response.data;
-    console.log("Parent Product Details:", parentProd);
+      const parentProd = response.data;
+      console.log("Parent Product Details:", parentProd);
 
-    if (!parentProd) return;
+      if (!parentProd) return;
 
-    // 2️⃣ Prepare mapped form fields (fill everything possible)
-    const updatedForm = {
-      ...form,
-      parent_id: parentProd.product_id || "",
-      name: form.name || "",
-      category: parentProd.product_sub_type || "",
-      subcategory: parentProd.prod_subtype2 || "",
-      brand: parentProd.brand?.brand_name || "",
-      product_code: form.product_code || "",
-      assign_code: form.assign_code || "", // keep existing assign_code
-      hsn: parentProd.hsn || "",
-      gst_perc: parentProd.gst_perc || "",
-      manufacturer_code: parentProd.manufacturer_code || "",
-      package: parentProd.package || "",
-      color: parentProd.color || "",
-      color_family: parentProd.color_family || "",
-      unit_of_measure: parentProd.unit_of_measure || "",
-      min_stk: parentProd.min_stk ? parentProd.min_stk : "",
-      no_of_items: parentProd.no_of_items ? parentProd.no_of_items : "",
-      desc: parentProd.product_desc || "",
-      sup_name: parentProd.users?.trade_name || form.sup_name || "",
-      type: parentProd.product_type || prodData.type || "",
-      user: "admin1",
-    };
-
-    setForm(updatedForm);
-
-    // 3️⃣ Fetch specs for this category (if available)
-    if (parentProd.product_sub_type) {
-      const payload = {
-        main_type: prodData.type,
-        category: parentProd.product_sub_type,
+      // 2️⃣ Prepare mapped form fields (fill everything possible)
+      const updatedForm = {
+        ...form,
+        parent_id: parentProd.product_id || "",
+        name: form.name || "",
+        category: parentProd.product_sub_type || "",
+        subcategory: parentProd.prod_subtype2 || "",
+        brand: parentProd.brand?.brand_name || "",
+        product_code: form.product_code || "",
+        assign_code: form.assign_code || "", // keep existing assign_code
+        hsn: parentProd.hsn || "",
+        gst_perc: parentProd.gst_perc || "",
+        manufacturer_code: parentProd.manufacturer_code || "",
+        package: parentProd.package || "",
+        color: parentProd.color || "",
+        color_family: parentProd.color_family || "",
+        unit_of_measure: parentProd.unit_of_measure || "",
+        min_stk: parentProd.min_stk ? parentProd.min_stk : "",
+        no_of_items: parentProd.no_of_items ? parentProd.no_of_items : "",
+        desc: parentProd.product_desc || "",
+        sup_name: parentProd.users?.trade_name || form.sup_name || "",
+        type: parentProd.product_type || prodData.type || "",
+        user: "admin1",
       };
 
+      setForm(updatedForm);
+
+      // 3️⃣ Fetch specs for this category (if available)
+      if (parentProd.product_sub_type) {
+        const payload = {
+          main_type: prodData.type,
+          category: parentProd.product_sub_type,
+        };
+
+        try {
+          const res = await axiosPrivate.post(`/product/getspec`, payload);
+          const specsArr = res.data[0]?.spec || [];
+          setProductSpecs([specsArr]);
+        } catch (err) {
+          console.error("Error loading specs:", err);
+          setProductSpecs([]);
+        }
+      }
+
+      // 4️⃣ Optional — preload product_spec (if your UI supports it)
+      if (parentProd.product_spec && Object.keys(parentProd.product_spec).length > 0) {
+        setSpecsData({ spec: parentProd.product_spec });
+      }
+    } catch (error) {
+      console.error("Error fetching parent product details:", error);
+    }
+  };
+
+  const reloadCategoriesAndSubCategories = async () => {
+    try {
+      const payload = { main_type: productType };
+      const res = await axiosPrivate.post(`/product/categories`, payload);
+
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        const categoryList = res.data;
+
+        // ✅ Always refresh categories
+        setProduct((prev) => ({
+          ...prev,
+          category: categoryList,
+        }));
+        dispatch({ type: "CATEGORY_SPECS", payload: categoryList });
+
+        console.log("✅ Categories reloaded:", categoryList);
+
+        // ✅ If the modal came from subcategory
+        if (openSource === "subcategory" && form.category) {
+          console.log("🔁 Reloading subcategories for:", form.category);
+
+          const specPayload = {
+            main_type: productType,
+            category: form.category,
+          };
+
+          const subRes = await axiosPrivate.post(`/product/getspec`, specPayload);
+
+          const subList =
+            subRes.data?.[0]?.sub_categories || subRes.data?.sub_categories || [];
+
+          setProduct((prev) => ({
+            ...prev,
+            subCategory: subList,
+          }));
+
+          console.log("✅ Subcategories reloaded:", subList);
+        }
+      }
+    } catch (err) {
+      console.error("❌ Error reloading category/subcategory:", err);
+    } finally {
+      // Reset the modal source
+      setOpenSource(null);
+    }
+  };
+
+
+  // brand filter
+
+  useEffect(() => {
+    const fetchBrand=async()=>{
       try {
-        const res = await axiosPrivate.post(`/product/getspec`, payload);
-        const specsArr = res.data[0]?.spec || [];
-        setProductSpecs([specsArr]);
-      } catch (err) {
-        console.error("Error loading specs:", err);
-        setProductSpecs([]);
+        
+        const brandBody = {
+          prod_type: productType,
+          supplier_id: state?.selectedSupplier
+        };
+        await axiosPrivate.post(`/product/viewBrands`, brandBody)
+                  .then((res) => {
+                    console.log("vv view brand res",res);
+                    let values = [];
+                    res.data.forEach(function (val) {
+                      if (val.brand_name) {
+                        values.push(val.brand_name);
+                      }
+                    });
+                    setBrandNames(values);
+                    setNewBrand({});
+                  });
+      } catch (error) {
+        console.log("Fetch brand failed",error);
+        
       }
     }
+    fetchBrand()
+  }, [form.sup_name])
 
-    // 4️⃣ Optional — preload product_spec (if your UI supports it)
-    if (parentProd.product_spec && Object.keys(parentProd.product_spec).length > 0) {
-      setSpecsData({ spec: parentProd.product_spec });
-    }
-  } catch (error) {
-    console.error("Error fetching parent product details:", error);
-  }
-};
 
 
 
@@ -776,7 +872,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                         onFocus={() =>
                           handleClickShowOptionBox("SHOW_SUPPLIER")
                         }
-                        // onBlur={() => handleCheckvalidData("sup_name")}
+                      // onBlur={() => handleCheckvalidData("sup_name")}
                       />
 
                       {state?.suppliers && (
@@ -788,59 +884,59 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                         >
                           {state?.filteredSupplier?.length > 0
                             ? state?.filteredSupplier?.map((item, index) => (
-                                <div
-                                  tabIndex={0}
-                                  key={index}
-                                  className="dropdown_map dropbar"
-                                  style={{
-                                    fontSize: "14px",
-                                    textAlign: "left",
-                                  }}
-                                  onKeyDown={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "supplier",
-                                      event
-                                    );
-                                  }}
-                                  onClick={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "supplier",
-                                      event
-                                    );
-                                  }}
-                                >
-                                  {item}
-                                </div>
-                              ))
+                              <div
+                                tabIndex={0}
+                                key={index}
+                                className="dropdown_map dropbar"
+                                style={{
+                                  fontSize: "14px",
+                                  textAlign: "left",
+                                }}
+                                onKeyDown={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "supplier",
+                                    event
+                                  );
+                                }}
+                                onClick={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "supplier",
+                                    event
+                                  );
+                                }}
+                              >
+                                {item}
+                              </div>
+                            ))
                             : product?.supplierName?.map((item, index) => (
-                                <div
-                                  tabIndex={0}
-                                  key={index}
-                                  className="dropdown_map dropbar"
-                                  style={{
-                                    fontSize: "14px",
-                                    textAlign: "left",
-                                  }}
-                                  onKeyDown={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "supplier",
-                                      event
-                                    );
-                                  }}
-                                  onClick={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "supplier",
-                                      event
-                                    );
-                                  }}
-                                >
-                                  {item}
-                                </div>
-                              ))}
+                              <div
+                                tabIndex={0}
+                                key={index}
+                                className="dropdown_map dropbar"
+                                style={{
+                                  fontSize: "14px",
+                                  textAlign: "left",
+                                }}
+                                onKeyDown={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "supplier",
+                                    event
+                                  );
+                                }}
+                                onClick={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "supplier",
+                                    event
+                                  );
+                                }}
+                              >
+                                {item}
+                              </div>
+                            ))}
                           <div
                             className="dropdown_map"
                             style={{ fontSize: "14px", textAlign: "left" }}
@@ -885,87 +981,87 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                   </div>
 
 
- <div className="form-group row">
-  <label
-    htmlFor="tagParentProduct"
-    className="col-sm-5 col-form-label"
-  >
-    Tag Parent Product
-  </label>
+                  <div className="form-group row">
+                    <label
+                      htmlFor="tagParentProduct"
+                      className="col-sm-5 col-form-label"
+                    >
+                      Tag Parent Product
+                    </label>
 
-  <div className="col-sm-7" ref={parendIdInputRef}>
-    <div className="react-select-wrapper">
-      <Select
-        id="tagParentProduct"
-        name="parent_id"
-        placeholder="Select parent product"
-        isSearchable
-        isClearable
-        value={
-    form.parent_id
-      ? (() => {
-          const matched = aaProductList?.find(
-            (p) => p.product_id === form.parent_id
-          );
-          return matched
-            ? { value: matched.product_id, label: matched.product_name }
-            : null;
-        })()
-      : null
-  }
-        options={
-          aaProductList
-            ?.filter(
-              (p) =>
-                p?.users?.trade_name === form.sup_name &&
-                p?.product_type === prodData?.type
-            )
-            ?.map((p) => ({
-              value: p.product_name,
-              label: p.product_name,
-              product_id: p.product_id,
-            })) || []
-        }
-        onChange={(selected) => {
-          if (selected) {
-            fetchAndSetParentProduct(selected.value, selected.product_id);
-          } else {
-            setForm({ ...form, parent_id: "" });
-          }
-        }}
-        classNamePrefix="custom-select"
-        styles={{
-          control: (base, state) => ({
-            ...base,
-            borderRadius: "12px",
-            border: state.isFocused ? "1.5px solid #00342E" : "1px solid #ced4da",
-            boxShadow: "none",
-            fontSize: "13px",
-            minHeight: "35px",
-            backgroundColor: "white",
-            textAlign: "left",
-          }),
-          menu: (base) => ({
-            ...base,
-            marginTop: "0px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            zIndex: 9999,
-          }),
-          option: (base, state) => ({
-            ...base,
-            backgroundColor: state.isFocused ? "#00342E" : "#fff",
-            color: state.isFocused ? "#fff" : "#000",
-            fontSize: "14px",
-            textAlign: "left",
-            borderBottom: "1px solid #eee",
-            cursor: "pointer",
-          }),
-        }}
-      />
-    </div>
-  </div>
-</div>
+                    <div className="col-sm-7" ref={parendIdInputRef}>
+                      <div className="react-select-wrapper">
+                        <Select
+                          id="tagParentProduct"
+                          name="parent_id"
+                          placeholder="Select parent product"
+                          isSearchable
+                          isClearable
+                          value={
+                            form.parent_id
+                              ? (() => {
+                                const matched = aaProductList?.find(
+                                  (p) => p.product_id === form.parent_id
+                                );
+                                return matched
+                                  ? { value: matched.product_id, label: matched.product_name }
+                                  : null;
+                              })()
+                              : null
+                          }
+                          options={
+                            aaProductList
+                              ?.filter(
+                                (p) =>
+                                  p?.users?.trade_name === form.sup_name &&
+                                  p?.product_type === prodData?.type
+                              )
+                              ?.map((p) => ({
+                                value: p.product_name,
+                                label: p.product_name,
+                                product_id: p.product_id,
+                              })) || []
+                          }
+                          onChange={(selected) => {
+                            if (selected) {
+                              fetchAndSetParentProduct(selected.value, selected.product_id);
+                            } else {
+                              setForm({ ...form, parent_id: "" });
+                            }
+                          }}
+                          classNamePrefix="custom-select"
+                          styles={{
+                            control: (base, state) => ({
+                              ...base,
+                              borderRadius: "12px",
+                              border: state.isFocused ? "1.5px solid #00342E" : "1px solid #ced4da",
+                              boxShadow: "none",
+                              fontSize: "13px",
+                              minHeight: "35px",
+                              backgroundColor: "white",
+                              textAlign: "left",
+                            }),
+                            menu: (base) => ({
+                              ...base,
+                              marginTop: "0px",
+                              borderRadius: "12px",
+                              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                              zIndex: 9999,
+                            }),
+                            option: (base, state) => ({
+                              ...base,
+                              backgroundColor: state.isFocused ? "#00342E" : "#fff",
+                              color: state.isFocused ? "#fff" : "#000",
+                              fontSize: "14px",
+                              textAlign: "left",
+                              borderBottom: "1px solid #eee",
+                              cursor: "pointer",
+                            }),
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="form-group row">
                     <label
@@ -994,7 +1090,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                         onFocus={() =>
                           handleClickShowOptionBox("SHOW_CATEGORY")
                         }
-                        // onBlur={() => handleCheckvalidData("category")}
+                      // onBlur={() => handleCheckvalidData("category")}
                       />
                       {state?.category === true && (
                         <div
@@ -1005,66 +1101,69 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                         >
                           {state?.filteredCategory?.length > 0
                             ? state?.filteredCategory?.map((item, index) => (
-                                <div
-                                  tabIndex={0}
-                                  // tabIndex="0"
-                                  key={index}
-                                  className="dropdown_map dropbar"
-                                  style={{
-                                    fontSize: "14px",
-                                    textAlign: "left",
-                                  }}
-                                  onKeyDown={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "category",
-                                      event
-                                    );
-                                  }}
-                                  onClick={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "category",
-                                      event
-                                    );
-                                  }}
-                                >
-                                  {item}
-                                </div>
-                              ))
+                              <div
+                                tabIndex={0}
+                                // tabIndex="0"
+                                key={index}
+                                className="dropdown_map dropbar"
+                                style={{
+                                  fontSize: "14px",
+                                  textAlign: "left",
+                                }}
+                                onKeyDown={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "category",
+                                    event
+                                  );
+                                }}
+                                onClick={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "category",
+                                    event
+                                  );
+                                }}
+                              >
+                                {item}
+                              </div>
+                            ))
                             : product?.category?.map((item, index) => (
-                                <div
-                                  tabIndex={0}
-                                  // tabIndex="0"
-                                  key={index}
-                                  className="dropdown_map dropbar"
-                                  style={{
-                                    fontSize: "14px",
-                                    textAlign: "left",
-                                  }}
-                                  onKeyDown={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "category",
-                                      event
-                                    );
-                                  }}
-                                  onClick={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "category",
-                                      event
-                                    );
-                                  }}
-                                >
-                                  {item}
-                                </div>
-                              ))}
+                              <div
+                                tabIndex={0}
+                                // tabIndex="0"
+                                key={index}
+                                className="dropdown_map dropbar"
+                                style={{
+                                  fontSize: "14px",
+                                  textAlign: "left",
+                                }}
+                                onKeyDown={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "category",
+                                    event
+                                  );
+                                }}
+                                onClick={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "category",
+                                    event
+                                  );
+                                }}
+                              >
+                                {item}
+                              </div>
+                            ))}
 
                           <div
                             className="dropdown_map"
                             style={{ fontSize: "14px", textAlign: "left" }}
-                            onClick={() => navigate("/category_manager")}
+                            onClick={() => {
+                              setcategoryOpen(true)
+                              setOpenSource("category");
+                            }}
                           >
                             New category
                           </div>
@@ -1100,7 +1199,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                         onFocus={() =>
                           handleClickShowOptionBox("SHOW_SUBCATEGORY")
                         }
-                        // onBlur={() => handleCheckvalidData("subcategory")}
+                      // onBlur={() => handleCheckvalidData("subcategory")}
                       />
                       {state?.subCategory === true && (
                         <div
@@ -1111,66 +1210,69 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                         >
                           {state?.filteredSubCategory?.length > 0
                             ? state?.filteredSubCategory.map((item, index) => (
-                                <div
-                                  tabIndex={0}
-                                  // tabIndex="0"
-                                  key={index}
-                                  className="dropdown_map dropbar"
-                                  style={{
-                                    fontSize: "14px",
-                                    textAlign: "left",
-                                  }}
-                                  onKeyDown={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "subCategory",
-                                      event
-                                    );
-                                  }}
-                                  onClick={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "subCategory",
-                                      event
-                                    );
-                                  }}
-                                >
-                                  {item}
-                                </div>
-                              ))
+                              <div
+                                tabIndex={0}
+                                // tabIndex="0"
+                                key={index}
+                                className="dropdown_map dropbar"
+                                style={{
+                                  fontSize: "14px",
+                                  textAlign: "left",
+                                }}
+                                onKeyDown={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "subCategory",
+                                    event
+                                  );
+                                }}
+                                onClick={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "subCategory",
+                                    event
+                                  );
+                                }}
+                              >
+                                {item}
+                              </div>
+                            ))
                             : product?.subCategory?.map((item, index) => (
-                                <div
-                                  // tabIndex="0"
-                                  tabIndex={0}
-                                  key={index}
-                                  className="dropdown_map dropbar"
-                                  style={{
-                                    fontSize: "14px",
-                                    textAlign: "left",
-                                  }}
-                                  onKeyDown={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "subCategory",
-                                      event
-                                    );
-                                  }}
-                                  onClick={(event) => {
-                                    handleClickSelectCat(
-                                      item,
-                                      "subCategory",
-                                      event
-                                    );
-                                  }}
-                                >
-                                  {item}
-                                </div>
-                              ))}
+                              <div
+                                // tabIndex="0"
+                                tabIndex={0}
+                                key={index}
+                                className="dropdown_map dropbar"
+                                style={{
+                                  fontSize: "14px",
+                                  textAlign: "left",
+                                }}
+                                onKeyDown={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "subCategory",
+                                    event
+                                  );
+                                }}
+                                onClick={(event) => {
+                                  handleClickSelectCat(
+                                    item,
+                                    "subCategory",
+                                    event
+                                  );
+                                }}
+                              >
+                                {item}
+                              </div>
+                            ))}
 
                           <div
                             className="dropdown_map"
                             style={{ fontSize: "14px", textAlign: "left" }}
-                            onClick={() => navigate("/category_manager")}
+                            onClick={() => {
+                              setOpenSource("subcategory");
+                              setcategoryOpen(true);
+                            }}
                           >
                             New category
                           </div>
@@ -1178,35 +1280,42 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                       )}
                     </div>
                   </div>
+<div className="form-group row">
+  <label htmlFor="Brand" className="col-sm-5 col-form-label">
+    Brand <b style={{ color: "red" }}>*</b>
+  </label>
+  <div className="col-sm-5">
+    <select
+      required
+      onChange={formData}
+      name="brand"
+      id="tradeNumber"
+      className="form-control products-form__form-control"
+      value={form.brand}
+    >
+      <option value="">Select Brand</option>
 
-                  <div className="form-group row">
-                    <label htmlFor="Brand" className="col-sm-5 col-form-label">
-                      Brand <b style={{ color: "red" }}>*</b>
-                    </label>
-                    <div className="col-sm-5">
-                      <select
-                        required
-                        onChange={formData}
-                        name="brand"
-                        id="tradeNumber"
-                        className="form-control products-form__form-control"
-                        value={form.brand}
-                      >
-                        <option value=""></option>
-                        {brandNames?.map((option, index) => (
-                          <option key={index} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-sm-2 flex-center">
-                      <AddCircleOutline
-                        onClick={handleBrandOpen}
-                        style={{ cursor: "pointer" }}
-                      />
-                    </div>
-                  </div>
+      {brandNames?.length > 0 ? (
+        brandNames.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))
+      ) : (
+        <option value="" disabled>
+          No brands for current supplier
+        </option>
+      )}
+    </select>
+  </div>
+  <div className="col-sm-2 flex-center">
+    <AddCircleOutline
+      onClick={handleBrandOpen}
+      style={{ cursor: "pointer" }}
+    />
+  </div>
+</div>
+
                   <div className="form-group row">
                     <label
                       htmlFor="Assign Product Code"
@@ -1357,7 +1466,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                       Color
                     </label>
                     <div className="col-sm-5">
-                      <ColorBoxComponent  setColor={handleSetColor} />
+                      <ColorBoxComponent setColor={handleSetColor} />
                     </div>
                   </div>
                 </Col>
@@ -1626,7 +1735,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                       <Col lg={6} className="flex-center" />
                       <Col lg={6} className="text-right">
                         <div title="Back">
-                          <CloseBtnComp handleClose={handleClose}/>
+                          <CloseBtnComp handleClose={handleClose} />
                           {/* <Close
                             onClick={handleClose}
                             style={{
@@ -1659,7 +1768,7 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                               zIndex: (theme) => theme.zIndex.drawer + 1,
                             }}
                             open={loading}
-                            // onClick={handleCloseloading}
+                          // onClick={handleCloseloading}
                           >
                             <CircularProgress color="inherit" />
                           </Backdrop>
@@ -1669,81 +1778,81 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                   </div>
                 </Modal>
                 <Modal
-  open={brandModal}
-  onClose={handleBrandClose} // still needed for Esc key
-  aria-labelledby="modal-modal-title"
-  aria-describedby="modal-modal-description"
-  BackdropProps={{ onClick: (e) => e.stopPropagation() }} // prevent click outside
->
-  <div
-    style={{
-       width: "250px",
-      height: "180px",
-      position: "absolute",     // center modal
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)", // center both vertically and horizontally
-      background: "#fff",
-      padding: "20px",
-      borderRadius: "15px",
-      // boxShadow: "0 0 12px rgba(0,123,255,0.4)", // optional blue glow
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-    }}
-    className="productPage-modal container flex-center"
-  >
-    {/* Back / Close button */}
-  <button
-      onClick={handleBrandClose}
-      style={{
-         position: "absolute",
-    top: "-30px",
-    right: "-30px",
-    zIndex: 10,
-    background: "#0785D2",      // blue background
-    border: "2px solid white",  // white border
-    borderRadius: "50%",        // circular button
-    width: "32px",
-    height: "32px",
-    fontSize: "18px",
-    fontWeight: 900,
-    color: "#fff",              // white X
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-      }}
-    >
-      &#x2715; {/* cross (X) symbol for closing */}
-    </button>
+                  open={brandModal}
+                  onClose={handleBrandClose} // still needed for Esc key
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                  BackdropProps={{ onClick: (e) => e.stopPropagation() }} // prevent click outside
+                >
+                  <div
+                    style={{
+                      width: "250px",
+                      height: "180px",
+                      position: "absolute",     // center modal
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)", // center both vertically and horizontally
+                      background: "#fff",
+                      padding: "20px",
+                      borderRadius: "15px",
+                      // boxShadow: "0 0 12px rgba(0,123,255,0.4)", // optional blue glow
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                    className="productPage-modal container flex-center"
+                  >
+                    {/* Back / Close button */}
+                    <button
+                      onClick={handleBrandClose}
+                      style={{
+                        position: "absolute",
+                        top: "-30px",
+                        right: "-30px",
+                        zIndex: 10,
+                        background: "#0785D2",      // blue background
+                        border: "2px solid white",  // white border
+                        borderRadius: "50%",        // circular button
+                        width: "32px",
+                        height: "32px",
+                        fontSize: "18px",
+                        fontWeight: 900,
+                        color: "#fff",              // white X
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      &#x2715; {/* cross (X) symbol for closing */}
+                    </button>
 
-    <Row>
-      <Col className="text-center">
-        <input
-          onChange={(event) =>
-            setNewBrand({ ...newBrand, name: event.target.value })
-          }
-          type="text"
-          className="form-control products-specs__form-control col-sm-12 mb-2"
-          placeholder="add new brand"
-        />
-        <input
-          onChange={(event) =>
-            setNewBrand({ ...newBrand, brandcode: event.target.value })
-          }
-          type="text"
-          maxLength={4}
-          className="form-control products-specs__form-control col-sm-12 mb-3"
-          placeholder="brand code"
-        />
-        <button onClick={handleAddBrand} className="products-form-saveBtn">
-          Add
-        </button>
-      </Col>
-    </Row>
-  </div>
-</Modal>
+                    <Row>
+                      <Col className="text-center">
+                        <input
+                          onChange={(event) =>
+                            setNewBrand({ ...newBrand, name: event.target.value })
+                          }
+                          type="text"
+                          className="form-control products-specs__form-control col-sm-12 mb-2"
+                          placeholder="add new brand"
+                        />
+                        <input
+                          onChange={(event) =>
+                            setNewBrand({ ...newBrand, brandcode: event.target.value })
+                          }
+                          type="text"
+                          maxLength={4}
+                          className="form-control products-specs__form-control col-sm-12 mb-3"
+                          placeholder="brand code"
+                        />
+                        <button onClick={handleAddBrand} className="products-form-saveBtn">
+                          Add
+                        </button>
+                      </Col>
+                    </Row>
+                  </div>
+                </Modal>
 
                 {/* <Modal
                   open={brandModal}
@@ -1790,6 +1899,10 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
                     </Row>
                   </div>
                 </Modal> */}
+
+                {/* Add category modal */}
+
+
               </Row>
             </Form>
             <ToastContainer>
@@ -1801,6 +1914,16 @@ const fetchAndSetParentProduct = async (selectedProductName, selectedProductId) 
           </div>
         </Col>
       </Row>
+      <CustomModal
+        open={categoryopen}
+        onClose={() => {
+          setcategoryOpen(false);
+          reloadCategoriesAndSubCategories(); // 🔁 reload after close
+        }}
+      >
+        <CustomerManagerCntrl />
+      </CustomModal>
+
     </div>
     // </Sidebar>
   );

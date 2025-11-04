@@ -10,22 +10,23 @@ import Categorytopbar from "../../../../components/admin components/Categorytopb
 import TransactionTab from "./TransactionTab";
 
 
-export default function CustomerProfileWrapper() {
+export default function CustomerProfileWrapper({ userId: propUserId }) {
     const [activeTab, setActiveTab] = useState("profile");
     const [profileData, setProfileData] = useState({});
     const [prodTypesArray, setProdTypesArray] = useState([]);
     const axiosPrivate = useAxiosPrivate();
     const location = useLocation();
-
+    const userId = location.state?.user_id || propUserId;
     useEffect(() => {
-        if (!location.state?.user_id) return;
+        if (!userId) return;
 
-        const data = { logged_id: location.state.user_id };
-console.log("wr data",data);
+        const data = { logged_id: userId };
+        console.log("wr data", data);
 
         axiosPrivate.post(`/customer/customerprofile`, data)
             .then((res) => {
                 const profData = res.data.data;
+                
                 setProfileData(profData);
 
                 // Prepare prodTypesArray
@@ -47,13 +48,19 @@ console.log("wr data",data);
                 console.error("Error fetching customer profile:", err);
             });
     }, [location.state]);
-console.log("profile data",profileData);
+    console.log("profile data", profileData);
 
     return (
         <Sidebar>
             <Row>
                 <Col lg={12}>
-                    <Categorytopbar />
+                    {
+                        location.state?.user_id ? (
+                            <Categorytopbar />
+                        ) : (
+                            null
+                        )
+                    }
                     <Row className="p-1.5 mb-0">
                         <Col>
                             <span

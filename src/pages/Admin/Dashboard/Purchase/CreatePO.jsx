@@ -118,7 +118,7 @@ export default function CreatePO() {
 
         const response = await axiosPrivate.post(
           `/logistics/suppliersandlogistics`,
-          
+
         );
         const supplierAndLogisticsNames = response.data;
         // console.log("supplierAndLogisticsNames =>", supplierAndLogisticsNames);
@@ -225,10 +225,10 @@ export default function CreatePO() {
     dispatch(PoSlice.UPDATE_PRODUCT_TABLE_ARRAY(updatedProductTableArr));
     const query = event.target.value.toLowerCase();
     const filteredData = state.productsForSelectedSupplierArr.filter(
-      (ele) => ele && (ele.product_name.toLowerCase().includes(query)||ele.product_code.toLowerCase().includes(query))
+      (ele) => ele && (ele.product_name.toLowerCase().includes(query) || ele.product_code.toLowerCase().includes(query))
     );
     const remainingData = state.productsForSelectedSupplierArr.filter(
-      (ele) => ele && ! (ele.product_name.toLowerCase().includes(query)||ele.product_code.toLowerCase().includes(query))
+      (ele) => ele && !(ele.product_name.toLowerCase().includes(query) || ele.product_code.toLowerCase().includes(query))
     );
     const sortedProductsArray = [...filteredData, ...remainingData];
     dispatch(PoSlice.SET_PRODUCTS_FOR_SELECTED_SUPPLIER(sortedProductsArray));
@@ -372,20 +372,20 @@ export default function CreatePO() {
           if (updatedProductTableArr[i + 1]) {
             updatedProductTableArr[i] = updatedProductTableArr[i + 1];
           } else {
-            
-          
+
+
             updatedProductTableArr[i] = {}
           }
         }
 
       }
-   
-              //    arrr= updatedProductTableArr.filter((dta,index)=>index>2&&dta.product_id)
-              // updatedProductTableArr.push(arr)
+
+      //    arrr= updatedProductTableArr.filter((dta,index)=>index>2&&dta.product_id)
+      // updatedProductTableArr.push(arr)
       // updatedProductTableArr[index] = updatedProductTableArr[index+1];
       // updatedProductTableArr[index+1] = {};
     }
-  
+
     dispatch(PoSlice.UPDATE_PRODUCT_TABLE_ARRAY(updatedProductTableArr));
   };
   const handleSendFormData = async (poStatus) => {
@@ -455,7 +455,7 @@ export default function CreatePO() {
         user,
       };
       console.log("dtaa", dta);
-      const po_number = draftData?.po_num; 
+      const po_number = draftData?.po_num;
       console.log("po_number", po_number);
       if (dta.products.length > 0 && dta.trade_name) {
         try {
@@ -472,10 +472,10 @@ export default function CreatePO() {
             po_number,
           };
           // const data = { dta: dta, po_number: po_number };
-          console.log("jjjj =>",data);
+          console.log("jjjj =>", data);
           if (po_number === undefined) {
             const formData = new FormData();
-           
+
             selectedFiles.forEach((image, index) => {
               formData.append("image", image);
             });
@@ -579,7 +579,7 @@ export default function CreatePO() {
     // setIndex(0);
     const selectedFile = event.target.files[0];
     if (!selectedFile) return;
-    setSelectedFiles([...selectedFiles,selectedFile])
+    setSelectedFiles([...selectedFiles, selectedFile])
   };
   // console.log(links);
 
@@ -620,7 +620,7 @@ export default function CreatePO() {
                       className="form-control purchase-form__form-control"
                       id="purchase-form__form-control"
                       placeholder="Enter a value"
-                      style={{width:"200px"}}
+                      style={{ width: "200px" }}
                       value={state?.formData?.trade_name ?? ""}
                       onChange={handleSupLogFilter}
                       onClick={() => {
@@ -631,7 +631,7 @@ export default function CreatePO() {
                           dispatch(PoSlice.SHOW_SUPPLIER_NAMES());
                         }
                       }}
-                      
+
                     />
 
                     {state?.showSupplierNames && (
@@ -639,7 +639,7 @@ export default function CreatePO() {
                         className="log-supp-dropdown-scrollbar2"
                         // id="style-2"
                         ref={open_sup_list_ref}
-                        tabIndex={-1} 
+                        tabIndex={-1}
                       >
                         {(state?.filteredSupplier.length > 0
                           ? state?.filteredSupplier
@@ -647,10 +647,10 @@ export default function CreatePO() {
                         ).map((value, index) =>
                           value !== null || "" ? (
                             <div
-                            tabIndex={0} 
+                              tabIndex={0}
                               key={index}
                               className="dropdown_map"
-                              style={{ fontSize: "12px",textAlign:"left" }}
+                              style={{ fontSize: "12px", textAlign: "left" }}
                               onClick={() =>
 
                                 handleSelectSupNlog("trade_name", value)
@@ -660,14 +660,14 @@ export default function CreatePO() {
                                   handleSelectSupNlog("trade_name", value);
                                 }
                               }}
-                              >
+                            >
                               {value}
                             </div>
                           ) : null
                         )}
                         <div
                           className="dropdown_map"
-                          style={{ fontSize: "14px" ,color:"blue"}}
+                          style={{ fontSize: "14px", color: "blue" }}
                           onClick={() =>
                             navigate("/register_new", { state: "sup" })
                           }
@@ -694,7 +694,7 @@ export default function CreatePO() {
                       className="form-control purchase-form__form-control"
                       id="purchase-form__form-control"
                       placeholder="Enter a value"
-                      style={{width:"200px"}}
+                      style={{ width: "200px" }}
                       value={state?.formData?.logistics_name ?? ""}
                       onChange={handleSupLogFilter}
                       onClick={() => {
@@ -711,20 +711,20 @@ export default function CreatePO() {
                     />
                     {state.showLogisticsNames && (
                       <div
-                      tabIndex={-1}
+                        tabIndex={-1}
                         ref={open_logistics_list_ref}
                         className="log-supp-dropdown-scrollbar2"
-                        // id="style-2"
+                      // id="style-2"
                       >
                         {(state?.filteredLogistics.length > 0
                           ? state?.filteredLogistics
                           : state?.logisticsNames
                         ).map((value, index) => (
                           <div
-                          tabIndex={0}
+                            tabIndex={0}
                             key={index}
                             className="dropdown_map"
-                            style={{ fontSize: "12px",textAlign:"left" }}
+                            style={{ fontSize: "12px", textAlign: "left" }}
                             onClick={() =>
                               handleSelectSupNlog("logistics_name", value)
                             }
@@ -740,7 +740,7 @@ export default function CreatePO() {
                         <div
                           className="dropdown_map"
                           onClick={handleShowNewLogistics}
-                          style={{ fontSize: "14px" ,color:"blue"}}
+                          style={{ fontSize: "14px", color: "blue" }}
                         >
                           New logistics
                         </div>
@@ -842,13 +842,13 @@ export default function CreatePO() {
                     <th style={{ width: "8%", fontSize: "12px" }}>Color</th>
                     <th style={{ fontSize: "12px" }}>Manf.code</th>
                     <th style={{ fontSize: "12px" }}>Instock</th>
-                    <th style={{ width: "8%", fontSize: "12px" }}>packing</th>
-                    <th style={{ width: "8%", fontSize: "12px" }}>Pieces</th>
+                    {/* <th style={{ width: "8%", fontSize: "12px" }}>packing</th> */}
                     <th style={{ width: "15%", fontSize: "12px" }}>Qty</th>
-                    <th style={{ width: "15%", fontSize: "12px" }}>Rate</th>
-                    <th style={{ padding: "1px", fontSize: "12px" }}>
+                    <th style={{ width: "8%", fontSize: "12px" }}>Pieces</th>
+                    <th style={{ width: "15%", fontSize: "12px" }}>Rate/Piece</th>
+                    {/* <th style={{ padding: "1px", fontSize: "12px" }}>
                       Pricing unit
-                    </th>
+                    </th> */}
                     <th style={{ padding: "1px", fontSize: "12px" }}>
                       Net Amt
                     </th>
@@ -879,7 +879,7 @@ export default function CreatePO() {
                                     handleDisplayProducts(index)
                                   }
                                 }}
-                                onFocus={()=>handleDisplayProducts(index)}
+                                onFocus={() => handleDisplayProducts(index)}
                                 onClick={() => handleDisplayProducts(index)}
                                 onChange={(event) => {
                                   handleChangeProdName(event, index);
@@ -902,7 +902,7 @@ export default function CreatePO() {
                             {state.productsForSelectedSupplierArr.length >
                               0 && index === state?.showProductNamesBox ? (
                               <div
-                              tabIndex={-1}
+                                tabIndex={-1}
                                 ref={open_prod_lists}
                                 className="purchase-dropdown-scrollbar"
                               >
@@ -911,7 +911,7 @@ export default function CreatePO() {
                                     style={{
                                       borderBottom: "1px solid black",
                                       zIndex: "100",
-                                      paddingTop:"5px"
+                                      paddingTop: "5px"
                                     }}
                                     className="create_po_table_align"
                                   >
@@ -932,7 +932,7 @@ export default function CreatePO() {
                                           textAlign: "center",
                                         }}
                                       >
-                                       Product Code
+                                        Product Code
                                       </p>
                                     </div>
                                     <div className="create_po_column2">
@@ -980,7 +980,7 @@ export default function CreatePO() {
                                   .map((value) => (
                                     <>
                                       <div
-                                      tabIndex={0}
+                                        tabIndex={0}
                                         className="cpo_prod_row"
                                         onKeyDown={(event) => {
                                           if (event.key === 'Enter') {
@@ -1033,7 +1033,7 @@ export default function CreatePO() {
                                           <span
                                             style={{
                                               fontSize: "0.7rem",
-                                      
+
                                             }}
                                           >
                                             {value?.total_quantity}
@@ -1043,7 +1043,7 @@ export default function CreatePO() {
                                           <span
                                             style={{
                                               fontSize: "0.7rem",
-                                        
+
                                             }}
                                           >
                                             {value?.stock_status ===
@@ -1067,7 +1067,7 @@ export default function CreatePO() {
                                           </span>
                                         </div>
                                       </div>
-                                      <Divider/>
+                                      <Divider />
                                     </>
                                   ))}
 
@@ -1106,10 +1106,7 @@ export default function CreatePO() {
                         {value?.manufacturer_code || value?.mfgcode}
                       </td>
                       <td style={{ fontSize: "12px" }}>{value?.instoke}</td>
-                      <td style={{ fontSize: "12px" }}>{value?.p_package}</td>
-                      <td style={{ fontSize: "12px" }}>
-                        {value?.no_of_items}
-                      </td>
+                      {/* <td style={{ fontSize: "12px" }}>{value?.p_package}</td> */}
                       <td>
                         {state?.productTableArr[index]?.prod_name ? (
                           <input
@@ -1135,6 +1132,11 @@ export default function CreatePO() {
                           />
                         )}
                       </td>
+                      <td style={{ fontSize: "12px" }}>
+                        {value?.no_of_items}
+                        {value?.no_of_items && value?.p_package ? "/" : ""}
+                        {value?.p_package}
+                      </td>
                       <td>
                         {state?.productTableArr[index]?.prod_name ? (
                           <input
@@ -1159,7 +1161,7 @@ export default function CreatePO() {
                           />
                         )}
                       </td>
-                      <td>
+                      {/* <td>
                         <select
                           onChange={(event) =>
                             handleProdPricingUnit(event, index)
@@ -1175,7 +1177,7 @@ export default function CreatePO() {
                           <option>Bundle</option>
                           <option>Pieces</option>
                         </select>
-                      </td>
+                      </td> */}
 
                       <td style={{ fontSize: "12px" }}>
                         {value.pricing_unit === "Bundle"
@@ -1279,7 +1281,7 @@ export default function CreatePO() {
 
               {/* )} */}
               <button
-                 disabled={open}
+                disabled={open}
                 style={{ fontSize: "12px" }}
                 className="purchase-btnns-confirm "
                 id="purchase-btn"
@@ -1292,7 +1294,7 @@ export default function CreatePO() {
                     zIndex: (theme) => theme.zIndex.drawer + 1,
                   }}
                   open={open}
-                  // onClick={handleClose}
+                // onClick={handleClose}
                 >
                   <CircularProgress color="inherit" />
                 </Backdrop>

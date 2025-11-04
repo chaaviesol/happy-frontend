@@ -3,7 +3,13 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
+import useAuth from "../../../../hooks/useAuth";
 export default function CustomerManagerCntrl() {
+
+  const { auth } = useAuth({});
+  const division = auth?.division;
+console.log("vv auth division",division);
+
   const [categorydata, setCategoryData] = useState([]);
   const [SubCatValues, setSubCatValues] = useState([]);
   const [specsValues, setspecsValues] = useState([]);
@@ -14,7 +20,7 @@ export default function CustomerManagerCntrl() {
   const [dltdetail_state, setdltdetail_state] = useState([""]);
   const [subcatarraystring, setsubcatarraystring] = useState([]);
   const [useefcttempstate, setuseefcttempstate] = useState({
-    drpdwn: false,
+    drpdwn: true,
     category: false,
     spec: false,
   });
@@ -82,7 +88,7 @@ export default function CustomerManagerCntrl() {
     category: "",
   });
   const [divisionstate, setdivisionstate] = useState({
-    type: "",
+    type: division||"",
   });
   const [requirestate, setrequirestate] = useState(false)
   const axiosPrivate=useAxiosPrivate()
@@ -143,6 +149,8 @@ export default function CustomerManagerCntrl() {
     type = type;
     setdivisionstate({ type: type });
   };
+  console.log("vv division state ===>",divisionstate);
+  
   // console.log("reload===========>", reloadstate);
   useEffect(() => {
     if (useefcttempstate.category) {

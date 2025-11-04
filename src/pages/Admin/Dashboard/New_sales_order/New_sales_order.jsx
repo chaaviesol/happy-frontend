@@ -18,6 +18,12 @@ import useDivBoxCloser from "../../../../hooks/useDivBoxCloser";
 import BarcodeListener from "../../../../components/Suppliercomponent/BarcodeListener";
 import InvoicePrint from "./InvoicePrint";
 import useAuth from "../../../../hooks/useAuth";
+import { Button } from "react-bootstrap";
+import EditIcon from "@mui/icons-material/Edit";
+import CustomModal from "../../../../components/CustomModal";
+import CustomerProfileWrapper from "../Customer_view/Customer_wrapper";
+
+
 export default function New_sales_order() {
   const location = useLocation();
   const [prdctflse, setprdctflse] = useState(false);
@@ -26,6 +32,7 @@ export default function New_sales_order() {
   const [products, setproducts] = useState([]);
   const [required, setrequired] = useState(false);
   const [cuslistflse, setcuslistflse] = useState(false);
+  const [EditCusOpen, setEditCusOpen] = useState(false)
   const [accessoriePop, setaccessoriePop] = useState({
     pop: false,
     ProIndex: "",
@@ -51,6 +58,8 @@ export default function New_sales_order() {
 
   const { auth } = useAuth({});
   const division = auth?.division;
+// const [pricing_unit, setpricing_unit] = useState("Pieces")
+
 
   const navigate = useNavigate();
   const cusflse = useRef(null);
@@ -91,6 +100,26 @@ export default function New_sales_order() {
       setAccessoriesdatas(res.data.data);
     });
   }, []);
+
+
+useEffect(() => {
+  if (location?.state?.quoted) {
+    setLoading(true);
+    const Quoted_salesID = {
+      sales_id: location?.state?.data,
+    };
+    axiosPrivate.post(`/sales/quoted_details`, Quoted_salesID).then((res) => {
+      console.log("res>>>>", res?.data);
+      setTotalData(res?.data[0]);
+      if (res?.data[0]) {
+        ProductCalculation(res?.data[0]);
+        setLoading(false);
+      }
+    });
+  }
+}, []);
+
+
   useEffect(() => {
     console.log("zxzx", division);
 
@@ -194,6 +223,7 @@ export default function New_sales_order() {
           }));
 
         }
+        navigate("/so_list")
       }
     } catch (err) {
       toast.info(err.response?.data?.message, toastConfig);
@@ -272,11 +302,14 @@ export default function New_sales_order() {
 
   const Calculations = async () => {
     try {
+    console.log("cc calc totaldata",TotalData);
+    
       let updatedProducts = TotalData?.products?.map((ele) => {
         let products_accessories = ele?.products_accessories?.map((acce) => {
           const price = acce?.price || acce?.sales_price;
           const qty = acce?.qty || acce?.order_qty;
-          if (qty && price) {
+
+          if (qty && price ) {
             let ac_tl_Price = parseInt(qty) * parseInt(price);
             return { ...acce, ac_tl_Price: ac_tl_Price };
           } else {
@@ -477,98 +510,100 @@ export default function New_sales_order() {
   //     console.error("Error in ProductCalculation:", error);
   //   }
   // };
-  const ProductCalculation = (Data, returnData = false) => {
-    try {
-      let tempProducts = { ...Data };
-      let grandTotal = 0;
+const ProductCalculation = (Data, returnData = false) => {
+  try {
+    let tempProducts = { ...Data };
+    let grandTotal = 0;
 
-      // 🧮 Per-product totals
-      tempProducts.products = tempProducts.products.map((pro) => {
-        const qty = parseFloat(pro.qty || 0);
-        const productPrice = parseFloat(pro.product_Price || 0);
-        const originalPrice = parseFloat(pro.original_price || 0);
-        const priceAccessory = parseFloat(pro.price_accessory || 0);
-        let total = 0;
-
-        if (pro.selecttype?.toLowerCase() === "as is") {
-          total = (productPrice || originalPrice) * qty;
-        } else {
-          total = (productPrice || originalPrice) * qty + priceAccessory * qty;
-        }
-
-        // 🎟️ Product-level discounts
-        if (pro.couponDiscount?.discount) {
-          if (pro.couponDiscount.discountType === "Percentage") {
-            total -= (total * parseFloat(pro.couponDiscount.discount)) / 100;
-          } else if (pro.couponDiscount.discountType === "Amount") {
-            total -= parseFloat(pro.couponDiscount.discount) * qty;
-          }
-        }
-
-        if (pro.normalDiscount?.discount) {
-          total -= (total * parseFloat(pro.normalDiscount.discount)) / 100;
-        }
-
-        return {
-          ...pro,
-          total: parseFloat(total.toFixed(2)),
-          tl_amt: parseFloat(total.toFixed(2)),
-        };
-      });
-
-      // 🧮 Grand total
-      tempProducts.products.forEach((p) => {
-        grandTotal += p.total || 0;
-      });
-
-      // 💰 Final discount (percentage or rupee)
-      const { type } = tempProducts.discount || {};
-      let discount = parseFloat(tempProducts.discount?.discount) || 0;
-      let finalAmount = grandTotal;
-
-      if (type === "Percentage" && discount > 0) {
-        finalAmount = grandTotal - (grandTotal * discount) / 100;
-      } else if (type === "Rupees" && discount > 0) {
-        if (discount > grandTotal) discount = grandTotal;
-        finalAmount = grandTotal - discount;
-      }
-
-      if (finalAmount < 0) finalAmount = 0;
-
-      tempProducts = {
-        ...tempProducts,
-        grandTotal: parseFloat(grandTotal.toFixed(2)),
-        tl_amt: parseFloat(finalAmount.toFixed(2)),
-      };
-
-      if (returnData) {
-        return tempProducts;
-      } else {
-        setTotalData({ ...tempProducts });
-      }
-    } catch (error) {
-      console.error("Error in ProductCalculation:", error);
+  if (!Array.isArray(tempProducts.products) || tempProducts.products.length === 0) {
+      console.warn("⚠️ No products found in ProductCalculation()");
+      return;
     }
-  };
+
+    tempProducts.products = tempProducts.products.map((pro) => {
+      const pricing_unit = pro.pricing_unit || "Pieces";
+      const qty = parseFloat(pro.qty || 0);
+      const noOfItems = parseFloat(pro.no_of_items || 0);
+
+      // ✅ Don't modify input qty — use derived qty for math only
+      const effectiveQty = pricing_unit === "Bundle" ? qty * noOfItems : qty;
+
+      const productPrice = parseFloat(pro.product_Price || 0);
+      const originalPrice = parseFloat(pro.original_price || 0);
+      const priceAccessory = parseFloat(pro.price_accessory || 0);
+
+      let basePrice = effectiveQty * (productPrice || originalPrice);
+      let total = 0;
+
+      if (pro.selecttype?.toLowerCase() === "as is") {
+        total = basePrice;
+      } else {
+        total = basePrice + priceAccessory * effectiveQty;
+      }
+
+      // 🎟️ Discounts
+      if (pro.couponDiscount?.discount) {
+        if (pro.couponDiscount.discountType === "Percentage") {
+          total -= (total * parseFloat(pro.couponDiscount.discount)) / 100;
+        } else if (pro.couponDiscount.discountType === "Amount") {
+          total -= parseFloat(pro.couponDiscount.discount) * effectiveQty;
+        }
+      }
+
+      if (pro.normalDiscount?.discount) {
+        total -= (total * parseFloat(pro.normalDiscount.discount)) / 100;
+      }
+
+      return {
+        ...pro,
+        total: parseFloat(total.toFixed(2)),
+        tl_amt: parseFloat(total.toFixed(2)),
+        effective_qty: effectiveQty, // store calculated qty for display/reference
+        pricing_unit:pro.pricing_unit==="Bundle"?"Bundle":"Pieces"
+      };
+    });
+
+    // 🧮 Grand total
+    tempProducts.products.forEach((p) => {
+      grandTotal += p.total || 0;
+    });
+
+    // 💰 Final discount
+    const { type } = tempProducts.discount || {};
+    let discount = parseFloat(tempProducts.discount?.discount) || 0;
+    let finalAmount = grandTotal;
+
+    if (type === "Percentage" && discount > 0) {
+      finalAmount = grandTotal - (grandTotal * discount) / 100;
+    } else if (type === "Rupees" && discount > 0) {
+      if (discount > grandTotal) discount = grandTotal;
+      finalAmount = grandTotal - discount;
+    }
+
+    if (finalAmount < 0) finalAmount = 0;
+
+    tempProducts = {
+      ...tempProducts,
+      grandTotal: parseFloat(grandTotal.toFixed(2)),
+      tl_amt: parseFloat(finalAmount.toFixed(2)),
+    };
+
+    if (returnData) {
+      return tempProducts;
+    } else {
+      setTotalData({ ...tempProducts });
+    }
+  } catch (error) {
+    console.error("Error in ProductCalculation:", error);
+  }
+};
+
+
+
+
 
 
   // console.log("TotalData>>>>>", TotalData)
-  useEffect(() => {
-    if (location?.state?.quoted) {
-      setLoading(true);
-      const Quoted_salesID = {
-        sales_id: location?.state?.data,
-      };
-      axiosPrivate.post(`/sales/quoted_details`, Quoted_salesID).then((res) => {
-        console.log("res>>>>", res?.data);
-        setTotalData(res?.data[0]);
-        if (res?.data[0]) {
-          ProductCalculation(res?.data[0]);
-          setLoading(false);
-        }
-      });
-    }
-  }, []);
 
   const accessorieconfirm = () => {
     ProductCalculation(TotalData);
@@ -892,6 +927,57 @@ export default function New_sales_order() {
   }, [TotalData?.user_name, userdata]);
   console.log("auto add userinfo", userInfo);
 
+  // Customer detail refresh after edit
+
+const refreshCustomerDetails = async (id) => {
+  if (!id) return;
+
+  try {
+    const res = await axiosPrivate.post("/customer/customerprofile", {
+      logged_id: id,
+    });
+    const profData = res.data.data;
+    console.log("profdata",profData);
+    
+
+    const discountObject = applyGradeDiscount(profData);
+    const discountValue = parseFloat(discountObject?.discount || 0);
+
+    // 🧩 Update customer info
+    setUserInfo((prev)=>({
+      ...prev,
+      user_name: profData?.user_name,
+      customer_id: profData?.id,
+      mobile: profData?.mobile,
+      // outstanding_amount: profData?.outstanding_amount,
+      discount: discountObject,
+    }));
+
+    // 🧩 Update total data
+    setTotalData((prev) => ({
+      ...prev,
+      user_name: profData?.user_name,
+      customer_id: profData?.id,
+      mobile: profData?.mobile,
+      // outstanding_amount: profData?.outstanding_amount,
+      discount: discountObject,
+    }));
+
+    // // ✅ Show grade toast
+    // if (discountValue > 0) {
+    //   toast.info(`Grade ${discountObject.grade} → ${discountValue}% discount applied`, {
+    //     position: "top-right",
+    //     autoClose: 2000,
+    //   });
+    // }
+
+    console.log("✅ Customer data refreshed after edit:", profData);
+  } catch (err) {
+    console.error("Error refreshing customer details:", err);
+  }
+};
+
+
 
   return (
     <>
@@ -1092,6 +1178,30 @@ export default function New_sales_order() {
                 </div>
               </div> */}
             </div>
+            {
+              TotalData.user_name && (
+
+                <div>
+                  <Button
+                    variant="outline-primary"
+                    onClick={() => {
+                      console.log("btn ui", userInfo);
+
+                      if (userInfo?.id) {
+                        setEditCusOpen(true);
+                      } else {
+                        toast.info("Please select a customer first.");
+                      }
+                    }}
+                    style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                  >
+                    <EditIcon fontSize="small" />
+                    Edit
+                  </Button>
+
+                </div>
+              )
+            }
             <div style={{ display: "flex", gap: "10px", }}>
               {
                 TotalData.sales_id && (
@@ -1175,7 +1285,8 @@ export default function New_sales_order() {
                 <p id="mediaqry_adjst_fnt">Color</p>
               </div>
               <div id="Cart_Cntrl_sprte_bx1515">
-                <p id="mediaqry_adjst_fnt">packing</p>
+                {/* <p id="mediaqry_adjst_fnt">packing</p> */}
+                <p id="mediaqry_adjst_fnt">Pricing Unit</p>
               </div>
               <div id="Cart_Cntrl_sprte_bx1414">
                 <p id="mediaqry_adjst_fnt">Unit</p>
@@ -1298,7 +1409,7 @@ export default function New_sales_order() {
                           }}
                         ></div>
                       </div>
-                      <div
+                      {/* <div
                         style={{ padding: "11px 00px" }}
                         id="Cart_Cntrl_sprte_bx1515"
                       >
@@ -1307,6 +1418,65 @@ export default function New_sales_order() {
                           id="mediaqry_adjst_fnt"
                         >
                           {detailed.package}
+                        </p>
+                      </div> */}
+                      <div
+                        style={{ padding: "11px 00px" }}
+                        id="Cart_Cntrl_sprte_bx1515"
+                      >
+                        <p
+                          style={{ textAlign: "center" }}
+                          id="mediaqry_adjst_fnt"
+                        >
+                          <select
+   onChange={(e) => {
+                              inponchange(e, ind);
+                            }}
+                            name="pricing_unit"
+  value={detailed?.pricing_unit}
+  className="form-control purchase-form__form-control"
+  style={{ height: "29px" }}
+>
+  <option disabled value="">
+    Select Unit
+  </option>
+  <option value="Pieces">Pieces</option>
+  <option value="Bundle">Bundle</option>
+</select>
+
+                            {/* <select
+                             
+                              onChange={(event) => {
+                                handleProducts(event, index);
+                              }}
+                              onFocus={() => { setIsHandleOpen(false); }}
+                              disabled={
+                                !productsData.lr_num ||
+                                  productsData.lr_num.length < 1 ||
+                                  value?.balance_qty === 0
+                                  ? true
+                                  : false
+                              }
+                              value={
+                                !productsData.lr_num ||
+                                  productsData.lr_num.length < 1 ||
+                                  value?.balance_qty === 0
+                                  ? ""
+                                  : value?.pricing_unit
+                              }
+                              className="form-control purchase-form__form-control"
+                              id="purchase-form__form-control"
+                              type="number"
+                              name="pricing_unit"
+                              style={{ height: "29px" }}
+                            >
+                              <option disabled selected></option>
+
+                              <option>Bundle</option>
+
+                              <option>Pieces</option>
+                            </select> */}
+                          
                         </p>
                       </div>
                       <div
@@ -1983,56 +2153,56 @@ export default function New_sales_order() {
             </div>
           </div>
 
-          {/* {location?.state?.solist && ( */}
-          <div className="newsalesAlignFinalAmount">
-            <div className="newsalesAlignFinalAmButton">
-              <p>Payment amount</p>
-              <input
-                value={
-                  paymentData?.total_amount ? paymentData?.total_amount : ""
-                }
-                onChange={getPaymentsData}
-                name="total_amount"
-                type="number"
-                disabled={!isSalesOrderCreated}
-              />
-            </div>
-            <div className="newsalesAlignFinalAmButton">
-              <p>Payment mode</p>
-              <select
-                value={paymentData?.mode}
-                onChange={getPaymentsData}
-                name="mode"
-                id=""
-                disabled={!isSalesOrderCreated}
-              >
-                <option selected disabled value="">
-                  Select mode
-                </option>
-                <option value="BANK">Bank</option>
-                <option value="CASH">Cash</option>
-                <option value="UPI">Upi</option>
-              </select>
-            </div>
-            <div className="newsalesAlignFinalAmButton">
-              <div className="newsalesAlignFinalConfirmBtn">
-                <button
-                  // onClick={confirmPaymentData}
-                  onClick={() => {
-                    if (!isSalesOrderCreated) {
-                      toast.info("Please confirm the new Sales Order before proceeding with payment.", toastConfig);
-                      return;
-                    }
-                    confirmPaymentData();
-                  }}
-                  className="newsalesAlignFinalConfirm"
+          {location?.state?.solist && (
+            <div className="newsalesAlignFinalAmount">
+              <div className="newsalesAlignFinalAmButton">
+                <p>Payment amount</p>
+                <input
+                  value={
+                    paymentData?.total_amount ? paymentData?.total_amount : ""
+                  }
+                  onChange={getPaymentsData}
+                  name="total_amount"
+                  type="number"
+                  disabled={!isSalesOrderCreated}
+                />
+              </div>
+              <div className="newsalesAlignFinalAmButton">
+                <p>Payment mode</p>
+                <select
+                  value={paymentData?.mode}
+                  onChange={getPaymentsData}
+                  name="mode"
+                  id=""
+                  disabled={!isSalesOrderCreated}
                 >
-                  Confirm
-                </button>
+                  <option selected disabled value="">
+                    Select mode
+                  </option>
+                  <option value="BANK">Bank</option>
+                  <option value="CASH">Cash</option>
+                  <option value="UPI">Upi</option>
+                </select>
+              </div>
+              <div className="newsalesAlignFinalAmButton">
+                <div className="newsalesAlignFinalConfirmBtn">
+                  <button
+                    // onClick={confirmPaymentData}
+                    onClick={() => {
+                      if (!isSalesOrderCreated) {
+                        toast.info("Please confirm the new Sales Order before proceeding with payment.", toastConfig);
+                        return;
+                      }
+                      confirmPaymentData();
+                    }}
+                    className="newsalesAlignFinalConfirm"
+                  >
+                    Confirm
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          {/* )} */}
+          )}
           <div style={{ height: "3rem" }}></div>
 
           <div id="Cart_Cntrl_last_sec">
@@ -2144,22 +2314,22 @@ export default function New_sales_order() {
                     location.state?.so_status === "packed" ||
                     location.state?.so_status === "dispatched"
                     ? (
-                    <button id="Cart_Cntrl_las_btns90">
-                      <div
-                        style={{ display: "flex", justifyContent: "center" }}
-                        onClick={() => {
-                          navigate("/sopayment", {
-                            state: location.state?.data,
-                          });
-                        }}
-                      >
-                        <div style={{ width: "5px" }}></div>
-                        Add payment
-                      </div>
-                    </button>
-                  ) : (
-                    ""
-                  )}
+                      <button id="Cart_Cntrl_las_btns90">
+                        <div
+                          style={{ display: "flex", justifyContent: "center" }}
+                          onClick={() => {
+                            navigate("/sopayment", {
+                              state: location.state?.data,
+                            });
+                          }}
+                        >
+                          <div style={{ width: "5px" }}></div>
+                          Add payment
+                        </div>
+                      </button>
+                    ) : (
+                      ""
+                    )}
 
 
                   <div style={{ width: "10px", height: "10px" }}></div>
@@ -2729,6 +2899,18 @@ export default function New_sales_order() {
           <OrderPage sales_id={location?.state?.data} />
         </div>
       </Modal>
+
+      <CustomModal
+        open={EditCusOpen}
+        onClose={() => {
+          setEditCusOpen(false);
+          refreshCustomerDetails(userInfo?.id); // 🔥 refresh after close
+        }}
+      >
+        <CustomerProfileWrapper userId={userInfo?.id} />
+      </CustomModal>
+
+
       <BarcodeListener onScan={handleScan} />
       {/* <input
         type="text"

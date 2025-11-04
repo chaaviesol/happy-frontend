@@ -124,7 +124,8 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
     "Staffaccess",
     "Createcampaign",
     "Accountdetails",
-    "Updateaccounts"
+    "Updateaccounts",
+    "Expenses"
   ] : auth.allowedPages
 
   const theme = useTheme();
@@ -155,15 +156,16 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
         10: "/customerlist",
         11: "/new_sales_order",
         12: "/so_list",
-        13: "/admin_quotation",
-        14: "/adm_service_view",
-        15: "/leave_list",
-        16: "/staff_claim",
-        17: "/user_access",
-        18: "/createcampaign",
-        19:"/taskworklist",
-        20:"/createshare",
-        21:"/viewdistribution"
+        // 13: "/admin_quotation",
+        // 14: "/adm_service_view",
+        // 15: "/leave_list",
+        // 16: "/staff_claim",
+        // 17: "/user_access",
+        // 18: "/createcampaign",
+        // 19:"/taskworklist",
+        // 20:"/createshare",
+        13:"/viewdistribution",
+        14:"/OpExpenses"
       };
 
       if (index === 6.1) {
@@ -236,6 +238,7 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
             // "Task worklist",
             // "Update accounts",
             "Account details",
+            "Expenses",
           ].map((text, index) => {
             const normalizedText = text.toLowerCase().replace(/\s/g, "");
 
@@ -519,6 +522,16 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
                           style={{
                             color:
                               currentPage === "accountdetails"
+                                ? "white"
+                                : "#b88a44 ",
+                          }}
+                        />
+                      )}
+                      {index === 22 && (
+                        <Menu
+                          style={{
+                            color:
+                              currentPage === "OpExpenses"
                                 ? "white"
                                 : "#b88a44 ",
                           }}

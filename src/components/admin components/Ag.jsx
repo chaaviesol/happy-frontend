@@ -77,6 +77,69 @@ export default function Ag({ filterSup }) {
       cellStyle,
       valueFormatter: (params) => moment(params.value).format("DD/MM/YYYY"),
     },
+{
+  flex: 1,
+  field: "edit",
+  headerName: "Edit PO",
+  headerClass: "center-align-header",
+  cellStyle,
+  cellRendererFramework: (params) => {
+    const status = params.data?.po_status?.toLowerCase();
+
+    if (status === "placed" || status === "draft") {
+
+      const handleEdit = async (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // Stop triggering cellClicked
+
+        try {
+          // Prepare request payload
+          const goodsData = {
+            po: params.data.po_number,
+            trade_name: params.data.users?.trade_name,
+            isHidden: isHidden ? true : false,
+          };
+
+          const res = await axiosPrivate.post(`/purchase/polist`, goodsData);
+
+          console.log("Full PO data from API:", res.data);
+
+          // Save to draftData and navigate
+          setDraftData(res.data);
+          navigate("/purchase");
+
+        } catch (err) {
+          console.error("Error fetching full PO data:", err);
+        }
+      };
+
+      return (
+        <button
+          style={{
+            padding: "4px 8px",
+            fontSize: "12px",
+            borderRadius: "4px",
+            border: "1px solid #007bff",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            cursor: "pointer",
+            height: "40px",
+            width: "100px",
+          }}
+          onClick={handleEdit}
+        >
+          Edit
+        </button>
+      );
+    }
+
+    return null; // Hide button for other statuses
+  },
+}
+
+
+
+
   ]);
 
   // DefaultColDef sets props common to all Columns
@@ -88,6 +151,7 @@ export default function Ag({ filterSup }) {
 
   // Example of consuming Grid Event
   const cellClickedListener = useCallback((event) => {
+    if (event.event?.target?.tagName === "BUTTON") return;
     if (event.type === "cellClicked") {
       const tradeName = event.data.users.trade_name;
       console.log(event.data.users);
@@ -113,6 +177,7 @@ export default function Ag({ filterSup }) {
 
             // navigate("/S_goodsreceipt");
           } else if (event.data.po_status === "draft") {
+
             setDraftData(res.data);
 
             navigate("/purchase");

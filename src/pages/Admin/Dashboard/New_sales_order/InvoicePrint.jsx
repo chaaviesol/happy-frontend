@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 
 function InvoicePrint({ TotalData }) {
   const printRef = useRef();
+console.log("vv print totaldata",TotalData);
 
   const handlePrint = () => {
     const printContent = printRef.current;
@@ -172,6 +173,7 @@ function InvoicePrint({ TotalData }) {
               <th>Sl No</th>
               <th>Description</th>
               <th>Qty</th>
+              <th>Pieces/Qty</th>
               <th>Rate</th>
               <th>Gross Amount</th>
               <th>Discount</th>
@@ -183,7 +185,8 @@ function InvoicePrint({ TotalData }) {
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td style={{ textAlign: "left" }}>{item?.product_name}</td>
-                <td>{item?.qty}</td>
+                <td>{item?.qty} {item?.package}</td>
+                <td>{item?.no_of_items}</td>
                 <td>{item?.product_Price || item?.original_price}</td>
                 <td>{(item?.qty * (item?.product_Price || item?.original_price)).toFixed(2)}</td>
                 <td>{item?.normalDiscount?.discount ? `${item.normalDiscount.discount}%` : "-"}</td>

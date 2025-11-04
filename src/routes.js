@@ -64,6 +64,7 @@ import OffersaleMain from "./pages/Customer/Cus_products/OffersaleMain";
 import { SettleWrapper } from "./pages/Admin/Profit/SettleWrapper";
 import { CreateWrapper } from "./pages/Admin/Profit/CreateWrapper";
 import CustomerProfileWrapper from "./pages/Admin/Dashboard/Customer_view/Customer_wrapper";
+import OperationalExpensesWrapper from "./pages/Admin/Dashboard/Expenses/OperationalExpensesWrapper";
 
 export const publicRoutes = [
   { path: "/", element: <Home /> },
@@ -125,6 +126,7 @@ export const privateRoutes = [
   { path: "createcampaign", element: <CreateCampaign /> },
   { path: "createshare", element: <CreateWrapper /> },
   { path: "viewdistribution", element: <SettleWrapper /> },
+  { path: "OpExpenses", element: <OperationalExpensesWrapper/> },
 ];
 export const supplierRoutes=[
   { path: "supplier_view", element: <Fullpage_supplier_view /> },
