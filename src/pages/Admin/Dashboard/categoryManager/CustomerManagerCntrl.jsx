@@ -135,12 +135,14 @@ console.log("vv auth division",division);
       axiosPrivate
         .post(`/category`, divisionstate)
         .then((result) => {
-          setCategoryData(result.data);
+          console.log("cc category response",result);
+          
+          setCategoryData(result.data.data);
           setsubcatTRUEFLSE({ division: true });
           setdltConfirm({ ...dltConfirm, function: false });
         })
         .catch((error) => {
-          console.log(error);
+          console.log("category error==>",error);
         });
     }
   }, [divisionstate, reloadstate]);
