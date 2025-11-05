@@ -773,6 +773,7 @@ const division = auth?.division; // e.g. "bikes", "toys", "baby", "accessories"
                 onChange={(val) => handleSearch({ target: { value: val } })}
                 isDisabled={!!division} // disable if division exists
                 hideDropdownIndicator={true} // remove arrow
+                highlightSelected={true} 
               />
 
 
