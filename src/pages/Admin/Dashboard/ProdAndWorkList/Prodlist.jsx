@@ -481,6 +481,7 @@ export default function Prodlist() {
                 onChange={(val) => handleSearch({ target: { value: val } })}
                 isDisabled={!!division} // disable if division exists
                 hideDropdownIndicator={true} // remove arrow
+                highlightSelected={true}
               />
 
 

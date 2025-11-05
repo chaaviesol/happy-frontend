@@ -72,6 +72,11 @@ const CustomDropdown = ({
             },
           };
         },
+        placeholder: (provided) => ({
+          ...provided,
+          color: "#000",
+        }),
+
         singleValue: (provided) => ({
           ...provided,
           color: highlightSelected && selectedOption ? "#fff" : "#000",
