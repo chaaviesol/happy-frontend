@@ -6,6 +6,8 @@ export default function OperationalExpenses() {
   const [expenses, setExpenses] = useState([]);
   const [todayExpenses, setTodayExpenses] = useState([]);
   const [newExpense, setNewExpense] = useState({ description: "", amount: "" });
+  const [editExpenseId, setEditExpenseId] = useState(null);
+  const [editedExpense, setEditedExpense] = useState({ description: "", amount: "" });
   const [filters, setFilters] = useState({
     from: "",
     to: "",
@@ -13,7 +15,6 @@ export default function OperationalExpenses() {
     year: "",
   });
 
-  // Helper to format date as dd-mm-yyyy
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
     const day = String(d.getDate()).padStart(2, "0");
@@ -24,7 +25,6 @@ export default function OperationalExpenses() {
 
   const todayDate = formatDate(new Date());
 
-  // Scrollable table wrapper style
   const tableWrapperStyle = {
     maxHeight: "300px",
     overflowY: "auto",
@@ -58,6 +58,28 @@ export default function OperationalExpenses() {
     setNewExpense({ description: "", amount: "" });
   };
 
+  const handleDeleteExpense = (id) => {
+    if (window.confirm("Are you sure you want to delete this expense?")) {
+      setExpenses((prev) => prev.filter((exp) => exp.id !== id));
+    }
+  };
+
+  const handleEditExpense = (exp) => {
+    setEditExpenseId(exp.id);
+    setEditedExpense({ description: exp.description, amount: exp.amount });
+  };
+
+  const handleSaveEditedExpense = (id) => {
+    setExpenses((prev) =>
+      prev.map((exp) =>
+        exp.id === id
+          ? { ...exp, description: editedExpense.description, amount: parseFloat(editedExpense.amount) }
+          : exp
+      )
+    );
+    setEditExpenseId(null);
+  };
+
   const filteredHistory = expenses.filter((exp) => {
     const expDate = new Date(exp.date);
     const fromDate = filters.from ? new Date(filters.from) : null;
@@ -76,15 +98,11 @@ export default function OperationalExpenses() {
     return matchesDateRange && matchesMonthYear;
   });
 
-  const totalAmount = filteredHistory.reduce(
-  (sum, exp) => sum + exp.amount,
-  0
-);
-
+  const totalAmount = filteredHistory.reduce((sum, exp) => sum + exp.amount, 0);
 
   return (
     <div>
-      {/* Top Row: Tabs Left, Date Right */}
+      {/* Top Row */}
       <div
         style={{
           display: "flex",
@@ -93,7 +111,6 @@ export default function OperationalExpenses() {
           marginBottom: "20px",
         }}
       >
-        {/* Tabs */}
         <div style={{ display: "flex", gap: "20px" }}>
           <Button
             variant={activeTab === "add" ? "dark" : "outline-dark"}
@@ -108,15 +125,12 @@ export default function OperationalExpenses() {
             Expense History
           </Button>
         </div>
-
-        {/* Date */}
         <h6 style={{ margin: 0, fontWeight: "600" }}>Date: {todayDate}</h6>
       </div>
 
-      {/* Add Expenses Tab */}
+      {/* Add Tab */}
       {activeTab === "add" && (
         <>
-          {/* Today's Expenses */}
           {todayExpenses.length > 0 && (
             <div style={{ marginTop: "20px" }}>
               <h6>Expenses Added Today</h6>
@@ -134,14 +148,79 @@ export default function OperationalExpenses() {
                       <th>Description</th>
                       <th>Amount (₹)</th>
                       <th>Time</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {todayExpenses.map((exp) => (
                       <tr key={exp.id}>
-                        <td>{exp.description}</td>
-                        <td>₹ {exp.amount}</td>
-                        <td>{new Date(exp.date).toLocaleTimeString()}</td>
+                        {editExpenseId === exp.id ? (
+                          <>
+                            <td>
+                              <Form.Control
+                                type="text"
+                                value={editedExpense.description}
+                                onChange={(e) =>
+                                  setEditedExpense((prev) => ({
+                                    ...prev,
+                                    description: e.target.value,
+                                  }))
+                                }
+                              />
+                            </td>
+                            <td>
+                              <Form.Control
+                                type="number"
+                                value={editedExpense.amount}
+                                onChange={(e) =>
+                                  setEditedExpense((prev) => ({
+                                    ...prev,
+                                    amount: e.target.value,
+                                  }))
+                                }
+                              />
+                            </td>
+                            <td>{new Date(exp.date).toLocaleTimeString()}</td>
+                            <td>
+                              <Button
+                                variant="success"
+                                size="sm"
+                                onClick={() => handleSaveEditedExpense(exp.id)}
+                              >
+                                Save
+                              </Button>{" "}
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => setEditExpenseId(null)}
+                              >
+                                Cancel
+                              </Button>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td>{exp.description}</td>
+                            <td>₹ {exp.amount}</td>
+                            <td>{new Date(exp.date).toLocaleTimeString()}</td>
+                            <td>
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => handleEditExpense(exp)}
+                              >
+                                Edit
+                              </Button>{" "}
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => handleDeleteExpense(exp.id)}
+                              >
+                                Delete
+                              </Button>
+                            </td>
+                          </>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -150,7 +229,7 @@ export default function OperationalExpenses() {
             </div>
           )}
 
-          {/* Add Expense Form */}
+          {/* Add New Expense */}
           <div
             style={{
               marginTop: "30px",
@@ -169,17 +248,6 @@ export default function OperationalExpenses() {
                   onChange={(e) =>
                     setNewExpense({ ...newExpense, description: e.target.value })
                   }
-                  style={{
-                    border: "1px solid #aaa",
-                    borderRadius: "5px",
-                    transition: "0.3s",
-                    padding: "5px",
-                  }}
-                  onFocus={(e) =>
-                    (e.target.style.boxShadow =
-                      "0 0 5px 2px rgba(0,123,255,0.5)")
-                  }
-                  onBlur={(e) => (e.target.style.boxShadow = "none")}
                 />
               </Col>
               <Col sm={4}>
@@ -190,17 +258,6 @@ export default function OperationalExpenses() {
                   onChange={(e) =>
                     setNewExpense({ ...newExpense, amount: e.target.value })
                   }
-                  style={{
-                    border: "1px solid #aaa",
-                    borderRadius: "5px",
-                    transition: "0.3s",
-                    padding: "5px",
-                  }}
-                  onFocus={(e) =>
-                    (e.target.style.boxShadow =
-                      "0 0 5px 2px rgba(0,123,255,0.5)")
-                  }
-                  onBlur={(e) => (e.target.style.boxShadow = "none")}
                 />
               </Col>
               <Col sm={2}>
@@ -213,7 +270,7 @@ export default function OperationalExpenses() {
         </>
       )}
 
-      {/* Expense History Tab */}
+      {/* History Tab */}
       {activeTab === "history" && (
         <div style={{ marginTop: "20px" }}>
           <h5>Expense History</h5>
@@ -221,80 +278,36 @@ export default function OperationalExpenses() {
           {/* Filters */}
           <Row
             style={{
-               marginBottom: "20px",
-    marginTop: "10px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
-    gap: "15px",
+              marginBottom: "20px",
+              marginTop: "10px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "15px",
             }}
           >
-            {/* From Date */}
-            <Col sm="auto" style={{ display: "flex", flexDirection: "column" }}>
-              <Form.Label style={{ marginBottom: "5px" }}>From Date</Form.Label>
+            <Col sm="auto">
+              <Form.Label>From</Form.Label>
               <Form.Control
                 type="date"
                 value={filters.from}
-                onChange={(e) =>
-                  setFilters((f) => ({ ...f, from: e.target.value }))
-                }
-                style={{
-                  border: "1px solid #aaa",
-                  borderRadius: "5px",
-                  padding: "5px",
-                  transition: "0.3s",
-                }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    "0 0 5px 2px rgba(0,123,255,0.5)")
-                }
-                onBlur={(e) => (e.target.style.boxShadow = "none")}
+                onChange={(e) => setFilters((f) => ({ ...f, from: e.target.value }))}
               />
             </Col>
-
-            {/* To Date */}
-            <Col sm="auto" style={{ display: "flex", flexDirection: "column" }}>
-              <Form.Label style={{ marginBottom: "5px" }}>To Date</Form.Label>
+            <Col sm="auto">
+              <Form.Label>To</Form.Label>
               <Form.Control
                 type="date"
                 value={filters.to}
-                onChange={(e) =>
-                  setFilters((f) => ({ ...f, to: e.target.value }))
-                }
-                style={{
-                  border: "1px solid #aaa",
-                  borderRadius: "5px",
-                  padding: "5px",
-                  transition: "0.3s",
-                }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    "0 0 5px 2px rgba(0,123,255,0.5)")
-                }
-                onBlur={(e) => (e.target.style.boxShadow = "none")}
+                onChange={(e) => setFilters((f) => ({ ...f, to: e.target.value }))}
               />
             </Col>
-
-            {/* Month */}
-            <Col sm="auto" style={{ display: "flex", flexDirection: "column" }}>
-              <Form.Label style={{ marginBottom: "5px" }}>Month</Form.Label>
+            <Col sm="auto">
+              <Form.Label>Month</Form.Label>
               <Form.Select
                 value={filters.month}
-                onChange={(e) =>
-                  setFilters((f) => ({ ...f, month: e.target.value }))
-                }
-                style={{
-                  border: "1px solid #aaa",
-                  borderRadius: "5px",
-                  padding: "5px",
-                  transition: "0.3s",
-                }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    "0 0 5px 2px rgba(0,123,255,0.5)")
-                }
-                onBlur={(e) => (e.target.style.boxShadow = "none")}
+                onChange={(e) => setFilters((f) => ({ ...f, month: e.target.value }))}
               >
                 <option value="">All</option>
                 {Array.from({ length: 12 }).map((_, i) => (
@@ -304,28 +317,13 @@ export default function OperationalExpenses() {
                 ))}
               </Form.Select>
             </Col>
-
-            {/* Year */}
-            <Col sm="auto" style={{ display: "flex", flexDirection: "column" }}>
-              <Form.Label style={{ marginBottom: "5px" }}>Year</Form.Label>
+            <Col sm="auto">
+              <Form.Label>Year</Form.Label>
               <Form.Control
                 type="number"
                 placeholder="e.g. 2025"
                 value={filters.year}
-                onChange={(e) =>
-                  setFilters((f) => ({ ...f, year: e.target.value }))
-                }
-                style={{
-                  border: "1px solid #aaa",
-                  borderRadius: "5px",
-                  padding: "5px",
-                  transition: "0.3s",
-                }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    "0 0 5px 2px rgba(0,123,255,0.5)")
-                }
-                onBlur={(e) => (e.target.style.boxShadow = "none")}
+                onChange={(e) => setFilters((f) => ({ ...f, year: e.target.value }))}
               />
             </Col>
           </Row>
@@ -345,33 +343,98 @@ export default function OperationalExpenses() {
                   <th>Date</th>
                   <th>Description</th>
                   <th>Amount (₹)</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
-             <tbody>
-  {filteredHistory.length > 0 ? (
-    <>
-      {filteredHistory.map((exp) => (
-        <tr key={exp.id}>
-          <td>{formatDate(exp.date)}</td>
-          <td>{exp.description}</td>
-          <td>₹ {exp.amount}</td>
-        </tr>
-      ))}
-      <tr style={{marginTop:'100px'}}>
-        <td></td>
-        <td style={{ fontWeight: "600", textAlign: "right" }}>Total:</td>
-        <td style={{ fontWeight: "600" }}>₹ {totalAmount.toFixed(2)}</td>
-      </tr>
-    </>
-  ) : (
-    <tr>
-      <td colSpan="3" style={{ textAlign: "center" }}>
-        No expenses found for the selected filters.
-      </td>
-    </tr>
-  )}
-</tbody>
-
+              <tbody>
+                {filteredHistory.length > 0 ? (
+                  <>
+                    {filteredHistory.map((exp) => (
+                      <tr key={exp.id}>
+                        {editExpenseId === exp.id ? (
+                          <>
+                            <td>{formatDate(exp.date)}</td>
+                            <td>
+                              <Form.Control
+                                type="text"
+                                value={editedExpense.description}
+                                onChange={(e) =>
+                                  setEditedExpense((prev) => ({
+                                    ...prev,
+                                    description: e.target.value,
+                                  }))
+                                }
+                              />
+                            </td>
+                            <td>
+                              <Form.Control
+                                type="number"
+                                value={editedExpense.amount}
+                                onChange={(e) =>
+                                  setEditedExpense((prev) => ({
+                                    ...prev,
+                                    amount: e.target.value,
+                                  }))
+                                }
+                              />
+                            </td>
+                            <td>
+                              <Button
+                                variant="success"
+                                size="sm"
+                                onClick={() => handleSaveEditedExpense(exp.id)}
+                              >
+                                Save
+                              </Button>{" "}
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => setEditExpenseId(null)}
+                              >
+                                Cancel
+                              </Button>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td>{formatDate(exp.date)}</td>
+                            <td>{exp.description}</td>
+                            <td>₹ {exp.amount}</td>
+                            <td>
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => handleEditExpense(exp)}
+                              >
+                                Edit
+                              </Button>{" "}
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => handleDeleteExpense(exp.id)}
+                              >
+                                Delete
+                              </Button>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                    <tr>
+                      <td></td>
+                      <td style={{ fontWeight: "600", textAlign: "right" }}>Total:</td>
+                      <td style={{ fontWeight: "600" }}>₹ {totalAmount.toFixed(2)}</td>
+                      <td></td>
+                    </tr>
+                  </>
+                ) : (
+                  <tr>
+                    <td colSpan="4" style={{ textAlign: "center" }}>
+                      No expenses found for the selected filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
             </Table>
           </div>
         </div>
