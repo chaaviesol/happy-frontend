@@ -1,0 +1,181 @@
+/* Import base styles from Operational Expenses for consistent look */
+@import '../Expenses/OperationalExpenses.css';
+
+/* Payment In Container */
+.payment-in-container {
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    text-align: left; /* ensure children (inline-flex) align left */
+}
+
+/* Pagination mirrors PaymentOut styles */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.pagination-arrow,
+.pagination-number {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+    min-width: 40px;
+    transition: all 0.2s;
+}
+
+.pagination-arrow:hover:not(:disabled),
+.pagination-number:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+.pagination-arrow:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-number.active {
+    background-color: #2d6a4f;
+    color: white;
+    border-color: #2d6a4f;
+}
+
+.pagination-number.active:hover {
+    background-color: #1d6244;
+    border-color: #1d6244;
+}
+
+/* More options icon */
+.more-options {
+    cursor: pointer;
+    color: #555;
+    font-size: 1rem;
+}
+
+.more-options:hover {
+    color: #333;
+}
+
+/* Small circular filter button used in page headers */
+.filter-circle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+    background: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.filter-circle-btn:hover {
+    background: #f5f5f5;
+}
+
+/* --- Copied Filter Section styles scoped to Payment In page --- */
+.payment-in-container .filter-section {
+    background-color: #2d6a4f;
+    padding: 20px;
+    border-radius: 12px;
+    color: white;
+    margin: 0 0 30px 0; /* reset margins */
+    display: inline-flex; /* shrink-to-fit */
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 20px;
+    /* Robust left-alignment fallback */
+    margin-left: 0 !important;
+    align-self: flex-start; /* if parent is flex */
+}
+
+.payment-in-container .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 0 0 auto; /* do not grow; size based on content */
+    min-width: 200px;
+    position: relative;
+}
+
+.payment-in-container .filter-group.date-group {
+    flex: 0 1 auto;
+    min-width: auto;
+}
+
+.payment-in-container .filter-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #e0e0e0;
+    text-align: left;
+    width: 100%;
+}
+
+.payment-in-container .filter-input-wrapper {
+    position: relative;
+    background: white;
+    border-radius: 6px;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.payment-in-container .filter-input-wrapper:hover {
+    background-color: #f9f9f9;
+}
+
+.payment-in-container .dropdown-arrow { font-size: 0.8rem; color: #666; }
+
+.payment-in-container .custom-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    margin-top: 5px;
+    padding: 10px;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.payment-in-container .dropdown-search { padding: 8px 12px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 5px; width: 100%; font-size: 0.9rem; }
+
+.payment-in-container .dropdown-item-custom { padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: background 0.2s; text-align: left; display: flex; justify-content: space-between; align-items: center; position: relative; }
+.payment-in-container .dropdown-item-custom:hover { background-color: #f0f0f0; }
+
+.payment-in-container .dropdown-item-options { display: flex; align-items: center; position: relative; }
+.payment-in-container .option-icon { color: #666; padding: 4px; border-radius: 50%; transition: background 0.2s; }
+.payment-in-container .option-icon:hover { background-color: #e0e0e0; color: #333; }
+
+.payment-in-container .option-menu-popup { position: absolute; right: 0; top: 100%; background: white; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 101; min-width: 120px; overflow: hidden; border: 1px solid #eee; }
+.payment-in-container .option-menu-item { padding: 8px 12px; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; color: #333; }
+.payment-in-container .option-menu-item:hover { background-color: #f5f5f5; }
+.payment-in-container .option-menu-item.delete { color: #d32f2f; }
+.payment-in-container .option-menu-item.delete:hover { background-color: #ffebee; }
+
+.payment-in-container .add-new-btn { background-color: #52796f; color: white; border: none; padding: 8px; border-radius: 6px; margin-top: 5px; width: 100%; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+.payment-in-container .add-new-btn:hover { background-color: #354f52; }
+
+.payment-in-container .total-expense-group { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-width: 195px; }
+.payment-in-container .total-expense-amount { font-size: 1.8rem; font-weight: 700; color: white; }
+
+/* --- End copied block (scoped) --- */

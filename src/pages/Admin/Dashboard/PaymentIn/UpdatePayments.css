@@ -1,0 +1,46 @@
+/* Styles for Update Payment In / Out pages (moved from Expenses folder) */
+.update-payment-container {
+	padding: 24px 28px;
+	background: #fff;
+}
+.page-header .table-title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 12px;
+}
+.expense-input-table-container {
+	margin-top: 12px;
+}
+.expense-input-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: transparent;
+}
+.expense-input-table th,
+.expense-input-table td {
+	padding: 14px 12px;
+	text-align: left;
+	vertical-align: middle;
+}
+.expense-input-table thead th {
+	background: #1b5d3a;
+	color: #fff;
+}
+.table-input {
+	width: 100%;
+	padding: 8px 10px;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+	font-size: 14px;
+}
+.amount-input-wrapper { display:flex; align-items:center; gap:8px; }
+.amount-input { max-width:120px; }
+.payment-type-summary { display:flex; align-items:center; gap:8px; }
+.plus-icon-green { color: #2f8a5a; cursor: pointer; }
+.form-actions { margin-top: 26px; display:flex; gap:16px; }
+.create-expense-btn { background:#2f8a5a; color:white; padding:12px 28px; border-radius:8px; border:none; cursor:pointer; }
+.cancel-form-btn { background:#f3f3f3; color:#333; padding:12px 28px; border-radius:8px; border:1px solid #ddd; cursor:pointer; }
+.status-badge { padding:6px 10px; border-radius:6px; font-size:13px; }
+.badge-paid { background:#bef5d47d; color:#1f7a4a; border:1px solid rgb(31, 122, 73); }
+.badge-partial { background:#f4e3bf85; color:#a36b12; border:1px solid rgb(163, 107, 18); }
+.badge-unpaid { background:#f4c5c577; color:#a82828; border:1px solid rgb(123, 19, 19); }

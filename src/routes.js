@@ -57,6 +57,12 @@ import Leave_lists from "./pages/Admin/Dashboard/leave_list/Leave_list_wraper";
 import Chart_graph from "./components/admin components/Chart_graph";
 import Customer_orders_wrap from "./pages/Customer/customer_order/Customer_orders_wrap";
 import Unauthorized from "./components/UnAuthorized";
+import PaymentOutWrapper from "./pages/Admin/Dashboard/PaymentOut/PaymentOut_wrapper";
+import PaymentInWrapper from "./pages/Admin/Dashboard/PaymentIn/PaymentIn_wrapper";
+import PaymentOutAddWrapper from "./pages/Admin/Dashboard/PaymentOut/PaymentOutAdd_wrapper";
+import PaymentInAddWrapper from "./pages/Admin/Dashboard/PaymentIn/PaymentInAdd_wrapper";
+import PaymentInUpdateWrapper from "./pages/Admin/Dashboard/PaymentIn/PaymentInUpdate_wrapper";
+import PaymentOutUpdateWrapper from "./pages/Admin/Dashboard/PaymentOut/PaymentOutUpdate_wrapper";
 import TaskWorklist from "./pages/Admin/Tasks/TaskWorklist";
 import User_access from "./pages/Admin/Dashboard/User_access/User_access";
 import { CreateCampaign } from "./pages/Admin/Campaign/CreateCampaign";
@@ -119,6 +125,12 @@ export const privateRoutes = [
  
 
   { path: "new_sales_order", element: <New_sales_wrapper /> },
+  { path: "payment_out", element: <PaymentOutWrapper /> },
+  { path: "payment_out_add", element: <PaymentOutAddWrapper /> },
+  { path: "payment_in", element: <PaymentInWrapper /> },
+  { path: "payment_in_add", element: <PaymentInAddWrapper /> },
+  { path: "payment_in_update", element: <PaymentInUpdateWrapper /> },
+  { path: "payment_out_update", element: <PaymentOutUpdateWrapper /> },
   { path: "view_sr", element: <View_service_request /> },
   { path: "quotation", element: <Quotation_wrapper /> },
   { path: "approveuser", element: <ApproveUsers /> },

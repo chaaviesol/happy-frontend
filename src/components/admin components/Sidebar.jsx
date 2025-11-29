@@ -26,6 +26,7 @@ import {
   ArrowDropUp,
   Toc,
 } from "@mui/icons-material";
+import PaymentIcon from '@mui/icons-material/Payment';
 
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import GroupIcon from "@mui/icons-material/Group";
@@ -95,29 +96,29 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
   const allowedPages =
     auth.userType === "SU"
       ? [
-          "Hey Happy",
-    "Inventory",
-    // "NewProducts",
-    "Productlist",
-    "Category",
-    "NewUser",
-    "Worklist",
-    // "CreatePO",
-    "POlist",
-    "Supplierlist",
-    // "Newsalesorder",
-    "SOlist",
-    "Customerlist",
-    // "Quotationworklist",
-    // "Service&Return",
-    // "Leavelist",
-    // "Staffclaim",
-    // "Staffaccess",
-    // "Createcampaign",
-    "Accountdetails",
-    "Updateaccounts",
-    "Expenses"
-        ]
+        "Hey Happy",
+        "Inventory",
+        // "NewProducts",
+        "Productlist",
+        "Category",
+        "NewUser",
+        "Worklist",
+        // "CreatePO",
+        "POlist",
+        "Supplierlist",
+        // "Newsalesorder",
+        "SOlist",
+        "Customerlist",
+        // "Quotationworklist",
+        // "Service&Return",
+        // "Leavelist",
+        // "Staffclaim",
+        // "Staffaccess",
+        // "Createcampaign",
+        "Accountdetails",
+        "Updateaccounts",
+        "Expenses"
+      ]
       : auth.allowedPages;
 
   const handleDrawerOpen = () => setOpen(true);
@@ -135,7 +136,7 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
       5: "/worklist",
       5.1: "/worklist",
       5.2: "/productworklist",
-      6: "/users", 
+      6: "/users",
       6.1: "/supplierlist",
       6.2: "/customerlist",
       // 7: "/purchase",
@@ -143,15 +144,17 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
       // 11: "/new_sales_order",
       8: "/so_list",
       // 13: "/admin_quotation",
-        // 14: "/adm_service_view",
-        // 15: "/leave_list",
-        // 16: "/staff_claim",
-        // 17: "/user_access",
-        // 18: "/createcampaign",
-        // 19:"/taskworklist",
-        // 20:"/createshare",
+      // 14: "/adm_service_view",
+      // 15: "/leave_list",
+      // 16: "/staff_claim",
+      // 17: "/user_access",
+      // 18: "/createcampaign",
+      // 19:"/taskworklist",
+      // 20:"/createshare",
       9: "/viewdistribution",
       10: "/OpExpenses",
+      11: "/payment_out",
+      12: "/payment_in",
     };
 
     setOpen(true);
@@ -223,16 +226,16 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
           {[
             "Hey Happy",
             "Inventory",
-             // "New Products",
+            // "New Products",
             "Product list",
             "Category",
             "New User",
             "Worklist",
-            "Users", 
+            "Users",
             // "Create PO",
             "Purchase Order",
             "Sales Order",
-             // "New sales order",
+            // "New sales order",
             // "Quotation worklist",
             // "Service & Return",
             // "Leave list",
@@ -243,6 +246,8 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
             // "Update accounts",
             "Account details",
             "Expenses",
+            "Payment Out",
+            "Payment In",
           ].map((text, index) => {
             const normalizedText = text.toLowerCase().replace(/\s/g, "");
 
@@ -267,10 +272,10 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
                           ? "135px"
                           : "76px"
                         : index === 6
-                        ? showUsers
-                          ? "135px"
-                          : "76px"
-                        : "76px",
+                          ? showUsers
+                            ? "135px"
+                            : "76px"
+                          : "76px",
                     backgroundColor: "#00342E",
                   }}
                 >
@@ -358,6 +363,8 @@ export default function MiniDrawer({ children, type, activeWorklistPage }) {
                       )}
                       {index === 9 && <Menu sx={{ color: "#b88a44" }} />}
                       {index === 10 && <Menu sx={{ color: "#b88a44" }} />}
+                      {index === 11 && <PaymentIcon sx={{ color: "#b88a44" }} />}
+                      {index === 12 && <PaymentIcon sx={{ color: "#b88a44" }} />}
                     </ListItemIcon>
 
                     <ListItemText

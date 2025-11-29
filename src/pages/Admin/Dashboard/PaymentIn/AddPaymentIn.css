@@ -1,0 +1,5 @@
+@import '../Expenses/OperationalExpenses.css';
+
+.add-payment-container { padding: 20px 24px 60px 24px; }
+.expense-form-content { margin-top: 10px; }
+.form-actions { display: flex; gap: 20px; justify-content: center; margin-top: 40px; }
