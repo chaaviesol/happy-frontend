@@ -30,9 +30,13 @@ const CustomDropdown = ({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const filteredOptions = options.filter(opt =>
-        opt.toLowerCase().includes(search.toLowerCase())
-    );
+    // const filteredOptions = (options||[]).filter(opt =>
+    //     opt.toLowerCase().includes(search.toLowerCase())
+    // );
+    const filteredOptions = Array.isArray(options)
+    ? options.filter(opt => String(opt).toLowerCase().includes(search.toLowerCase()))
+    : [];
+
 
     const handleOptionClick = (e, item) => {
         e.stopPropagation();
@@ -70,7 +74,7 @@ const CustomDropdown = ({
                                 }}
                             >
                                 <span>{item}</span>
-                                <div className="dropdown-item-options">
+                                {/* <div className="dropdown-item-options">
                                     <FaEllipsisV
                                         className="option-icon"
                                         onClick={(e) => handleOptionClick(e, item)}
@@ -89,7 +93,7 @@ const CustomDropdown = ({
                                             }}>Delete</div>
                                         </div>
                                     )}
-                                </div>
+                                </div> */}
                             </div>
                         ))}
                     </div>

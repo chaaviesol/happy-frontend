@@ -106,15 +106,17 @@
     background-color: #2d6a4f;
     padding: 20px;
     border-radius: 12px;
-        color: white;
-        margin: 0 0 30px 0; /* reset margins */
-        display: inline-flex; /* shrink-to-fit */
-        flex-wrap: wrap;
-        align-items: flex-end;
-        gap: 20px;
-        /* Robust left-alignment fallback */
-        margin-left: 0 !important;
-        align-self: flex-start; /* if parent is flex */
+    color: white;
+    margin: 0 0 30px 0;
+    
+    display: flex;           /* FIX: makes it span full width */
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between; 
+    gap: 20px;
+
+    width: 100%;             /* ensure full width */
+    align-self: stretch;     /* if parent is flex */
 }
 
 .payment-out-container .filter-group {

@@ -5,7 +5,7 @@ import CustomDropdown from './CustomDropdown';
 import { InputModal, DeleteConfirmationModal } from './ExpenseModals';
 import './OperationalExpenses.css';
 
-const AddExpenseForm = ({ onCancel, onSave, categories, subCategories }) => {
+const AddExpenseForm = ({ onCancel, onSave, categories, subCategories, onCreateCategory,onCreateSubCategory,onRename,onDelete }) => {
     const [expenseRows, setExpenseRows] = useState([
         {
             id: Date.now(),
@@ -115,16 +115,19 @@ const AddExpenseForm = ({ onCancel, onSave, categories, subCategories }) => {
         return expenseRows.reduce((sum, row) => sum + (parseFloat(row.totalAmount) || 0), 0);
     };
 
-    // Modal Handlers (Mock logic)
-    const handleCreateCategory = (name) => {
-        alert(`Created Category: ${name}`);
-        setInputModal({ ...inputModal, isOpen: false });
-    };
 
-    const handleCreateSubCategory = (name) => {
-        alert(`Created Sub Category: ${name}`);
-        setInputModal({ ...inputModal, isOpen: false });
-    };
+    
+    // Modal Handlers (Mock logic)
+
+    // const handleCreateCategory = (name) => {
+    //     alert(`Created Category: ${name}`);
+    //     setInputModal({ ...inputModal, isOpen: false });
+    // };
+
+    // const handleCreateSubCategory = (name) => {
+    //     alert(`Created Sub Category: ${name}`);
+    //     setInputModal({ ...inputModal, isOpen: false });
+    // };
 
     const handleRename = (newName) => {
         alert(`Renamed ${inputModal.item} to ${newName}`);
@@ -195,7 +198,7 @@ const AddExpenseForm = ({ onCancel, onSave, categories, subCategories }) => {
                                             onSelect={(val) => handleInputChange(row.id, 'subCategory', val)}
                                             placeholder="Select"
                                             searchPlaceholder="Search"
-                                            onAddNew={() => setInputModal({ isOpen: true, type: 'createSubCategory' })}
+                                            onAddNew={() => setInputModal({ isOpen: true, type: 'createSubCategory', category: row.category  })}
                                             onRename={(item) => setInputModal({ isOpen: true, type: 'rename', item })}
                                             onDelete={(item) => setDeleteModal({ isOpen: true, item, category: 'Sub Category' })}
                                             disabled={!row.category}
@@ -288,11 +291,24 @@ const AddExpenseForm = ({ onCancel, onSave, categories, subCategories }) => {
             <InputModal
                 isOpen={inputModal.isOpen}
                 onClose={() => setInputModal({ ...inputModal, isOpen: false })}
-                onConfirm={
-                    inputModal.type === 'createCategory' ? handleCreateCategory :
-                        inputModal.type === 'createSubCategory' ? handleCreateSubCategory :
-                            handleRename
-                }
+                // onConfirm={
+                //     inputModal.type === 'createCategory' ? handleCreateCategory :
+                //         inputModal.type === 'createSubCategory' ? handleCreateSubCategory :
+                //             handleRename
+                // }
+   onConfirm={(name) => {
+  if (inputModal.type === 'createSubCategory') {
+    onCreateSubCategory(inputModal.category, name);
+    setInputModal({ ...inputModal, isOpen: false });
+  } else if (inputModal.type === 'createCategory') {
+    onCreateCategory(name);
+    setInputModal({ ...inputModal, isOpen: false });
+  } else {
+    onRename(name);
+  }
+}}
+
+
                 title={
                     inputModal.type === 'createCategory' ? 'Create Category' :
                         inputModal.type === 'createSubCategory' ? 'Enter Sub Category Name' :

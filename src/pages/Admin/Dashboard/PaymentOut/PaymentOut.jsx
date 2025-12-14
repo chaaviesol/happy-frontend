@@ -4,116 +4,95 @@ import { FaSearch, FaEllipsisV, FaChevronDown, FaPlus } from "react-icons/fa";
 import "./PaymentOut.css";
 import PaymentDetailsOverlay from "../Expenses/PaymentDetailsOverlay";
 import RowOptionsPortal from "../../../../components/admin components/RowOptionsPortal";
+import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
+import PaymentComponent from "../../../../components/admin components/payment/PaymentComponent";
+import CustomModal from "../../../../components/CustomModal";
+import Loader from "../../../../components/Loader";
 
 export default function PaymentOut() {
     const navigate = useNavigate();
-    // Mock Data
-    const initialPayments = [
-        {
-            id: 1,
-            date: "11/05/2025",
-            poNo: "REF589723",
-            party: "AlphaWidget",
-            paid: 10000,
-            outstanding: 2000,
-            totalAmount: 12000,
-            paymentType: "Cash",
-            payments: [
-                { id: 1001, method: 'Cash', amount: 5000, reference: 'INV1001', date: '2025-05-11' },
-                { id: 1002, method: 'Bank', amount: 5000, reference: 'REF1001', date: '2025-05-11' }
-            ]
-        },
-        {
-            id: 2,
-            date: "12/05/2025",
-            poNo: "REF589723",
-            party: "AlphaWidget",
-            paid: 2000,
-            outstanding: 10000,
-            totalAmount: 12000,
-            paymentType: "Cheque",
-            payments: [
-                { id: 2001, method: 'Cheque', amount: 2000, reference: 'CHQ2001', date: '2025-05-12' }
-            ]
-        },
-        {
-            id: 3,
-            date: "15/05/2025",
-            poNo: "REF589723",
-            party: "AlphaWidget",
-            paid: 10000,
-            outstanding: 10000,
-            totalAmount: 12000,
-            paymentType: "Cash/Cheque",
-            payments: [
-                { id: 3001, method: 'Cash', amount: 10000, reference: 'INV3001', date: '2025-05-15' }
-            ]
-        },
-        {
-            id: 4,
-            date: "20/05/2025",
-            poNo: "REF589723",
-            party: "AlphaWidget",
-            paid: 2000,
-            outstanding: 2000,
-            totalAmount: 12000,
-            paymentType: "Cash"
-        },
-        {
-            id: 5,
-            date: "20/05/2025",
-            poNo: "REF589723",
-            party: "AlphaWidget",
-            paid: 1000,
-            outstanding: 1000,
-            totalAmount: 12000,
-            paymentType: "Cash"
-        },
-        {
-            id: 6,
-            date: "20/05/2025",
-            poNo: "REF589723",
-            party: "AlphaWidget",
-            paid: 1000,
-            outstanding: 1000,
-            totalAmount: 12000,
-            paymentType: "Cash"
+    const [loading, setLoading] = useState(false);
+    const axiosPrivate = useAxiosPrivate();
+    const [poList, setpoList] = useState([])
+
+    //fetch all purchase orders
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const requestBody = {
+                division: "",
+                //   isHidden: isHidden ? true : false,
+                isHidden: false,
+            };
+            const response = await axiosPrivate.post(
+                `/purchase/polist`,
+                requestBody
+            );
+            console.log("initial po list", response.data);
+
+            setpoList(response.data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
+    useEffect(() => {
+
+        fetchData();
+
+    }, []);
+
+    useEffect(() => {
+        if (!poList.length) return;
+
+        const formatted = poList.map(po => {
+            const paymentsArr = Array.isArray(po.po_payment)
+                ? po.po_payment.map(p => ({
+                    id: p.id,
+                    method: p.mode,
+                    amount: Number(p.amount),
+                    reference: p.payment_id,
+                    date: p.created_date?.split("T")[0]
+                }))
+                : [];
+
+            const paid = paymentsArr.reduce((s, x) => s + Number(x.amount || 0), 0);
+
+            return {
+                id: po.purchase_id,
+                date: po.created_date?.split("T")[0] || "",
+                poNo: po.po_number,
+                party: po.users?.trade_name || "",
+                paid,
+                outstanding: Number(po.total_amount || 0) - paid,
+                totalAmount: Number(po.total_amount || 0),
+                paymentType:
+                    paymentsArr.map(x => x.method).join(", ") || "Pending",
+                payments: paymentsArr
+            };
+        });
+
+        setPayments(prev => {
+            // merge server POs + local added items
+            // const saved = JSON.parse(localStorage.getItem("payment_out_additions") || "[]");
+            return [...formatted];
+        });
+
+    }, [poList]);
+
+
 
     // State
-    const [dateRange, setDateRange] = useState("This Month");
+    const [dateRange, setDateRange] = useState("All");
     const [customDate, setCustomDate] = useState("05/06/2025 - 05/08/2025");
     const [showDateDropdown, setShowDateDropdown] = useState(false);
     const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
     const [startDate, setStartDate] = useState("2025-05-06");
     const [endDate, setEndDate] = useState("2025-05-08");
     const [searchQuery, setSearchQuery] = useState("");
-    const [payments, setPayments] = useState(() => {
-        try {
-            const saved = JSON.parse(localStorage.getItem('payment_out_additions') || '[]');
-            const mapped = Array.isArray(saved) ? saved.map(s => {
-                const paymentsArr = Array.isArray(s.payments) ? s.payments.map(p => ({ ...p, amount: Number(p.amount) })) : [];
-                const paid = paymentsArr.reduce((sum, x) => sum + (Number(x.amount) || 0), 0);
-                const outstanding = (Number(s.totalAmount) || 0) - paid;
-                return {
-                    id: s.id || Date.now(),
-                    date: s.date || '',
-                    poNo: s.poNo || '',
-                    party: s.party || '',
-                    paid,
-                    outstanding,
-                    totalAmount: Number(s.totalAmount) || 0,
-                    paymentType: paymentsArr.map(x => x.method).join(', ') || s.paymentType || 'Pending',
-                    payments: paymentsArr
-                };
-            }) : [];
-            return [...initialPayments, ...mapped];
-        } catch (err) {
-            console.error('Failed to parse saved payment outs', err);
-            return initialPayments;
-        }
-    });
+    const [payments, setPayments] = useState([]);
+
     const [activeRowMenu, setActiveRowMenu] = useState(null);
     const [menuCoords, setMenuCoords] = useState(null);
     const [paymentModal, setPaymentModal] = useState({ isOpen: false, paymentId: null, mode: 'view' });
@@ -141,6 +120,23 @@ export default function PaymentOut() {
 
     // Filter Logic
     const filteredPayments = payments.filter((payment) => {
+        // DATE FILTER
+        if (dateRange !== "All" && startDate && endDate) {
+            const payDate = new Date(payment.date);
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            // Ignore if invalid
+            if (isNaN(payDate.getTime())) return false;
+
+            // If outside the date range → remove it
+            if (payDate < start || payDate > end) {
+                return false;
+            }
+        }
+
+        // SEARCH FILTER
+
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
             const matchesSearch =
@@ -179,6 +175,14 @@ export default function PaymentOut() {
     const handleDateRangeSelect = (range) => {
         setDateRange(range);
         setShowDateDropdown(false);
+
+        // NEW: Handle the All option
+        if (range === "All") {
+            setStartDate("");
+            setEndDate("");
+            setCustomDate("All");
+            return;
+        }
 
         const today = new Date();
         let start = new Date();
@@ -286,7 +290,7 @@ export default function PaymentOut() {
         setPaymentModal({ isOpen: false, paymentId: null, mode: 'view' });
     };
 
-    const dateOptions = ["Today", "Yesterday", "This Month", "Last Month", "This Year", "Custom Range"];
+    const dateOptions = ["All", "Today", "Yesterday", "This Month", "Last Month", "This Year", "Custom Range"];
 
     return (
         <div className="payment-out-container">
@@ -374,10 +378,10 @@ export default function PaymentOut() {
             <div className="page-header">
                 <div className="table-title">Payment Out Table</div>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <button className="add-expense-main-btn" onClick={() => navigate('/payment_out_add')}> 
+                    {/* <button className="add-expense-main-btn" onClick={() => navigate('/payment_out_add')}>
                         <FaPlus />&nbsp; Add Payment Out
-                    </button>
-                    
+                    </button> */}
+
                 </div>
             </div>
 
@@ -393,55 +397,66 @@ export default function PaymentOut() {
                     />
                 </div>
             </div>
-
-            {/* Table */}
-            <div className="custom-table-container">
-                <table className="custom-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>PO no</th>
-                            <th>Party</th>
-                            <th>Paid</th>
-                            <th>Outstanding</th>
-                            <th>Status</th>
-                            <th>Total Amount</th>
-                            <th>Payment Type</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentPayments.map((payment) => (
-                            <tr key={payment.id}>
-                                <td>{payment.date}</td>
-                                <td>{payment.poNo}</td>
-                                <td>{payment.party}</td>
-                                <td>₹{(payment.paid || 0).toLocaleString()}</td>
-                                <td>₹{(payment.outstanding || 0).toLocaleString()}</td>
-                                <td>
-                                    {(() => {
-                                        const paid = Number(payment.paid || 0);
-                                        const total = Number(payment.totalAmount || 0);
-                                        if (paid >= total && total > 0) {
-                                            return <span className="status-badge badge-paid">Full Paid</span>;
-                                        }
-                                        if (paid > 0 && paid < total) {
-                                            return <span className="status-badge badge-partial">Partially Paid</span>;
-                                        }
-                                        return <span className="status-badge badge-unpaid">Unpaid</span>;
-                                    })()}
-                                </td>
-                                <td>₹{payment.totalAmount.toLocaleString()}</td>
-                                <td>
-                                    <div className="payment-type">
-                                        {payment.paymentType}
-                                        <FaPlus
-                                            className="plus-icon-green"
-                                            onClick={() => setPaymentModal({ isOpen: true, paymentId: payment.id, mode: 'view' })}
-                                        />
-                                    </div>
-                                </td>
-                                <td>
+            
+            <div>
+            {loading ? (
+                <Loader message="Fetching Payments Out..." />
+            ) : (
+                <div >
+                    {/* Table */}
+                    <div className="custom-table-container">
+                        <table className="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>PO no</th>
+                                    <th>Party</th>
+                                    <th>Paid</th>
+                                    <th>Outstanding</th>
+                                    <th>Status</th>
+                                    <th>Total Amount</th>
+                                    <th>Payment</th>
+                                    {/* <th>Action</th> */}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentPayments.map((payment) => (
+                                    <tr key={payment.id}>
+                                        <td>{payment.date}</td>
+                                        <td>{payment.poNo}</td>
+                                        <td>{payment.party}</td>
+                                        <td>₹{(payment.paid || 0).toLocaleString()}</td>
+                                        <td>₹{(payment.outstanding || 0).toLocaleString()}</td>
+                                        <td>
+                                            {(() => {
+                                                const paid = Number(payment.paid || 0);
+                                                const total = Number(payment.totalAmount || 0);
+                                                if (paid >= total && total > 0) {
+                                                    return <span className="status-badge badge-paid">Full Paid</span>;
+                                                }
+                                                if (paid > 0 && paid < total) {
+                                                    return <span className="status-badge badge-partial">Partially Paid</span>;
+                                                }
+                                                return <span className="status-badge badge-unpaid">Unpaid</span>;
+                                            })()}
+                                        </td>
+                                        <td>₹{payment.totalAmount.toLocaleString()}</td>
+                                        <td>
+                                            <div className="payment-type">
+                                                {payment.paymentType}
+                                                <FaPlus
+                                                    className="plus-icon-green"
+                                                    onClick={() =>
+                                                        setPaymentModal({
+                                                            isOpen: true,
+                                                            paymentId: payment.id,
+                                                            data: payment,   // <-- store the selected row
+                                                        })
+                                                    }
+                                                />
+                                            </div>
+                                        </td>
+                                        {/* <td>
                                     <FaEllipsisV
                                         className="more-options"
                                         onClick={(e) => {
@@ -455,56 +470,83 @@ export default function PaymentOut() {
                                             }
                                         }}
                                     />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                                </td> */}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-            {activeRowMenu && menuCoords && (
+                    {/* {activeRowMenu && menuCoords && (
                 <RowOptionsPortal coords={menuCoords}>
                     <div onClick={() => { handleUpdatePayment(activeRowMenu); setActiveRowMenu(null); setMenuCoords(null); }}>Update</div>
                     <div onClick={() => { handleDeletePayment(activeRowMenu); setActiveRowMenu(null); setMenuCoords(null); }} className="delete">Delete</div>
                 </RowOptionsPortal>
-            )}
+            )} */}
 
-                <PaymentDetailsOverlay
-                    isOpen={paymentModal.isOpen}
-                    onClose={() => setPaymentModal({ isOpen: false, paymentId: null, mode: 'view' })}
-                    onConfirm={(updatedPayments) => handlePaymentUpdate(paymentModal.paymentId, updatedPayments)}
-                    initialPayments={payments.find(p => p.id === paymentModal.paymentId)?.payments}
-                    totalAmount={payments.find(p => p.id === paymentModal.paymentId)?.totalAmount}
-                    mode={paymentModal.mode}
-                    onEdit={() => setPaymentModal({ ...paymentModal, mode: 'edit' })}
-                />
-
-            {/* Pagination */}
-            <div className="pagination-container">
-                <button
-                    className="pagination-arrow"
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                >
-                    &lt;
-                </button>
-                {[...Array(totalPages)].map((_, index) => (
-                    <button
-                        key={index + 1}
-                        className={`pagination-number ${currentPage === index + 1 ? 'active' : ''}`}
-                        onClick={() => setCurrentPage(index + 1)}
+                    <CustomModal
+                        open={paymentModal.isOpen}
+                        onClose={() => setPaymentModal({ isOpen: false, paymentId: null })}
                     >
-                        {index + 1}
-                    </button>
-                ))}
-                <button
-                    className="pagination-arrow"
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                >
-                    &gt;
-                </button>
+                        {paymentModal.data && (
+                            <PaymentComponent
+                                poData={{
+                                    purchase_id: paymentModal.data.id,
+                                    po_number: paymentModal.data.poNo,
+                                    total_amount: paymentModal.data.totalAmount,
+                                    balance_amt: paymentModal.data.outstanding,
+                                    paymentdetails: paymentModal.data.payments
+                                }}
+                                onClose={() => {
+                                    setPaymentModal({ isOpen: false })
+                                    fetchData();
+                                }}
+                                isModal={true}
+                            />
+                        )}
+                    </CustomModal>
+
+                    {/* <PaymentDetailsOverlay
+                isOpen={paymentModal.isOpen}
+                onClose={() => setPaymentModal({ isOpen: false, paymentId: null, mode: 'view' })}
+                onConfirm={(updatedPayments) => handlePaymentUpdate(paymentModal.paymentId, updatedPayments)}
+                initialPayments={payments.find(p => p.id === paymentModal.paymentId)?.payments}
+                totalAmount={payments.find(p => p.id === paymentModal.paymentId)?.totalAmount}
+                mode={paymentModal.mode}
+                onEdit={() => setPaymentModal({ ...paymentModal, mode: 'edit' })}
+            /> */}
+
+                    {/* Pagination */}
+                    <div className="pagination-container">
+                        <button
+                            className="pagination-arrow"
+                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                        >
+                            &lt;
+                        </button>
+                        {[...Array(totalPages)].map((_, index) => (
+                            <button
+                                key={index + 1}
+                                className={`pagination-number ${currentPage === index + 1 ? 'active' : ''}`}
+                                onClick={() => setCurrentPage(index + 1)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button
+                            className="pagination-arrow"
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                            disabled={currentPage === totalPages}
+                        >
+                            &gt;
+                        </button>
+                    </div>
+
+
+                </div>)}
             </div>
+
         </div>
     );
 }

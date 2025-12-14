@@ -12,9 +12,16 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
-export default function SoPayment() {
+export default function SoPayment({ soData, isModal = false, onClose }) {
   const location = useLocation();
-  const passedSalesId = { so: location.state };
+
+  console.log("sopay sodata",soData);
+  
+  // const passedSalesId = { so:soData|| location.state };
+  const passedSalesId = {
+  so: soData?.sales_id || location.state
+};
+
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(false);
@@ -27,6 +34,9 @@ export default function SoPayment() {
     "Mode",
     "Received By",
   ];
+console.log("passed sales id check***>>>",passedSalesId.so);
+
+
   const [formData, setFormData] = useState({
     // sales_id: passedSalesId.so,
     sales_id: passedSalesId.so,
@@ -173,9 +183,15 @@ export default function SoPayment() {
           >
             <button onClick={handleOpenModal}>Add new payment</button>
             <button
-              onClick={() => {
-                navigate(-1);
-              }}
+               onClick={() => {
+        if (isModal) {
+            // close modal only
+            onClose();
+        } else {
+            // normal page navigation
+            navigate(-1);
+        }
+    }}
             >
               Close
             </button>

@@ -6,88 +6,148 @@ import CustomDropdown from "./CustomDropdown";
 import { InputModal, DeleteConfirmationModal } from "./ExpenseModals";
 import PaymentDetailsOverlay from "./PaymentDetailsOverlay";
 import "./OperationalExpenses.css";
+import useAxiosPrivate from "../../../../hooks/useAxiosPrivate";
+import CustomDateInput from "../../../../components/CustomDatepicker";
 
 export default function OperationalExpenses() {
-  // Mock Data
-  const categories = [
-    "Stationary",
-    "Raw Materials",
-    "Manufacturing",
-    "Logistics & Distribution",
-    "Sales & Marketing",
-    "General & Administrative",
-  ];
 
-  const subCategories = {
-    Stationary: ["Pencil", "Paper", "Pen", "Rubber", "Book", "Stapler"],
-    "Raw Materials": ["Steel", "Plastic", "Wood"],
-    Manufacturing: ["Labor", "Electricity", "Maintenance"],
-    "Logistics & Distribution": ["Fuel", "Vehicle Maintenance", "Driver Salary"],
-    "Sales & Marketing": ["Ads", "Events", "Promotions"],
-    "General & Administrative": ["Rent", "Utilities", "Internet"],
+  const axiosPrivate = useAxiosPrivate();
+  const [categories, setcategories] = useState([])
+  const [subCategories, setsubCategories] = useState([])
+
+  const fetchCategory = async () => {
+    try {
+      const response = await axiosPrivate.get(`/expense/viewcategory`);
+      const data = response.data?.data || [];
+
+
+      // Extract category names
+      const categoryNames = data.map(item => item.category);
+
+      // Build subcategory object
+      const subCatObject = {};
+      data.forEach(item => {
+        if (Array.isArray(item.subcategory)) {
+          subCatObject[item.category] = item.subcategory;
+        } else if (item.subcategory) {
+          subCatObject[item.category] = [item.subcategory];
+        } else {
+          subCatObject[item.category] = [];
+        }
+      });
+
+      setcategories(categoryNames);     // ["Stationary"]
+      setsubCategories(subCatObject);   // { Stationary: ["Pencil", ...] }
+
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const initialExpenses = [
-    {
-      id: 1,
-      date: "2025-05-11",
-      party: "AlphaWidget",
-      category: "Stationary",
-      subCategory: "Pencil",
-      amount: 12000,
-      paid: 10000,
-      balance: 2000,
-      status: "Partially Paid",
-      paymentType: "Cash, Bank, UPI",
-      payments: [
-        { id: 101, method: 'Cash', amount: 5000, reference: 'INV001', date: '2025-05-11' },
-        { id: 102, method: 'Bank', amount: 5000, reference: 'REF001', date: '2025-05-11' }
-      ]
-    },
-    {
-      id: 2,
-      date: "2025-05-12",
-      party: "KB Ltd",
-      category: "Stationary",
-      subCategory: "Paper",
-      amount: 12000,
-      paid: 12000,
-      balance: 0,
-      status: "Full Paid",
-      paymentType: "Cash, Bank, UPI",
-      payments: [
-        { id: 201, method: 'Cash', amount: 12000, reference: 'INV002', date: '2025-05-12' }
-      ]
-    },
-    {
-      id: 3,
-      date: "2025-05-13",
-      party: "Gamma Corp",
-      category: "Raw Materials",
-      subCategory: "Steel",
-      amount: 50000,
-      paid: 0,
-      balance: 50000,
-      status: "Unpaid",
-      paymentType: "Pending",
-      payments: []
-    },
-  ];
+  useEffect(() => {
+    fetchCategory()
+  }, [])
+
+  console.log("categories", categories, "   subcat", subCategories);
+
+
+  const fetchExpense = async () => {
+
+    const response = await axiosPrivate.get(`/expense/getexpenses`);
+    console.log("fetch expense reponse", response.data);
+    setExpenses(response.data.data)
+
+  }
+  useEffect(() => {
+    fetchExpense()
+  }, [])
+
+
+
+
+  // Mock Data
+  // const categories = [
+  //   "Stationary",
+  //   "Raw Materials",
+  //   "Manufacturing",
+  //   "Logistics & Distribution",
+  //   "Sales & Marketing",
+  //   "General & Administrative",
+  // ];
+
+  // const subCategories = {
+  //   Stationary: ["Pencil", "Paper", "Pen", "Rubber", "Book", "Stapler"],
+  //   "Raw Materials": ["Steel", "Plastic", "Wood"],
+  //   Manufacturing: ["Labor", "Electricity", "Maintenance"],
+  //   "Logistics & Distribution": ["Fuel", "Vehicle Maintenance", "Driver Salary"],
+  //   "Sales & Marketing": ["Ads", "Events", "Promotions"],
+  //   "General & Administrative": ["Rent", "Utilities", "Internet"],
+  // };
+
+  // const initialExpenses = [
+  //   {
+  //     id: 1,
+  //     date: "2025-05-11",
+  //     party: "AlphaWidget",
+  //     category: "Stationary",
+  //     subCategory: "Pencil",
+  //     amount: 12000,
+  //     paid: 10000,
+  //     balance: 2000,
+  //     status: "Partially Paid",
+  //     paymentType: "Cash, Bank, UPI",
+  //     payments: [
+  //       { id: 101, method: 'Cash', amount: 5000, reference: 'INV001', date: '2025-05-11' },
+  //       { id: 102, method: 'Bank', amount: 5000, reference: 'REF001', date: '2025-05-11' }
+  //     ]
+  //   },
+  //   {
+  //     id: 2,
+  //     date: "2025-05-12",
+  //     party: "KB Ltd",
+  //     category: "Stationary",
+  //     subCategory: "Paper",
+  //     amount: 12000,
+  //     paid: 12000,
+  //     balance: 0,
+  //     status: "Full Paid",
+  //     paymentType: "Cash, Bank, UPI",
+  //     payments: [
+  //       { id: 201, method: 'Cash', amount: 12000, reference: 'INV002', date: '2025-05-12' }
+  //     ]
+  //   },
+  //   {
+  //     id: 3,
+  //     date: "2025-05-13",
+  //     party: "Gamma Corp",
+  //     category: "Raw Materials",
+  //     subCategory: "Steel",
+  //     amount: 50000,
+  //     paid: 0,
+  //     balance: 50000,
+  //     status: "Unpaid",
+  //     paymentType: "Pending",
+  //     payments: []
+  //   },
+  // ];
 
   // State
   const [viewMode, setViewMode] = useState('list'); // 'list', 'add', 'update'
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  const [dateRange, setDateRange] = useState("This Month");
-  const [customDate, setCustomDate] = useState("05/06/2025 - 05/08/2025");
+  const [dateRange, setDateRange] = useState("All");
+  const [customDate, setCustomDate] = useState("All");
   const [showDateDropdown, setShowDateDropdown] = useState(false);
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
-  const [startDate, setStartDate] = useState("2025-05-06");
-  const [endDate, setEndDate] = useState("2025-05-08");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [expenses, setExpenses] = useState(initialExpenses);
+  const [expenses, setExpenses] = useState([]);
   const [activeRowMenu, setActiveRowMenu] = useState(null);
+
+  console.log("activeRowMenu", activeRowMenu);
+
 
   // Modal States
   const [inputModal, setInputModal] = useState({ isOpen: false, type: '', item: '' }); // type: 'createCategory', 'createSubCategory', 'rename'
@@ -113,10 +173,38 @@ export default function OperationalExpenses() {
     };
   }, []);
 
+
+
+  const safeDate = (value) => {
+    // Convert any date format to yyyy-mm-dd consistently
+    const d = new Date(value);
+
+    // Avoid invalid dates
+    if (isNaN(d.getTime())) return null;
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+
   // Filter Logic
   const filteredExpenses = expenses.filter((exp) => {
     if (selectedCategory && exp.category !== selectedCategory) return false;
     if (selectedSubCategory && exp.subCategory !== selectedSubCategory) return false;
+
+    // Date filter only when start/end available
+    if (startDate && endDate) {
+      const expDate = safeDate(exp.date);
+      if (!expDate) return false;
+
+      if (expDate < startDate || expDate > endDate) {
+        return false;
+      }
+    }
+
 
     // Search filter
     if (searchQuery) {
@@ -166,6 +254,11 @@ export default function OperationalExpenses() {
     let end = new Date();
 
     switch (range) {
+      case "All":
+        setStartDate("");
+        setEndDate("");
+        setCustomDate("All");
+        return;
       case "Today":
         // start and end are today
         break;
@@ -198,49 +291,116 @@ export default function OperationalExpenses() {
     setCustomDate(`${formatDateForDisplay(start)} - ${formatDateForDisplay(end)}`);
   };
 
-  const handleSaveExpense = (newExpenses) => {
+  const handleSaveExpense = async (newExpenses) => {
     const formattedExpenses = newExpenses.map(exp => ({
-      id: exp.id,
-      date: exp.date,
-      party: exp.party,
       category: exp.category,
+      party: exp.party,
       subCategory: exp.subCategory,
       amount: parseFloat(exp.totalAmount) || 0,
+      payments: exp.payments,
+      id: exp.id,
+      date: exp.date,
       paid: exp.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
       balance: (parseFloat(exp.totalAmount) || 0) - exp.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
       status: exp.status,
       paymentType: exp.payments.map(p => p.method).join(', ') || 'Pending',
-      payments: exp.payments
     }));
+    console.log("formatted expense", formattedExpenses);
 
-    setExpenses([...expenses, ...formattedExpenses]);
+
+    const response = await axiosPrivate.post(`/expense/addexpense`, formattedExpenses);
+    console.log("add expense reponse", response.data);
+    fetchExpense()
+    // setExpenses([...expenses, ...formattedExpenses]);
     setViewMode('list');
     alert('Expense Created Successfully!');
   };
 
-  const handleUpdateExpense = (updatedExpense) => {
-    setExpenses(expenses.map(exp => {
-      if (exp.id === updatedExpense.id) {
-        return {
-          ...exp,
-          date: updatedExpense.date,
-          party: updatedExpense.party,
-          category: updatedExpense.category,
-          subCategory: updatedExpense.subCategory,
-          amount: parseFloat(updatedExpense.totalAmount) || 0,
-          paid: updatedExpense.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
-          balance: (parseFloat(updatedExpense.totalAmount) || 0) - updatedExpense.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
-          status: updatedExpense.status,
-          paymentType: updatedExpense.payments.map(p => p.method).join(', ') || 'Pending',
-          payments: updatedExpense.payments
-        };
-      }
-      return exp;
-    }));
-    setViewMode('list');
+  // const handleUpdateExpense = (updatedExpense) => {
+  //   setExpenses(expenses.map(exp => {
+  //     if (exp.id === updatedExpense.id) {
+  //       return {
+  //         ...exp,
+  //         date: updatedExpense.date,
+  //         party: updatedExpense.party,
+  //         category: updatedExpense.category,
+  //         subCategory: updatedExpense.subCategory,
+  //         amount: parseFloat(updatedExpense.totalAmount) || 0,
+  //         paid: updatedExpense.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
+  //         balance: (parseFloat(updatedExpense.totalAmount) || 0) - updatedExpense.payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
+  //         status: updatedExpense.status,
+  //         paymentType: updatedExpense.payments.map(p => p.method).join(', ') || 'Pending',
+  //         payments: updatedExpense.payments
+  //       };
+  //     }
+  //     return exp;
+  //   }));
+  //   setViewMode('list');
+  //   setSelectedExpense(null);
+  //   alert('Expense Updated Successfully!');
+  // };
+  const handleUpdateExpense = async (updatedExpense) => {
+  try {
+    const payload = {
+      id: updatedExpense.id,
+      category: updatedExpense.category,
+      party: updatedExpense.party,
+      subCategory: updatedExpense.subCategory,
+      amount: updatedExpense.totalAmount,
+      payments: updatedExpense.payments,
+    };
+
+    const response = await axiosPrivate.post(
+      "/expense/updateexpense",
+      payload
+    );
+
+    if (!response.data?.success) {
+      throw new Error("Update failed");
+    }
+
+    // Update UI state only after successful API call
+    setExpenses((prevExpenses) =>
+      prevExpenses.map((exp) => {
+        if (exp.id === updatedExpense.id) {
+          const totalAmount = parseFloat(updatedExpense.totalAmount) || 0;
+          const paid = updatedExpense.payments.reduce(
+            (sum, p) => sum + (parseFloat(p.amount) || 0),
+            0
+          );
+
+          return {
+            ...exp,
+            date: updatedExpense.date,
+            party: updatedExpense.party,
+            category: updatedExpense.category,
+            subCategory: updatedExpense.subCategory,
+            amount: totalAmount,
+            paid,
+            balance: totalAmount - paid,
+            status: updatedExpense.status,
+            paymentType:
+              updatedExpense.payments.map((p) => p.method).join(", ") ||
+              "Pending",
+            payments: updatedExpense.payments,
+          };
+        }
+        return exp;
+      })
+    );
+
+    setViewMode("list");
     setSelectedExpense(null);
-    alert('Expense Updated Successfully!');
-  };
+    alert("Expense updated successfully!");
+  } catch (error) {
+    console.error("Update expense failed:", error);
+    alert(
+      error.response?.data?.message ||
+        "Failed to update expense. Please try again."
+    );
+  }
+};
+
 
   const handleEditClick = (expense) => {
     setSelectedExpense(expense);
@@ -248,23 +408,85 @@ export default function OperationalExpenses() {
     setActiveRowMenu(null);
   };
 
-  const handleDeleteExpense = (id) => {
-    if (window.confirm("Are you sure you want to delete this expense?")) {
+  const handleDeleteExpense = async(id) => {
+
+    console.log("delete Id",id);
+    
+    if (window.confirm("Are you sure you want to delete this expense?",id)) {
       setExpenses(expenses.filter(e => e.id !== id));
+      const response = await axiosPrivate.post(
+  `/expense/deleteexpense/${id}`
+);
+console.log("delete response",response);
+
+
     }
     setActiveRowMenu(null);
   };
 
   // Modal Handlers
-  const handleCreateCategory = (name) => {
-    alert(`Created Category: ${name}`);
+  const handleCreateCategory = async (name) => {
+    // alert(`Created Category: ${name}`);
+
+    // const body={category:categories,subcategory:subCategories }
+    console.log("add cat name===>", { category: name });
+
+    const response = await axiosPrivate.post(
+      `/expense/addcategory`, { category: name }
+    );
+    console.log("add cat response", response);
     setInputModal({ ...inputModal, isOpen: false });
+    fetchCategory()
+
   };
 
-  const handleCreateSubCategory = (name) => {
-    alert(`Created Sub Category: ${name} under ${selectedCategory}`);
-    setInputModal({ ...inputModal, isOpen: false });
+  const handleCreateSubCategory = async (categoryOrName, maybeName) => {
+    let category, name;
+
+    if (maybeName !== undefined) {
+      // Called from child: (category, name)
+      category = categoryOrName;
+      name = maybeName;
+    } else {
+      // Called from parent: (name)
+      category = selectedCategory; // from parent state
+      name = categoryOrName;
+    }
+
+    console.log("Creating subcategory:", name, "under category:", category);
+
+    // Get existing subcategories
+    const existingSubs = subCategories[category] || [];
+    const updatedSubs = [...existingSubs, name];
+
+    try {
+      const body = {
+        category: category,
+        subcategory: updatedSubs
+      };
+
+      console.log("add sub category body", body);
+
+      const response = await axiosPrivate.post(`/expense/addcategory`, body);
+      console.log("add sub category response", response);
+
+      alert(`Created Sub Category: ${name} under ${category}`);
+
+      // Update UI state
+      setsubCategories({
+        ...subCategories,
+        [category]: updatedSubs
+      });
+
+      setInputModal({ ...inputModal, isOpen: false });
+
+    } catch (error) {
+      console.error(error);
+      alert("Failed to create subcategory");
+    }
   };
+
+
 
   const handleRename = (newName) => {
     alert(`Renamed ${inputModal.item} to ${newName}`);
@@ -273,11 +495,17 @@ export default function OperationalExpenses() {
 
   const handleDelete = () => {
     alert(`Deleted ${deleteModal.item}`);
+    // console.log("delete modal.item===>",deleteModal.item);
+    
     setDeleteModal({ ...deleteModal, isOpen: false });
   };
 
-  const handlePaymentUpdate = (updatedPayments) => {
-    setExpenses(expenses.map(exp => {
+  const handlePaymentUpdate = async(updatedPayments) => {
+
+    console.log("updated payments",updatedPayments);
+    console.log("expenseID",paymentModal.expenseId);
+
+    setExpenses(expenses.map (exp => {
       if (exp.id === paymentModal.expenseId) {
         const paid = updatedPayments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
         const balance = exp.amount - paid;
@@ -285,6 +513,12 @@ export default function OperationalExpenses() {
         if (balance <= 0 && paid > 0) status = 'Full Paid';
         else if (paid > 0 && balance > 0) status = 'Partially Paid';
         else if (paid === 0) status = 'Nil';
+
+console.log("paid",paid);
+console.log("balance",status);
+
+
+
 
         return {
           ...exp,
@@ -297,6 +531,15 @@ export default function OperationalExpenses() {
       }
       return exp;
     }));
+    
+const body={
+  payments:updatedPayments,
+  id:paymentModal.expenseId
+}
+
+ const response = await axiosPrivate.post(`/expense/updatepayment`,body );
+      console.log("add payment response", response);
+
     setPaymentModal({ ...paymentModal, isOpen: false });
   };
 
@@ -311,7 +554,7 @@ export default function OperationalExpenses() {
     }
   };
 
-  const dateOptions = ["Today", "Yesterday", "This Month", "Last Month", "This Year", "Custom Range"];
+  const dateOptions = ["All", "Today", "Yesterday", "This Month", "Last Month", "This Year", "Custom Range"];
 
   if (viewMode === 'add') {
     return (
@@ -320,6 +563,10 @@ export default function OperationalExpenses() {
         onSave={handleSaveExpense}
         categories={categories}
         subCategories={subCategories}
+        onCreateCategory={handleCreateCategory}
+        onCreateSubCategory={handleCreateSubCategory}
+        onRename={handleRename}
+        onDelete={handleDelete}
       />
     );
   }
@@ -337,6 +584,26 @@ export default function OperationalExpenses() {
   }
 
   const activeExpense = expenses.find(e => e.id === paymentModal.expenseId);
+
+
+  const formatDisplayDate = (dateString) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+      return ""; // invalid date
+    }
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  };
+
+
+
 
   return (
     <div className="operational-expenses-container">
@@ -389,23 +656,33 @@ export default function OperationalExpenses() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                       <label style={{ fontSize: "0.85rem", color: "#666" }}>From</label>
-                      <input
+                      {/* <input
                         type="date"
                         className="table-input"
                         value={startDate}
                         onChange={(e) => handleCustomDateChange('start', e.target.value)}
                         style={{ padding: "8px" }}
+                      /> */}
+                      <CustomDateInput
+                        value={startDate}
+                        onChange={(v) => handleCustomDateChange("start", v)}
                       />
+
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                       <label style={{ fontSize: "0.85rem", color: "#666" }}>To</label>
-                      <input
+                      {/* <input
                         type="date"
                         className="table-input"
                         value={endDate}
                         onChange={(e) => handleCustomDateChange('end', e.target.value)}
                         style={{ padding: "8px" }}
+                      /> */}
+                      <CustomDateInput
+                        value={endDate}
+                        onChange={(v) => handleCustomDateChange("end", v)}
                       />
+
                     </div>
                   </div>
                 </div>
@@ -418,9 +695,13 @@ export default function OperationalExpenses() {
         <div className="filter-group">
           <label className="filter-label">Select Category</label>
           <CustomDropdown
-            options={categories}
+            // options={categories}
+            options={["All", ...categories]}
             selected={selectedCategory}
-            onSelect={(cat) => { setSelectedCategory(cat); setSelectedSubCategory(""); }}
+            onSelect={(cat) => {
+              setSelectedCategory(cat === "All" ? "" : cat);
+              setSelectedSubCategory("");
+            }}
             placeholder="Select Category"
             searchPlaceholder="Search Category"
             onAddNew={() => setInputModal({ isOpen: true, type: 'createCategory' })}
@@ -434,9 +715,13 @@ export default function OperationalExpenses() {
         <div className="filter-group">
           <label className="filter-label">Select Sub Category</label>
           <CustomDropdown
-            options={selectedCategory ? subCategories[selectedCategory] || [] : []}
+            options={
+              selectedCategory
+                ? ["All", ...(subCategories[selectedCategory] || [])]
+                : ["All"]
+            }
             selected={selectedSubCategory}
-            onSelect={setSelectedSubCategory}
+            onSelect={(sub) => setSelectedSubCategory(sub === "All" ? "" : sub)}
             placeholder="Select Sub Category"
             searchPlaceholder="Search Sub Category"
             onAddNew={() => setInputModal({ isOpen: true, type: 'createSubCategory' })}
@@ -495,7 +780,7 @@ export default function OperationalExpenses() {
           <tbody>
             {filteredExpenses.map((exp) => (
               <tr key={exp.id}>
-                <td>{exp.date}</td>
+                <td>{formatDisplayDate(exp.date)}</td>
                 <td>{exp.party}</td>
                 <td>{exp.category}</td>
                 <td>{exp.subCategory}</td>
@@ -526,7 +811,7 @@ export default function OperationalExpenses() {
                 <td style={{ position: 'relative' }}>
                   <FaEllipsisV
                     className="more-options"
-                    onClick={() => setActiveRowMenu(activeRowMenu === exp.id ? null : exp.id)}
+                    onClick={() => setActiveRowMenu(activeRowMenu == exp.id ? null : exp.id)}
                   />
                   {activeRowMenu === exp.id && (
                     <div className="row-options-menu">

@@ -10,9 +10,11 @@ import "react-toastify/dist/ReactToastify.css";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
-export default function PaymentComponent() {
+export default function PaymentComponent({ poData, isModal = false, onClose }) {
   const location = useLocation();
-  const passedPoNum = { po: location.state.po_num };
+ const passedPoNum = {
+    po: poData?.purchase_id || location.state?.po_num
+};
   const {auth}=useAuth()
   const axiosPrivate=useAxiosPrivate()
   const [isShowModal, setIsShowModal] = useState(false);
@@ -110,6 +112,7 @@ export default function PaymentComponent() {
       );
       if (response.status === 200) {
         toast.success("Success", toastOptions);
+        setIsShowModal(false);
       }
       console.log(response)
       fetchPaymentHistory();
@@ -169,12 +172,20 @@ export default function PaymentComponent() {
             >
               <button onClick={handleOpenModal}>Add new payment</button>
               <button
-                onClick={() => {
-                  navigate(-1);
-                }}
-              >
-                Close
-              </button>
+    type="button"
+    onClick={() => {
+        if (isModal) {
+            // close modal only
+            onClose();
+        } else {
+            // normal page navigation
+            navigate(-1);
+        }
+    }}
+>
+    Close
+</button>
+
             </div>
           )}
         </div>
